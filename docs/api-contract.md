@@ -1,6 +1,6 @@
 # InfoRight AI — API Contracts v2.0
 
-> **Compatibility Notice**: The frozen RTI generation endpoint (`POST /api/rti/generate`) remains 100% untouched. Additional endpoints (`/api/triage`, `/api/rights/navigate`, `/api/schemes/match`) are additive extensions.
+> **Compatibility Guarantee**: The frozen RTI generation endpoint (`POST /api/rti/generate`) remains 100% untouched. Additional endpoints (`/api/triage`, `/api/rights/navigate`, `/api/schemes/match`) are strictly additive extensions.
 
 ---
 
@@ -15,12 +15,14 @@ export interface TriageRequest {
 
 ### Response
 ```ts
+export type ServiceRoute = "rti" | "rights" | "schemes" | "unsupported";
+
 export interface TriageResponse {
-  recommendedModule: "rti" | "rights" | "schemes";
-  category?: "consumer" | "tenant" | "workplace" | "civic_road";
-  confidence: number;
+  service: ServiceRoute;
+  category?: "consumer" | "tenant" | "workplace";
+  confidence: "high" | "medium" | "verificationRequired";
   explanation: string;
-  suggestedRoute: string;
+  missingFields: string[];
 }
 ```
 
@@ -93,32 +95,15 @@ export interface RightsNavigateRequest {
 ### Response
 ```ts
 export interface RightsNavigateResponse {
-  mode: "ai" | "fallback";
   category: "consumer" | "tenant" | "workplace";
-  issueTitle: string;
-  rightsSummary: string;
-  proceduralSteps: string[];
+  jurisdiction: string;
+  summary: string;
+  actions: string[];
   evidenceChecklist: string[];
-  escalationPathway: {
-    portalName: string;
-    portalUrl: string;
-    authorityName: string;
-    helplinePhone?: string;
-  };
-  representationLetter: {
-    recipientTitle: string;
-    subject: string;
-    body: string;
-  };
-  bureaucracyTranslation: {
-    whatThisMeans: string;
-    whatYouShouldDoNow: string;
-    documentsToCollect: string[];
-    whereToSubmit: string;
-    whatIfNoResponse: string;
-  };
-  jurisdictionWarning?: string;
+  escalationSteps: string[];
+  draftLetter: string;
   citationIds: string[];
+  verificationRequired: boolean;
   warning?: string;
 }
 ```
@@ -143,20 +128,17 @@ export interface SchemeMatchRequest {
 
 ### Response
 ```ts
+export interface SchemeMatch {
+  schemeId: string;
+  result: "matched" | "notMatched" | "verificationRequired";
+  reasons: string[];
+  requiredDocuments: string[];
+  citationIds: string[];
+}
+
 export interface SchemeMatchResponse {
   totalMatched: number;
-  matchedSchemes: Array<{
-    id: string;
-    title: string;
-    ministry: string;
-    state: string;
-    matchingReason: string;
-    benefits: string;
-    eligibilityCriteria: string[];
-    requiredDocuments: string[];
-    officialApplyUrl: string;
-    lastVerifiedDate: string;
-  }>;
+  matchedSchemes: SchemeMatch[];
   disclaimer: "Final eligibility is determined strictly by the respective government department.";
 }
 ```

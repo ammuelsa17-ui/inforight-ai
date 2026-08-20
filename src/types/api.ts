@@ -44,16 +44,18 @@ export interface GenerateRtiResponse {
 // 2. Additive Version 2.0 Contracts (Triage, Rights & Schemes)
 // -------------------------------------------------------------
 
+export type ServiceRoute = "rti" | "rights" | "schemes" | "unsupported";
+
 export interface TriageRequest {
   problemDescription: string;
 }
 
 export interface TriageResponse {
-  recommendedModule: "rti" | "rights" | "schemes";
-  category?: "consumer" | "tenant" | "workplace" | "civic_road";
-  confidence: number;
+  service: ServiceRoute;
+  category?: "consumer" | "tenant" | "workplace";
+  confidence: "high" | "medium" | "verificationRequired";
   explanation: string;
-  suggestedRoute: string;
+  missingFields: string[];
 }
 
 export interface RightsNavigateRequest {
@@ -68,32 +70,15 @@ export interface RightsNavigateRequest {
 }
 
 export interface RightsNavigateResponse {
-  mode: "ai" | "fallback";
   category: "consumer" | "tenant" | "workplace";
-  issueTitle: string;
-  rightsSummary: string;
-  proceduralSteps: string[];
+  jurisdiction: string;
+  summary: string;
+  actions: string[];
   evidenceChecklist: string[];
-  escalationPathway: {
-    portalName: string;
-    portalUrl: string;
-    authorityName: string;
-    helplinePhone?: string;
-  };
-  representationLetter: {
-    recipientTitle: string;
-    subject: string;
-    body: string;
-  };
-  bureaucracyTranslation: {
-    whatThisMeans: string;
-    whatYouShouldDoNow: string;
-    documentsToCollect: string[];
-    whereToSubmit: string;
-    whatIfNoResponse: string;
-  };
-  jurisdictionWarning?: string;
+  escalationSteps: string[];
+  draftLetter: string;
   citationIds: string[];
+  verificationRequired: boolean;
   warning?: string;
 }
 
@@ -108,20 +93,17 @@ export interface SchemeMatchRequest {
   socialCategory?: string;
 }
 
+export interface SchemeMatch {
+  schemeId: string;
+  result: "matched" | "notMatched" | "verificationRequired";
+  reasons: string[];
+  requiredDocuments: string[];
+  citationIds: string[];
+}
+
 export interface SchemeMatchResponse {
   totalMatched: number;
-  matchedSchemes: Array<{
-    id: string;
-    title: string;
-    ministry: string;
-    state: string;
-    matchingReason: string;
-    benefits: string;
-    eligibilityCriteria: string[];
-    requiredDocuments: string[];
-    officialApplyUrl: string;
-    lastVerifiedDate: string;
-  }>;
+  matchedSchemes: SchemeMatch[];
   disclaimer: "Final eligibility is determined strictly by the respective government department.";
 }
 

@@ -8,34 +8,34 @@
 
 ### 1.1 Module 1: RTI Drafting Agent (Implemented & Retained)
 * Plain-language civic road issue input with RTI suitability check.
-* Conversion of subjective complaints into 3–5 objective requests for certified records under Section 6(1) of RTI Act 2005.
-* Deterministic Public Information Officer (PIO) authority recommendation.
+* Conversion of subjective complaints into 3–5 objective requests for certified record copies under Section 6(1) of RTI Act 2005.
+* Deterministically constructed Public Information Officer (PIO) authority recommendation.
 * Verified source allowlisting (`RTI_ACT_2005_AMENDED`, `CCMC_RTI_AUTHORITY`, `CCMC_ENGINEERING_ROADS`).
 * Client-side applicant details merge, editable preview, copy to clipboard, print, and PDF export.
-* Predetermined fallback protection when AI generation fails.
+* Predetermined fallback template protection when AI generation fails.
 
 ### 1.2 Module 2: Rights Navigator
 Supports three dispute categories:
 
-| Category | Working Use Cases | Output / Deliverables |
+| Category | Required Use Cases | Output / Deliverables |
 | :--- | :--- | :--- |
-| **Consumer** | Defective product, refund denied, service not delivered | Legal rights summary, evidence checklist, National Consumer Helpline (1915) & e-Daakhil escalation pathway, formal representation letter draft. |
-| **Tenant** | Security deposit withholding, urgent repairs, eviction notice, rent dispute | Simple-language rights breakdown, evidence checklist, State Rent Authority escalation path, formal tenant notice letter draft. *Includes explicit state-jurisdiction variation warnings.* |
-| **Workplace** | Unpaid salary, wrongful termination, grievance pathway | Applicable labor rights, evidence checklist, District Labor Commissioner / Samadhan portal escalation path, formal employer grievance representation letter draft. |
+| **Consumer** | Defective product, refund denied, service not delivered | Simple-language summary, evidence checklist, National Consumer Helpline (1915) & **e-Jagriti** portal escalation pathway, generated draft representation letter. |
+| **Tenant** | Security deposit withholding, urgent repairs, eviction notice, rent dispute | Simple-language rights breakdown, evidence checklist, State Rent Authority escalation path, generated draft tenant representation letter. *Includes explicit state-jurisdiction variation warnings.* |
+| **Workplace** | Unpaid salary, wrongful termination, grievance pathway | Applicable labor rights, evidence checklist, District Labor Commissioner / **SAMADHAN 2.0** (Central Industrial Disputes) escalation path, generated draft employer grievance letter. |
 
 ### 1.3 Module 3: Scheme Eligibility Reader (Rule-Based Matching)
-Evaluates 10–15 verified National and Tamil Nadu welfare schemes:
+Evaluates 10–15 verified National and Tamil Nadu welfare schemes using the **myScheme** platform as an official reference framework:
 * **Inputs**: State, Age, Income Range, Occupation, Student Status, Rural/Urban location, Disability status (optional), Social category (optional).
-* **Rule-Based Engine**: Matches schemes strictly using deterministic conditional rules (Gemini explains results but does not decide eligibility).
-* **Outputs**: Matching scheme list, "Why you matched" breakdown, benefits, eligibility criteria, required document checklist, official application link, last-verified date, and mandatory department disclaimer.
+* **Rule-Based Engine**: Matches schemes strictly using deterministic conditional rules returning `matched`, `notMatched`, or `verificationRequired` (Gemini explains results but does not decide eligibility).
+* **Outputs**: Matching scheme list, reasons for match status, required documents checklist, official application link, last-verified date, and mandatory department disclaimer.
 
 ### 1.4 Module 4: Conversational Form-Filler (Shared Capability)
 * Asks one clear question at a time across all modules.
-* Auto-populates official documents:
-  - RTI Application
-  - Consumer Complaint Representation Letter
-  - Tenant Notice Representation Letter
-  - Employer Grievance Representation Letter
+* Auto-populates generated drafts:
+  - Structured RTI Application Draft
+  - Generated Draft Consumer Representation Letter
+  - Generated Draft Tenant Representation Letter
+  - Generated Draft Employer Grievance Letter
   - Scheme Application Checklist
 
 ### 1.5 Module 5: Bureaucracy Translator
@@ -67,30 +67,13 @@ Embedded simple-language translation block across all output pages:
 
 ### 2.2 API Contract Endpoints
 ```text
-POST /api/triage            Categorizes incoming citizen problem into service module
+POST /api/triage            Categorizes incoming citizen problem into service route or unsupported/emergency
 POST /api/rti/generate      Frozen RTI drafting endpoint (retained from v1.0)
-POST /api/rights/navigate   Generates procedural guidance & representation letter
+POST /api/rights/navigate   Generates procedural guidance & draft representation letter
 POST /api/schemes/match     Rule-based welfare scheme eligibility matcher
 ```
 
-### 2.3 Source Data Registry (`src/data/`)
-```text
-src/data/
-├── sources/
-│   ├── rti/
-│   ├── consumer/
-│   ├── tenant/
-│   ├── workplace/
-│   └── welfare/
-├── schemes/
-│   ├── national-schemes.ts
-│   └── tamil-nadu-schemes.ts
-├── forms/
-│   └── form-registry.ts
-└── source-registry.ts
-```
-
-Source Schema:
+### 2.3 Source Data Registry Schema (`src/types/api.ts`)
 ```ts
 export interface SourceRecord {
   id: string;
@@ -110,10 +93,10 @@ export interface SourceRecord {
 ## 3. Mandatory Demo Scenarios
 
 1. **Coimbatore Road Potholes (RTI)**: DB Road pothole inspection and Measurement Book entries.
-2. **Online Product Refund Denial (Consumer)**: E-commerce seller refusing refund for defective laptop.
-3. **Tenant Security Deposit Withholding (Tenant)**: Landlord refusing ₹50,000 deposit return in Chennai.
-4. **Unpaid Salary Grievance (Workplace)**: Employer withholding 2 months' salary post-resignation.
-5. **Low-Income Student Scholarship (Schemes)**: Post-matric scholarship matching for Tamil Nadu student.
+2. **Online Product Refund Denial (Consumer)**: E-commerce seller refusing refund; escalation to NCH (1915) & e-Jagriti.
+3. **Tenant Security Deposit Withholding (Tenant)**: Landlord refusing deposit return in Chennai with Tamil Nadu Rent Act jurisdiction warning.
+4. **Unpaid Salary Grievance (Workplace)**: Employer withholding 2 months' salary post-resignation; escalation via SAMADHAN 2.0 / Labor Commissioner.
+5. **Low-Income Student Scholarship (Schemes)**: Post-matric scholarship matching referenced against myScheme eligibility rules.
 
 ---
 
@@ -121,7 +104,7 @@ export interface SourceRecord {
 
 * **Harsha (AI, Backend & Integration)**: AI Triage API, Rights Navigator API, Scheme Matcher API, structured output validation, source allowlist intersection, deployment, and integration testing.
 * **Abirami (Complete Frontend)**: Service landing page, unified problem entry interface, Rights Navigator forms & results, Scheme matcher form, conversational step UI, responsive sky-blue/indigo layout.
-* **Mithun (Sources, Rules & Forms)**: Source registries (`src/data/sources/`), scheme rules (`src/data/schemes/`), complaint templates (`src/data/forms/`), official domain URL verification.
+* **Mithun (Sources, Rules & Templates)**: Source registries (`src/data/sources/`), scheme rules (`src/data/schemes/`), complaint templates (`src/data/forms/`), official domain URL verification.
 
 ---
 
