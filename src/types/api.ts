@@ -52,9 +52,10 @@ export interface TriageRequest {
 
 export interface TriageResponse {
   service: ServiceRoute;
-  category?: "consumer" | "tenant" | "workplace";
+  category?: "consumer" | "tenant" | "workplace" | "civic_road";
   confidence: "high" | "medium" | "verificationRequired";
   explanation: string;
+  suggestedRoute?: string;
   missingFields: string[];
 }
 
@@ -70,13 +71,34 @@ export interface RightsNavigateRequest {
 }
 
 export interface RightsNavigateResponse {
+  mode?: "ai" | "fallback";
   category: "consumer" | "tenant" | "workplace";
   jurisdiction: string;
+  issueTitle?: string;
   summary: string;
   actions: string[];
   evidenceChecklist: string[];
   escalationSteps: string[];
-  draftLetter: string;
+  escalationPathway?: {
+    portalName: string;
+    portalUrl: string;
+    authorityName: string;
+    helplinePhone?: string;
+  };
+  representationLetter?: {
+    recipientTitle: string;
+    subject: string;
+    body: string;
+  };
+  bureaucracyTranslation?: {
+    whatThisMeans: string;
+    whatYouShouldDoNow: string;
+    documentsToCollect: string[];
+    whereToSubmit: string;
+    whatIfNoResponse: string;
+  };
+  draftLetter?: string;
+  jurisdictionWarning?: string;
   citationIds: string[];
   verificationRequired: boolean;
   warning?: string;
@@ -98,6 +120,7 @@ export interface SchemeMatch {
   result: "matched" | "notMatched" | "verificationRequired";
   reasons: string[];
   requiredDocuments: string[];
+  officialApplyUrl?: string;
   citationIds: string[];
 }
 
