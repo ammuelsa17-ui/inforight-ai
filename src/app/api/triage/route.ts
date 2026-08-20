@@ -1,18 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
 import { TriageRequest, TriageResponse } from "@/types/api";
 
+const ALLOWED_KEYS = new Set(["problemDescription"]);
+
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json().catch(() => null)) as TriageRequest | null;
+    const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
 
-    if (!body || !body.problemDescription || typeof body.problemDescription !== "string") {
+    if (!body || typeof body !== "object") {
       return NextResponse.json(
-        { error: "Invalid request. 'problemDescription' is required." },
+        { error: "Invalid JSON request body." },
         { status: 400 }
       );
     }
 
-    const text = body.problemDescription.toLowerCase().trim();
+    // Strict Unknown-Field Rejection (Privacy Guardrail)
+    const keys = Object.keys(body);
+    const unknownKeys = keys.filter((k) => !ALLOWED_KEYS.has(k));
+    if (unknownKeys.length > 0) {
+      return NextResponse.json(
+        { error: `Unknown request fields detected: ${unknownKeys.join(", ")}. Strict schema parsing rejected request.` },
+        { status: 400 }
+      );
+    }
+
+    const { problemDescription } = body as unknown as TriageRequest;
+
+    if (!problemDescription || typeof problemDescription !== "string" || problemDescription.trim().length === 0) {
+      return NextResponse.json(
+        { error: "Invalid request. 'problemDescription' is required and cannot be empty." },
+        { status: 400 }
+      );
+    }
+
+    const text = problemDescription.toLowerCase().trim();
 
     // Emergency / Criminal Safety Handling
     if (/suicide|self harm|physical assault|domestic violence|murder|kidnap|blood|medical emergency/i.test(text)) {
@@ -38,7 +59,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(response, { status: 200 });
     }
 
-    // 2. Rights Navigator — Tenant (Checked before generic refund)
+    // 2. Rights Navigator — Tenant
     if (/tenant|landlord|rent|security deposit|rental deposit|eviction|lease|flat|house deposit|repairs|agreement/i.test(text)) {
       const response: TriageResponse = {
         service: "rights",

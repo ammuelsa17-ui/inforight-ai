@@ -116,17 +116,17 @@ async function runRouteHandlerContractTests() {
     assert(res.status === 400, "Triage rejects missing problemDescription field with HTTP 400");
   }
 
-  // Test 9: Unknown Fields Included -> Processed Safely
+  // Test 9: Strict Unknown Field Rejection -> HTTP 400
   {
     const req = new NextRequest("http://localhost/api/triage", {
       method: "POST",
       body: JSON.stringify({
         problemDescription: "Pothole repair on DB Road",
-        unknownExtraParam: "random_value",
+        applicantName: "Leaked Name", // UNKNOWN FIELD
       }),
     });
     const res = await triageHandler(req);
-    assert(res.status === 200, "Triage safely handles unknown extra parameters");
+    assert(res.status === 400, "Triage strictly rejects unknown field applicantName with HTTP 400");
   }
 
   // ---------------------------------------------------------
@@ -224,7 +224,7 @@ async function runRouteHandlerContractTests() {
     assert(!data.citationIds?.includes("UNTRUSTED_FAKE_SOURCE_ID_123"), "Untrusted citation ID is excluded from response citationIds");
   }
 
-  // Test 15: Controlled Failure Simulation Flag Safety
+  // Test 15: Controlled Failure Simulation Toggle (ENABLE_DEMO_FAILURE=true)
   {
     const oldFlag = process.env.ENABLE_DEMO_FAILURE;
     process.env.ENABLE_DEMO_FAILURE = "true";
@@ -246,12 +246,34 @@ async function runRouteHandlerContractTests() {
     process.env.ENABLE_DEMO_FAILURE = oldFlag;
   }
 
+  // Test 16: Controlled Failure Simulation Toggle Safety (ENABLE_DEMO_FAILURE=false)
+  {
+    const oldFlag = process.env.ENABLE_DEMO_FAILURE;
+    process.env.ENABLE_DEMO_FAILURE = "false";
+    const req = new NextRequest("http://localhost/api/rti/generate", {
+      method: "POST",
+      body: JSON.stringify({
+        issue: "Potholes on DB Road",
+        state: "Tamil Nadu",
+        district: "Coimbatore",
+        localBodyName: "Coimbatore Corporation",
+        locality: "R.S. Puram",
+        sourceIds: ["RTI_ACT_2005_AMENDED"],
+        simulateFailure: true,
+      }),
+    });
+    const res = await rtiHandler(req);
+    const data = await res.json();
+    assert(data.mode === "fallback" || data.mode === "ai", "ENABLE_DEMO_FAILURE=false ignores simulateFailure flag");
+    process.env.ENABLE_DEMO_FAILURE = oldFlag;
+  }
+
   // ---------------------------------------------------------
   // SECTION 3: RIGHTS NAVIGATOR ROUTE HANDLER TESTS (/api/rights/navigate)
   // ---------------------------------------------------------
   console.log("\n--- SECTION 3: /api/rights/navigate Route-Handler Tests ---");
 
-  // Test 16: Consumer Rights Contract Compliance
+  // Test 17: Consumer Rights Contract Compliance
   {
     const req = new NextRequest("http://localhost/api/rights/navigate", {
       method: "POST",
@@ -269,7 +291,7 @@ async function runRouteHandlerContractTests() {
     assert(data.citationIds?.includes("E_JAGRITI_PORTAL"), "Consumer rights includes e-Jagriti portal citation");
   }
 
-  // Test 17: Tenant Rights Contract Compliance & State Warning
+  // Test 18: Tenant Rights Contract Compliance & State Warning
   {
     const req = new NextRequest("http://localhost/api/rights/navigate", {
       method: "POST",
@@ -286,7 +308,7 @@ async function runRouteHandlerContractTests() {
     assert(typeof data.jurisdictionWarning === "string" && data.jurisdictionWarning.length > 0, "Tenant rights includes state jurisdiction warning");
   }
 
-  // Test 18: Workplace Rights Contract Compliance
+  // Test 19: Workplace Rights Contract Compliance
   {
     const req = new NextRequest("http://localhost/api/rights/navigate", {
       method: "POST",
@@ -303,7 +325,7 @@ async function runRouteHandlerContractTests() {
     assert(data.citationIds?.includes("SAMADHAN_2_PORTAL"), "Workplace rights includes SAMADHAN 2.0 portal citation");
   }
 
-  // Test 19: Invalid Rights Category Rejection -> HTTP 400
+  // Test 20: Invalid Rights Category Rejection -> HTTP 400
   {
     const req = new NextRequest("http://localhost/api/rights/navigate", {
       method: "POST",
@@ -317,12 +339,27 @@ async function runRouteHandlerContractTests() {
     assert(res.status === 400, "Rights API rejects invalid category with HTTP 400");
   }
 
+  // Test 21: Strict Unknown Field Rejection -> HTTP 400
+  {
+    const req = new NextRequest("http://localhost/api/rights/navigate", {
+      method: "POST",
+      body: JSON.stringify({
+        category: "consumer",
+        description: "Test dispute",
+        state: "Tamil Nadu",
+        unknownParam: "unauthorized_data",
+      }),
+    });
+    const res = await rightsHandler(req);
+    assert(res.status === 400, "Rights API strictly rejects unknown fields with HTTP 400");
+  }
+
   // ---------------------------------------------------------
   // SECTION 4: SCHEME MATCHING ROUTE HANDLER TESTS (/api/schemes/match)
   // ---------------------------------------------------------
   console.log("\n--- SECTION 4: /api/schemes/match Route-Handler Tests ---");
 
-  // Test 20: Low-Income Student Profile Matching
+  // Test 22: Low-Income Student Profile Matching
   {
     const req = new NextRequest("http://localhost/api/schemes/match", {
       method: "POST",
@@ -342,7 +379,7 @@ async function runRouteHandlerContractTests() {
     assert(typeof data.disclaimer === "string", "Scheme matcher returns mandatory department disclaimer");
   }
 
-  // Test 21: Income Limit Exact Boundary Test (₹2,50,000 threshold)
+  // Test 23: Income Limit Exact Boundary Test (₹2,50,000 threshold)
   {
     const req = new NextRequest("http://localhost/api/schemes/match", {
       method: "POST",
@@ -361,23 +398,39 @@ async function runRouteHandlerContractTests() {
     assert(hasPostMatric, "Scheme matcher matches TN_POST_MATRIC_SCHOLARSHIP at exact ₹2,50,000 income boundary");
   }
 
-  // Test 22: Non-Student Profile Evaluation
+  // Test 24: Negative Income Rejection -> HTTP 400
   {
     const req = new NextRequest("http://localhost/api/schemes/match", {
       method: "POST",
       body: JSON.stringify({
         state: "Tamil Nadu",
-        age: 35,
-        annualIncome: 200000,
-        occupation: "farmer",
-        isStudent: false,
-        areaType: "rural",
+        age: 20,
+        annualIncome: -5000, // INVALID NEGATIVE INCOME
+        occupation: "student",
+        isStudent: true,
+        areaType: "urban",
       }),
     });
     const res = await schemesHandler(req);
-    const data = await res.json();
-    const hasStudentScheme = data.matchedSchemes?.some((s: { schemeId: string }) => s.schemeId === "TN_POST_MATRIC_SCHOLARSHIP");
-    assert(!hasStudentScheme, "Non-student profile correctly excludes student-only schemes");
+    assert(res.status === 400, "Scheme matcher rejects negative annualIncome with HTTP 400");
+  }
+
+  // Test 25: Strict Unknown Field Rejection -> HTTP 400
+  {
+    const req = new NextRequest("http://localhost/api/schemes/match", {
+      method: "POST",
+      body: JSON.stringify({
+        state: "Tamil Nadu",
+        age: 20,
+        annualIncome: 150000,
+        occupation: "student",
+        isStudent: true,
+        areaType: "urban",
+        extraLeakedField: "unauthorized",
+      }),
+    });
+    const res = await schemesHandler(req);
+    assert(res.status === 400, "Scheme matcher strictly rejects unknown fields with HTTP 400");
   }
 
   console.log("\n=================================================================");
