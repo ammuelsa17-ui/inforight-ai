@@ -21,7 +21,7 @@ export default function Navbar() {
                 InfoRight <span className="text-[#4F46E5]">AI</span>
               </span>
               <span className="block text-[10px] text-[#526176] font-medium leading-none">
-                RTI Drafting Assistant
+                Civic & Legal Empowerment Platform
               </span>
             </div>
           </Link>
@@ -31,10 +31,16 @@ export default function Navbar() {
             <Link href="/" className="hover:text-[#4F46E5] transition-colors">
               Home
             </Link>
-            <Link href="/#how-it-works" className="hover:text-[#4F46E5] transition-colors">
-              How It Works
+            <Link href="/ask" className="hover:text-[#4F46E5] transition-colors">
+              RTI Drafting
             </Link>
-            <Link href="/#sources" className="hover:text-[#4F46E5] transition-colors">
+            <Link href="/rights" className="hover:text-[#4F46E5] transition-colors">
+              Rights Navigator
+            </Link>
+            <Link href="/schemes" className="hover:text-[#4F46E5] transition-colors">
+              Welfare Schemes
+            </Link>
+            <Link href="/sources" className="hover:text-[#4F46E5] transition-colors">
               Official Sources
             </Link>
           </nav>
@@ -45,7 +51,7 @@ export default function Navbar() {
               href="/ask"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-sm"
             >
-              <span>Start RTI Request</span>
+              <span>Describe Problem</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -72,14 +78,28 @@ export default function Navbar() {
             Home
           </Link>
           <Link
-            href="/#how-it-works"
+            href="/ask"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
-            How It Works
+            RTI Drafting
           </Link>
           <Link
-            href="/#sources"
+            href="/rights"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
+          >
+            Rights Navigator
+          </Link>
+          <Link
+            href="/schemes"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
+          >
+            Welfare Schemes
+          </Link>
+          <Link
+            href="/sources"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
@@ -91,7 +111,7 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors"
             >
-              <span>Start RTI Request</span>
+              <span>Describe Problem</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
