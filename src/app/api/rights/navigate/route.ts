@@ -3,21 +3,74 @@ import { RightsNavigateRequest, RightsNavigateResponse } from "@/types/api";
 import { DRAFT_FORM_TEMPLATES } from "@/data/forms/form-registry";
 import { OFFICIAL_SOURCES_REGISTRY } from "@/data/source-registry";
 
+const ALLOWED_KEYS = new Set([
+  "category",
+  "issueType",
+  "description",
+  "state",
+  "jurisdiction",
+  "amountInDispute",
+  "sourceIds",
+  "simulateFailure",
+]);
+
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json().catch(() => null)) as RightsNavigateRequest | null;
+    const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
 
-    if (!body || !body.category || !body.description || !body.state) {
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { error: "Invalid JSON request body." },
+        { status: 400 }
+      );
+    }
+
+    // Strict Unknown Field Rejection
+    const keys = Object.keys(body);
+    const unknownKeys = keys.filter((k) => !ALLOWED_KEYS.has(k));
+    if (unknownKeys.length > 0) {
+      return NextResponse.json(
+        { error: `Unknown request fields detected: ${unknownKeys.join(", ")}. Strict schema parsing rejected request.` },
+        { status: 400 }
+      );
+    }
+
+    const { category, issueType, description, state, simulateFailure } = body as unknown as RightsNavigateRequest;
+
+    if (!category || !description || !state || typeof description !== "string" || typeof state !== "string") {
       return NextResponse.json(
         { error: "Missing required fields: category, description, state are required." },
         { status: 400 }
       );
     }
 
-    const { category, issueType, description, state, simulateFailure } = body;
+    if (description.trim().length === 0) {
+      return NextResponse.json(
+        { error: "Description field cannot be empty." },
+        { status: 400 }
+      );
+    }
 
-    // Check for simulated failure toggle
-    if (simulateFailure) {
+    if (description.length > 5000) {
+      return NextResponse.json(
+        { error: "Description exceeds maximum allowed length of 5000 characters." },
+        { status: 400 }
+      );
+    }
+
+    // Validate Category
+    if (!["consumer", "tenant", "workplace"].includes(category)) {
+      return NextResponse.json(
+        { error: "Invalid category. Must be 'consumer', 'tenant', or 'workplace'." },
+        { status: 400 }
+      );
+    }
+
+    // Controlled failure simulation toggle check
+    const maySimulateFailure =
+      process.env.ENABLE_DEMO_FAILURE === "true" && simulateFailure === true;
+
+    if (maySimulateFailure) {
       const fallbackResponse: RightsNavigateResponse = {
         category,
         jurisdiction: state,

@@ -2,13 +2,34 @@ import { NextRequest, NextResponse } from "next/server";
 import { SchemeMatchRequest, SchemeMatchResponse, SchemeMatch } from "@/types/api";
 import { VERIFIED_SCHEMES_REGISTRY } from "@/data/schemes/schemes-registry";
 
+const ALLOWED_KEYS = new Set([
+  "state",
+  "age",
+  "annualIncome",
+  "occupation",
+  "isStudent",
+  "areaType",
+  "hasDisability",
+  "socialCategory",
+]);
+
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json().catch(() => null)) as SchemeMatchRequest | null;
+    const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
 
-    if (!body || !body.state || typeof body.age !== "number" || typeof body.annualIncome !== "number") {
+    if (!body || typeof body !== "object") {
       return NextResponse.json(
-        { error: "Missing required fields: state, age, annualIncome are required." },
+        { error: "Invalid JSON request body." },
+        { status: 400 }
+      );
+    }
+
+    // Strict Unknown Field Rejection
+    const keys = Object.keys(body);
+    const unknownKeys = keys.filter((k) => !ALLOWED_KEYS.has(k));
+    if (unknownKeys.length > 0) {
+      return NextResponse.json(
+        { error: `Unknown request fields detected: ${unknownKeys.join(", ")}. Strict schema parsing rejected request.` },
         { status: 400 }
       );
     }
@@ -20,7 +41,29 @@ export async function POST(req: NextRequest) {
       occupation,
       isStudent,
       areaType,
-    } = body;
+    } = body as unknown as SchemeMatchRequest;
+
+    if (!state || typeof age !== "number" || typeof annualIncome !== "number" || typeof state !== "string") {
+      return NextResponse.json(
+        { error: "Missing required fields: state, age, annualIncome are required." },
+        { status: 400 }
+      );
+    }
+
+    // Boundary & Range Validations
+    if (age < 0 || age > 120) {
+      return NextResponse.json(
+        { error: "Invalid age value. Age must be between 0 and 120." },
+        { status: 400 }
+      );
+    }
+
+    if (annualIncome < 0) {
+      return NextResponse.json(
+        { error: "Invalid annualIncome. Income cannot be negative." },
+        { status: 400 }
+      );
+    }
 
     const matchedSchemes: SchemeMatch[] = [];
 
@@ -82,6 +125,7 @@ export async function POST(req: NextRequest) {
           result: "matched",
           reasons,
           requiredDocuments: scheme.requiredDocuments,
+          officialApplyUrl: scheme.officialApplyUrl,
           citationIds: ["MYSCHEME_PLATFORM"],
         });
       }
