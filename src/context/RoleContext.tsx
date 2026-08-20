@@ -215,45 +215,58 @@ const INITIAL_CASES: Case[] = [
 
 export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [role, setRoleState] = useState<"public" | "citizen" | "official">(() => {
-    const saved = localStorage.getItem("inforight_role");
-    return (saved as "public" | "citizen" | "official") || "public";
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("inforight_role");
+      return (saved as "public" | "citizen" | "official") || "public";
+    }
+    return "public";
   });
   const [cases, setCases] = useState<Case[]>(() => {
-    const saved = localStorage.getItem("inforight_cases");
-    if (saved) {
-      try {
-        return JSON.parse(saved) as Case[];
-      } catch {
-        return INITIAL_CASES;
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("inforight_cases");
+      if (saved) {
+        try {
+          return JSON.parse(saved) as Case[];
+        } catch {
+          return INITIAL_CASES;
+        }
       }
     }
     return INITIAL_CASES;
   });
   const [savedRights, setSavedRights] = useState<string[]>(() => {
-    const saved = localStorage.getItem("inforight_saved_rights");
-    return saved ? JSON.parse(saved) : [];
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("inforight_saved_rights");
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
   });
   const [savedResources, setSavedResources] = useState<string[]>(() => {
-    const saved = localStorage.getItem("inforight_saved_resources");
-    return saved ? JSON.parse(saved) : [];
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("inforight_saved_resources");
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
   });
   const [documents, setDocuments] = useState<{ name: string; size: string; uploadedAt: string }[]>(() => {
-    const saved = localStorage.getItem("inforight_docs");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        return [];
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("inforight_docs");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return [];
+        }
       }
     }
     return [];
   });
 
-  // No effect needed; state initialized from localStorage.
-
   const setRole = (newRole: "public" | "citizen" | "official") => {
     setRoleState(newRole);
-    localStorage.setItem("inforight_role", newRole);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("inforight_role", newRole);
+    }
   };
 
   const addCase = (newCaseData: Omit<Case, "id" | "createdAt" | "status" | "priority">) => {
