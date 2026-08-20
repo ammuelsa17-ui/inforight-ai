@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRole, Case } from "@/context/RoleContext";
@@ -34,14 +34,14 @@ export default function OfficialCaseDetailsPage({ params }: PageProps) {
   const { id } = use(params);
   const { cases, updateCaseStatus } = useRole();
 
+  // Memoized case lookup (replaces previous state + effect)
+  const caseItem = useMemo(() => cases.find((c) => c.id === id) ?? null, [id, cases]);
+
   // Editable fields for officials
   const [status, setStatus] = useState<Case["status"]>(caseItem?.status ?? "Pending");
   const [priority, setPriority] = useState<Case["priority"]>(caseItem?.priority ?? "Medium");
   const [assignedOfficial, setAssignedOfficial] = useState(caseItem?.assignedOfficial ?? "");
   const [internalNotes, setInternalNotes] = useState(caseItem?.internalNotes ?? "");
-
-  // Memoized case lookup (replaces previous state + effect)
-  const caseItem = useMemo(() => cases.find((c) => c.id === id) ?? null, [id, cases]);
   
   const [toastMsg, setToastMsg] = useState("");
 
