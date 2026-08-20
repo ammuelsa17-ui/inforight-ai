@@ -121,27 +121,27 @@ export default function AskPage() {
   return (
     <div className="w-full py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
       {/* Header Navigation */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-        <Link href="/" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors">
+      <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-4">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#526176] hover:text-[#102A56] transition-colors font-medium">
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Home</span>
         </Link>
-        <span className="text-xs font-semibold text-teal-400 uppercase tracking-wider flex items-center gap-1.5">
-          <ShieldCheck className="w-4 h-4" />
+        <span className="text-xs font-semibold text-[#0369A1] uppercase tracking-wider flex items-center gap-1.5 px-3 py-1 bg-[#E0F2FE] rounded-full border border-[#7DD3FC]">
+          <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
           Applicant identity stays in this browser
         </span>
       </div>
 
       <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Draft Your Record-Based RTI Application</h1>
-        <p className="text-sm text-slate-300">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56]">Draft Your Record-Based RTI Application</h1>
+        <p className="text-sm text-[#526176]">
           Convert your civic road complaint into clear, record-based requests for official government records.
         </p>
       </div>
 
       {/* Demo Scenario Selectors */}
       <div className="space-y-2">
-        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+        <label className="text-xs font-bold text-[#526176] uppercase tracking-wider">
           Quick Prefilled Scenarios (Coimbatore)
         </label>
         <div className="flex flex-wrap gap-2">
@@ -150,29 +150,29 @@ export default function AskPage() {
               key={idx}
               type="button"
               onClick={() => applyScenario(sc)}
-              className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs font-medium text-slate-200 hover:bg-slate-800 hover:border-teal-500/50 transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-white border border-[#BCD7EE] text-xs font-semibold text-[#102A56] hover:bg-[#F4F9FF] hover:border-[#4F46E5] transition-colors shadow-xs"
             >
               {sc.label}
             </button>
           ))}
         </div>
-        <p className="text-[11px] text-slate-400">
+        <p className="text-[11px] text-[#526176]">
           Demo inputs are hypothetical. Verify the locality, ward and date range before filing.
         </p>
       </div>
 
       {/* Guided RTI Form */}
-      <form onSubmit={handleGenerate} className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-6">
+      <form onSubmit={handleGenerate} className="p-6 sm:p-8 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-6">
         <div className="space-y-2">
-          <label className="block text-sm font-semibold text-white">
-            1. Describe the Civic Road Problem <span className="text-red-400">*</span>
+          <label className="block text-sm font-bold text-[#102A56]">
+            1. Describe the Civic Road Problem <span className="text-red-500">*</span>
           </label>
           <textarea
             rows={3}
             value={issue}
             onChange={(e) => setIssue(e.target.value)}
             placeholder="E.g., Deep potholes and broken pavement along DB Road near R.S. Puram causing traffic congestion and accidents."
-            className="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-teal-500"
+            className="w-full p-3 bg-white border border-[#BCD7EE] rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
             required
           />
         </div>
@@ -180,107 +180,107 @@ export default function AskPage() {
         {/* Location Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="block text-xs font-semibold text-slate-300">State</label>
+            <label className="block text-xs font-bold text-[#102A56]">State</label>
             <input
               type="text"
               value={state}
               onChange={(e) => setState(e.target.value)}
-              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-teal-500"
+              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-semibold text-slate-300">District</label>
+            <label className="block text-xs font-bold text-[#102A56]">District</label>
             <input
               type="text"
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
-              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-teal-500"
+              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
               required
             />
           </div>
 
           <div className="space-y-2 sm:col-span-2">
-            <label className="block text-xs font-semibold text-slate-300">Local Body Name</label>
+            <label className="block text-xs font-bold text-[#102A56]">Local Body Name</label>
             <input
               type="text"
               value={localBodyName}
               onChange={(e) => setLocalBodyName(e.target.value)}
-              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-teal-500"
+              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-semibold text-slate-300">
-              Locality / Road Name <span className="text-red-400">*</span>
+            <label className="block text-xs font-bold text-[#102A56]">
+              Locality / Road Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={locality}
               onChange={(e) => setLocality(e.target.value)}
               placeholder="E.g., DB Road, R.S. Puram"
-              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-teal-500"
+              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-semibold text-slate-300">Ward Number (Optional)</label>
+            <label className="block text-xs font-bold text-[#102A56]">Ward Number (Optional)</label>
             <input
               type="text"
               value={ward}
               onChange={(e) => setWard(e.target.value)}
               placeholder="E.g., Ward 23"
-              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-teal-500"
+              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
             />
           </div>
 
           <div className="space-y-2 sm:col-span-2">
-            <label className="block text-xs font-semibold text-slate-300">Date Range (Optional)</label>
+            <label className="block text-xs font-bold text-[#102A56]">Date Range (Optional)</label>
             <input
               type="text"
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
               placeholder="E.g., January 2026 to Present"
-              className="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-teal-500"
+              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
             />
           </div>
         </div>
 
         {/* Local Applicant Details (Kept strictly in browser session) */}
-        <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-teal-400 uppercase tracking-wider">
-            <ShieldCheck className="w-4 h-4" />
+        <div className="p-4 rounded-xl bg-[#F4F9FF] border border-[#BCD7EE] space-y-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-[#0369A1] uppercase tracking-wider">
+            <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
             Applicant details — kept in this browser session
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="block text-xs text-slate-400">Applicant Name</label>
+              <label className="block text-xs font-semibold text-[#526176]">Applicant Name</label>
               <input
                 type="text"
                 value={applicantName}
                 onChange={(e) => setApplicantName(e.target.value)}
                 placeholder="E.g., K. Harsha"
-                className="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-teal-500"
+                className="w-full p-2 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
               />
             </div>
             <div className="space-y-1">
-              <label className="block text-xs text-slate-400">Applicant Address</label>
+              <label className="block text-xs font-semibold text-[#526176]">Applicant Address</label>
               <input
                 type="text"
                 value={applicantAddress}
                 onChange={(e) => setApplicantAddress(e.target.value)}
                 placeholder="E.g., 42 R.S. Puram, Coimbatore - 641002"
-                className="w-full p-2 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-teal-500"
+                className="w-full p-2 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
               />
             </div>
           </div>
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-300 text-sm">
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -289,7 +289,7 @@ export default function AskPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-bold text-white bg-teal-600 hover:bg-teal-500 transition-colors shadow-lg shadow-teal-950 disabled:opacity-50"
+          className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] transition-colors shadow-md shadow-indigo-100 disabled:opacity-50"
         >
           <Sparkles className="w-5 h-5" />
           <span>{loading ? "Generating Record Requests..." : "Generate RTI Application"}</span>
@@ -298,11 +298,11 @@ export default function AskPage() {
 
       {/* RTI Suitability Banner */}
       {showSuitabilityBanner && (
-        <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-200 text-sm">
-          <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-sm shadow-xs">
+          <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <h4 className="font-semibold text-blue-300">RTI Suitability Guidance</h4>
-            <p className="text-blue-200/90 leading-relaxed">
+            <h4 className="font-bold text-blue-950">RTI Suitability Guidance</h4>
+            <p className="text-blue-900/90 leading-relaxed">
               RTI generally requests existing official records rather than explanations or subjective opinions. We converted your concern into requests for work orders, estimates, Measurement Book (MB) entries, and expenditure records.
             </p>
           </div>

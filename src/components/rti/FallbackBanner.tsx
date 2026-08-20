@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AlertTriangle, Info, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, Info } from "lucide-react";
 
 interface FallbackBannerProps {
   mode: "ai" | "fallback";
@@ -21,13 +21,13 @@ export default function FallbackBanner({
   return (
     <div className="w-full space-y-3 mb-6">
       {mode === "fallback" && (
-        <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-200">
-          <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 shadow-xs">
+          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div className="space-y-1 text-sm">
-            <h4 className="font-semibold text-amber-300">
+            <h4 className="font-bold text-amber-950">
               Fallback Template Activated
             </h4>
-            <p className="text-amber-200/90 leading-relaxed">
+            <p className="text-amber-900/90 leading-relaxed">
               {warning ||
                 "AI generation was unavailable. Standard, pre-approved record-based RTI requests have been loaded safely."}
             </p>
@@ -36,13 +36,13 @@ export default function FallbackBanner({
       )}
 
       {!verifiedAuthority && (
-        <div className="flex items-start gap-3 p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-200">
-          <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 shadow-xs">
+          <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
           <div className="space-y-1 text-sm">
-            <h4 className="font-semibold text-blue-300">
+            <h4 className="font-bold text-blue-950">
               Authority Verification Notice
             </h4>
-            <p className="text-blue-200/90 leading-relaxed">
+            <p className="text-blue-900/90 leading-relaxed">
               The entered public authority has not been independently verified in our Coimbatore registry. Please confirm authority details before submitting.
             </p>
           </div>
