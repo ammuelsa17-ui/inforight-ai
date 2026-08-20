@@ -67,8 +67,8 @@ Do not implement:
 
 ## Branch ownership
 
-* Harsha: frontend, integration, PDF, deployment and Pull Request review
-* Mithun: RTI API, Gemini output, validation and fallback
-* Abirami: official sources, citation verification, documentation and testing evidence
+* Harsha: `feature/rti-engine` — AI integration, Gemini prompts, structured output, validation, deterministic authority logic, fallback, integration, deployment and Pull Request review
+* Abirami: `feature/frontend` — Next.js foundation, frontend UI/UX, guided form, client-side applicant details, editable document preview, trust panel, citation cards, copy/print/PDF and responsive design
+* Mithun: `feature/source-data` — Official government sources, citation metadata, verification dates, source documentation, README support and manual test evidence
 
 No contributor may change the frozen scope or API contract without Harsha’s explicit approval.
