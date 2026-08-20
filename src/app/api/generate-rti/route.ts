@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GenerateRtiResponse } from "@/context/RoleContext";
-
-// Local official-source allowlist
-const ALLOWLISTED_SOURCE_IDS = ["CIT-TAM-01", "CIT-TAM-02", "CIT-TAM-03", "CIT-TAM-04"];
+import { isAllowlistedSourceId } from "@/data/sources";
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,7 +37,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate citation IDs
-    const invalidCitations = sourceIds.filter((id: string) => !ALLOWLISTED_SOURCE_IDS.includes(id));
+    const invalidCitations = sourceIds.filter((id: string) => !isAllowlistedSourceId(id));
     const citationsValid = invalidCitations.length === 0;
 
     // Construct authority deterministically (Outside Gemini)
@@ -66,7 +64,7 @@ export async function POST(req: NextRequest) {
           `State the official duration and completion milestones committed to by the department for solving maintenance requests in ${locality}.`
         ],
         authority,
-        citationIds: sourceIds.filter((id: string) => ALLOWLISTED_SOURCE_IDS.includes(id)),
+        citationIds: sourceIds.filter((id: string) => isAllowlistedSourceId(id)),
         validation: {
           schemaValid: true,
           citationsValid,

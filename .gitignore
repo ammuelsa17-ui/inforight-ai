@@ -31,3 +31,6 @@ lerna-debug.log*
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# TypeScript build info
+*.tsbuildinfo
