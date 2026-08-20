@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { FileText, Menu, X, ArrowRight } from "lucide-react";
+import LanguageSelector from "@/components/LanguageSelector";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -45,8 +46,9 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          {/* Action CTA */}
+          {/* Action CTA & Language Selector */}
           <div className="hidden md:flex items-center gap-3">
+            <LanguageSelector />
             <Link
               href="/ask"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-sm"
@@ -57,13 +59,16 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Toggle Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-[#526176] hover:text-[#102A56] hover:bg-[#E0F2FE]"
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex md:hidden items-center gap-2">
+            <LanguageSelector />
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-lg text-[#526176] hover:text-[#102A56] hover:bg-[#E0F2FE]"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
