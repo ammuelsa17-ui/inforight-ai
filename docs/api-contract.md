@@ -1,6 +1,6 @@
 # InfoRight AI — API Contracts v2.0
 
-> **Compatibility Guarantee**: The frozen RTI generation endpoint (`POST /api/rti/generate`) remains 100% untouched. Additional endpoints (`/api/triage`, `/api/rights/navigate`, `/api/schemes/match`) are strictly additive extensions.
+> **Compatibility Guarantee**: The frozen RTI generation endpoint (`POST /api/rti/generate`) remains strictly preserved. Additional endpoints (`/api/triage`, `/api/rights/navigate`, `/api/schemes/match`) are strictly additive extensions.
 
 ---
 
