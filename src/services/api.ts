@@ -1,28 +1,25 @@
-// src/services/api.ts
-import { GenerateRtiRequest, GenerateRtiResponse } from "@/types/api";
+import type { GenerateRtiRequest, GenerateRtiResponse } from "@/types/api";
 
-export async function generateRti(request: GenerateRtiRequest): Promise<GenerateRtiResponse> {
-  const response = await fetch("/api/generate-rti", {
+export async function generateRtiApplication(
+  payload: GenerateRtiRequest
+): Promise<GenerateRtiResponse> {
+  const response = await fetch("/api/rti/generate", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(request),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error || "Failed to generate RTI guidance");
+    const errorData: { error?: string } = await response
+      .json()
+      .catch(() => ({}));
+
+    throw new Error(
+      errorData.error ?? `RTI generation failed with status ${response.status}`
+    );
   }
 
-  const data = await response.json();
-  // Basic validation to ensure required fields exist
-  if (
-    typeof data.subject !== "string" ||
-    typeof data.applicationBody !== "string" ||
-    !Array.isArray(data.questions) ||
-    typeof data.authority !== "object" ||
-    typeof data.citationIds === "undefined"
-  ) {
-    throw new Error("Malformed response from backend");
-  }
-  return data as GenerateRtiResponse;
+  return response.json() as Promise<GenerateRtiResponse>;
 }
