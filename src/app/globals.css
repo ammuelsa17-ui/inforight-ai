@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-indigo-primary: #4F46E5;
+  --color-sky-blue: #38BDF8;
+  --color-sky-light-bg: #F0F9FF;
+  --color-dark-text: #0F172A;
+  --color-secondary-text: #64748B;
+  --color-borders: #E2E8F0;
+  --color-success-green: #16A34A;
+  --color-success-bg: #F0FDF4;
+  --color-warning-amber: #F59E0B;
+  --color-warning-bg: #FFFBEB;
+  --color-danger-red: #DC2626;
+  --color-danger-bg: #FEF2F2;
+  
+  --radius-subtle: 6px;
+  --radius-normal: 8px;
+}
+
+:root {
+  --background: #FFFFFF;
+  --foreground: #0F172A;
+}
+
+body {
+  background-color: #FFFFFF;
+  color: #0F172A;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom focus states and input resets */
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid #4F46E5;
+  outline-offset: 1px;
+}
+
+/* Custom print layouts for documents */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+}
