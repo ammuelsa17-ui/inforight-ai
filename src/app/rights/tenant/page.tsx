@@ -136,6 +136,18 @@ export default function TenantRightsPage() {
             )}
           </div>
 
+          {/* Bureaucracy Translation Block */}
+          {result.bureaucracyTranslation && (
+            <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] space-y-4">
+              <h4 className="text-base font-bold text-[#102A56]">Bureaucracy Translation — What This Means</h4>
+              <p className="text-sm text-[#526176]">{result.bureaucracyTranslation.whatThisMeans}</p>
+              <div className="space-y-2 text-xs">
+                <strong className="text-[#102A56] block">Next Action:</strong>
+                <p className="text-[#526176]">{result.bureaucracyTranslation.whatYouShouldDoNow}</p>
+              </div>
+            </div>
+          )}
+
           {/* Generated Representation Letter */}
           {result.representationLetter && (
             <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] space-y-4 no-print">
