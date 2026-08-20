@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Edit3, Copy, Printer, Download, Check } from "lucide-react";
+import { Edit3, Copy, Printer, Check } from "lucide-react";
 
 interface DocumentActionsProps {
   onCopy?: () => void;
@@ -81,8 +81,8 @@ export default function DocumentActions({
         onClick={onDownloadPdf || handlePrint}
         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-teal-600 text-white hover:bg-teal-500 transition-colors shadow-sm"
       >
-        <Download className="w-4 h-4" />
-        <span>Download PDF</span>
+        <Printer className="w-4 h-4" />
+        <span>Print / Save as PDF</span>
       </button>
     </div>
   );
