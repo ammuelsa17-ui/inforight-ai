@@ -16,6 +16,14 @@ export async function POST(req: NextRequest) {
 
     const { category, issueType, description, state, simulateFailure } = body;
 
+    // Validate Category
+    if (!["consumer", "tenant", "workplace"].includes(category)) {
+      return NextResponse.json(
+        { error: "Invalid category. Must be 'consumer', 'tenant', or 'workplace'." },
+        { status: 400 }
+      );
+    }
+
     // Check for simulated failure toggle
     if (simulateFailure) {
       const fallbackResponse: RightsNavigateResponse = {

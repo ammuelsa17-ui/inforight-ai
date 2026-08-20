@@ -38,21 +38,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(response, { status: 200 });
     }
 
-    // 2. Rights Navigator — Consumer
-    if (/refund|defective|laptop|mobile|e-commerce|flipkart|amazon|product|delivery|warranty|seller|service center/i.test(text)) {
-      const response: TriageResponse = {
-        service: "rights",
-        category: "consumer",
-        confidence: "high",
-        explanation: "Your issue relates to consumer protection and defective product/refund denial. We will guide you through National Consumer Helpline (1915) & e-Jagriti escalation.",
-        suggestedRoute: "/rights/consumer",
-        missingFields: [],
-      };
-      return NextResponse.json(response, { status: 200 });
-    }
-
-    // 3. Rights Navigator — Tenant
-    if (/tenant|landlord|rent|security deposit|eviction|lease|flat|house deposit|repairs|agreement/i.test(text)) {
+    // 2. Rights Navigator — Tenant (Checked before generic refund)
+    if (/tenant|landlord|rent|security deposit|rental deposit|eviction|lease|flat|house deposit|repairs|agreement/i.test(text)) {
       const response: TriageResponse = {
         service: "rights",
         category: "tenant",
@@ -64,7 +51,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(response, { status: 200 });
     }
 
-    // 4. Rights Navigator — Workplace
+    // 3. Rights Navigator — Workplace
     if (/salary|wages|employer|company|resignation|termination|hr|unpaid|pf|gratuity|job/i.test(text)) {
       const response: TriageResponse = {
         service: "rights",
@@ -72,6 +59,19 @@ export async function POST(req: NextRequest) {
         confidence: "high",
         explanation: "Your issue relates to workplace wage withholding or employment grievance. We will guide you through Labour Commissioner / SAMADHAN 2.0 conciliation procedures.",
         suggestedRoute: "/rights/workplace",
+        missingFields: [],
+      };
+      return NextResponse.json(response, { status: 200 });
+    }
+
+    // 4. Rights Navigator — Consumer
+    if (/refund|defective|laptop|mobile|e-commerce|flipkart|amazon|product|delivery|warranty|seller|service center/i.test(text)) {
+      const response: TriageResponse = {
+        service: "rights",
+        category: "consumer",
+        confidence: "high",
+        explanation: "Your issue relates to consumer protection and defective product/refund denial. We will guide you through National Consumer Helpline (1915) & e-Jagriti escalation.",
+        suggestedRoute: "/rights/consumer",
         missingFields: [],
       };
       return NextResponse.json(response, { status: 200 });
