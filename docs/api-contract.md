@@ -1,9 +1,36 @@
-# RTI Generation API Contract
+# InfoRight AI — API Contracts v2.0
 
-## Request
+> **Compatibility Notice**: The frozen RTI generation endpoint (`POST /api/rti/generate`) remains 100% untouched. Additional endpoints (`/api/triage`, `/api/rights/navigate`, `/api/schemes/match`) are additive extensions.
 
+---
+
+## 1. Problem Triage API (`POST /api/triage`)
+
+### Request
 ```ts
-interface GenerateRtiRequest {
+export interface TriageRequest {
+  problemDescription: string;
+}
+```
+
+### Response
+```ts
+export interface TriageResponse {
+  recommendedModule: "rti" | "rights" | "schemes";
+  category?: "consumer" | "tenant" | "workplace" | "civic_road";
+  confidence: number;
+  explanation: string;
+  suggestedRoute: string;
+}
+```
+
+---
+
+## 2. RTI Generation API (`POST /api/rti/generate`) — [Frozen Scope v1.0]
+
+### Request
+```ts
+export interface GenerateRtiRequest {
   issue: string;
   state: string;
   district: string;
@@ -16,19 +43,14 @@ interface GenerateRtiRequest {
 }
 ```
 
-Prohibited request fields:
-
+Prohibited request fields (strictly excluded from API payload):
 * `applicantName`
 * `applicantAddress`
-* Phone number
-* Email address
-* Aadhaar number
-* Signature
+* Phone number / Email address / Aadhaar number / Signature
 
-## Response
-
+### Response
 ```ts
-interface GenerateRtiResponse {
+export interface GenerateRtiResponse {
   mode: "ai" | "fallback";
   subject: string;
   applicationBody: string;
@@ -50,12 +72,91 @@ interface GenerateRtiResponse {
 }
 ```
 
-Rules:
+---
 
-* `questions` must contain 3–5 record-based requests.
-* Every citation ID must exist in the local official-source allowlist.
-* Invalid AI output must be rejected.
-* Timeout, malformed output or invalid citations must activate fallback mode.
-* Authority must be constructed outside Gemini.
-* Coimbatore can be marked verified only when matched against the curated Coimbatore source record.
-* Other authorities must display a verification warning.
+## 3. Rights Navigator API (`POST /api/rights/navigate`)
+
+### Request
+```ts
+export interface RightsNavigateRequest {
+  category: "consumer" | "tenant" | "workplace";
+  issueType: string;
+  description: string;
+  state: string;
+  jurisdiction?: string;
+  amountInDispute?: number;
+  sourceIds?: string[];
+  simulateFailure?: boolean;
+}
+```
+
+### Response
+```ts
+export interface RightsNavigateResponse {
+  mode: "ai" | "fallback";
+  category: "consumer" | "tenant" | "workplace";
+  issueTitle: string;
+  rightsSummary: string;
+  proceduralSteps: string[];
+  evidenceChecklist: string[];
+  escalationPathway: {
+    portalName: string;
+    portalUrl: string;
+    authorityName: string;
+    helplinePhone?: string;
+  };
+  representationLetter: {
+    recipientTitle: string;
+    subject: string;
+    body: string;
+  };
+  bureaucracyTranslation: {
+    whatThisMeans: string;
+    whatYouShouldDoNow: string;
+    documentsToCollect: string[];
+    whereToSubmit: string;
+    whatIfNoResponse: string;
+  };
+  jurisdictionWarning?: string;
+  citationIds: string[];
+  warning?: string;
+}
+```
+
+---
+
+## 4. Scheme Eligibility Matcher API (`POST /api/schemes/match`)
+
+### Request
+```ts
+export interface SchemeMatchRequest {
+  state: string;
+  age: number;
+  annualIncome: number;
+  occupation: "student" | "farmer" | "salaried" | "self_employed" | "unemployed" | "senior_citizen";
+  isStudent: boolean;
+  areaType: "urban" | "rural";
+  hasDisability?: boolean;
+  socialCategory?: string;
+}
+```
+
+### Response
+```ts
+export interface SchemeMatchResponse {
+  totalMatched: number;
+  matchedSchemes: Array<{
+    id: string;
+    title: string;
+    ministry: string;
+    state: string;
+    matchingReason: string;
+    benefits: string;
+    eligibilityCriteria: string[];
+    requiredDocuments: string[];
+    officialApplyUrl: string;
+    lastVerifiedDate: string;
+  }>;
+  disclaimer: "Final eligibility is determined strictly by the respective government department.";
+}
+```
