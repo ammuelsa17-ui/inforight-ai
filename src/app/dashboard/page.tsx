@@ -123,6 +123,11 @@ ${selectedCase.applicantAddress}
               <SecondaryButton icon={Printer} onClick={() => window.print()}>
                 Print
               </SecondaryButton>
+              <Link href={`/dashboard/cases/${selectedCase.id}`}>
+                <PrimaryButton>
+                  View Details
+                </PrimaryButton>
+              </Link>
               <PrimaryButton onClick={() => setIsCaseModalOpen(false)}>
                 Close
               </PrimaryButton>
