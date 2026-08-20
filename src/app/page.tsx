@@ -36,7 +36,7 @@ export default function HomePage() {
       {/* Trust Badges Bar */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { title: "Browser Privacy Boundary", desc: "Applicant identity details stay 100% inside your local browser memory." },
+          { title: "Browser Privacy Boundary", desc: "Applicant identity details stay inside your local browser memory." },
           { title: "Deterministic Authority", desc: "Public Information Officers are assigned using strict Coimbatore source rules." },
           { title: "Source Citation Allowlisting", desc: "Citation IDs are intersected server-side against verified official records." },
           { title: "Safe Fallback Protection", desc: "Standard record templates activate automatically if AI generation is unavailable." },
