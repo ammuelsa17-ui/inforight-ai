@@ -6,14 +6,14 @@ This document outlines the GitHub collaboration workflow for the InfoRight AI pr
 
 Each contributor is assigned a specific feature branch. Contributors must create their own branch locally from the latest `main` branch:
 
-- `feature/frontend` — Harsha
-  Frontend UI layout, user interaction, forms, client components, integration, PDF, deployment and Pull Request review.
+- `feature/rti-engine` — Harsha
+  AI integration, Gemini prompts, structured output, validation, deterministic authority logic, fallback, integration, deployment and Pull Request review.
 
-- `feature/rti-engine` — Mithun
-  RTI (Right to Information) generation engine, prompt handling, Gemini API integration logic, validation and fallback.
+- `feature/frontend` — Abirami
+  Next.js foundation, frontend UI/UX, guided form, client-side applicant details, editable document preview, trust panel, citation cards, copy/print/PDF and responsive design.
 
-- `feature/source-data` — Abirami
-  Official government source records, citation metadata, verification dates, documentation and manual test evidence. Do not introduce a vector database, general RAG pipeline or database infrastructure.
+- `feature/source-data` — Mithun
+  Official government sources, citation metadata, verification dates, source documentation, README support and manual test evidence. No vector database or general RAG.
 
 > **Note**: Do not create all feature branches on a single machine. Each contributor must create their own branch from `main` on their local environment.
 
