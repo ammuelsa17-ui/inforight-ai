@@ -2,7 +2,7 @@
 
 import React, { useState, Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useRole, Case } from "@/context/RoleContext";
 import { RIGHTS_DATA } from "@/data/rights";
 import {
@@ -13,12 +13,8 @@ import {
   HelpCircle,
   User,
   ArrowRight,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
   FileUp,
   Search,
-  ExternalLink,
   ChevronRight,
   Printer,
   Copy
@@ -38,14 +34,12 @@ export default function CitizenDashboardPage() {
 }
 
 function CitizenDashboardContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("tab") || "overview";
   
   const {
     cases,
     savedRights,
-    savedResources,
     documents,
     addDocument,
     role,

@@ -5,6 +5,10 @@ import Link from "next/link";
 import { generateRtiApplication } from "@/services/api";
 import { GenerateRtiResponse } from "@/types/api";
 import GeneratedPreview, { ApplicantLocalDetails } from "@/components/rti/GeneratedPreview";
+import RtiFeeCalculator from "@/components/RtiFeeCalculator";
+import RtiStatutoryTimeline from "@/components/RtiStatutoryTimeline";
+import EvidenceCompletenessScore from "@/components/EvidenceCompletenessScore";
+import EvidenceOrganizer from "@/components/EvidenceOrganizer";
 import { ArrowLeft, Sparkles, AlertCircle, Info, ShieldCheck } from "lucide-react";
 
 const PREFILLED_SCENARIOS = [
@@ -311,11 +315,34 @@ export default function AskPage() {
 
       {/* Generated Result Preview */}
       {result && (
-        <GeneratedPreview
-          data={result}
-          applicantDetails={applicantLocalDetails}
-          sources={[]}
-        />
+        <div className="space-y-6">
+          <GeneratedPreview
+            data={result}
+            applicantDetails={applicantLocalDetails}
+            sources={[]}
+          />
+
+          {/* Evidence Completeness Scorecard */}
+          <EvidenceCompletenessScore
+            issueDescription={issue}
+            locationAndAuthority={`${locality}, ${localBodyName}, ${state}`}
+            dateRange={dateRange}
+            hasSupportingDocuments={false}
+            hasSpecificQuestions={Boolean(result.questions && result.questions.length > 0)}
+          />
+
+          {/* Statutory Fee & Payment Mode Calculator */}
+          <RtiFeeCalculator
+            initialState={state}
+            initialAuthority={localBodyName}
+          />
+
+          {/* Statutory Timeline Engine */}
+          <RtiStatutoryTimeline />
+
+          {/* Client-Side Evidence Organizer */}
+          <EvidenceOrganizer />
+        </div>
       )}
     </div>
   );

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { FileText, Menu, X, ArrowRight } from "lucide-react";
 import LanguageSelector from "@/components/LanguageSelector";
+import AccessibilityToolbar from "@/components/AccessibilityToolbar";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -48,6 +49,7 @@ export default function Navbar() {
 
           {/* Action CTA & Language Selector */}
           <div className="hidden md:flex items-center gap-3">
+            <AccessibilityToolbar textToRead="Welcome to InfoRight AI. Convert municipal road complaints into clear record-based RTI applications with verified official sources." />
             <LanguageSelector />
             <Link
               href="/ask"

@@ -4,10 +4,13 @@
 import React from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useRole, Case } from "@/context/RoleContext";
+import { useRole } from "@/context/RoleContext";
 import { Copy, Printer, ArrowLeft } from "lucide-react";
 import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { StatusBadge } from "@/components/Feedback";
+import DocumentIntegrityChecksum from "@/components/DocumentIntegrityChecksum";
+import RtiStatutoryTimeline from "@/components/RtiStatutoryTimeline";
+import FirstAppealGenerator from "@/components/FirstAppealGenerator";
 
 export default function CitizenCasePage() {
   const { id } = useParams();
@@ -107,10 +110,43 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
 
         </div>
         {/* Action Buttons */}
-        <div className="flex gap-2 mt-4">
+        <div className="flex gap-2 mt-4 pb-4 border-b border-borders">
           <SecondaryButton icon={Copy} onClick={handleCopyCaseRti}>Copy Draft</SecondaryButton>
           <SecondaryButton icon={Printer} onClick={() => window.print()}>Print</SecondaryButton>
         </div>
+
+        {/* Section: Document Integrity Checksum */}
+        {selectedCase.aiResponse && (
+          <div className="mt-4">
+            <DocumentIntegrityChecksum
+              documentText={`${selectedCase.aiResponse.subject}\n\n${selectedCase.aiResponse.applicationBody}\n\n${selectedCase.aiResponse.questions.join("\n")}`}
+            />
+          </div>
+        )}
+
+        {/* Section: Statutory Timeline Engine */}
+        <div className="mt-6">
+          <RtiStatutoryTimeline initialFilingDate={selectedCase.createdAt.split("T")[0]} />
+        </div>
+
+        {/* Section: First Appeal Generator (Rendered ONLY when eligible: Pending/In Progress or Urgent) */}
+        {(selectedCase.status === "Pending" || selectedCase.status === "In Progress" || selectedCase.priority === "Urgent" || selectedCase.priority === "High") && (
+          <div className="mt-6 border-t border-borders pt-6">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+              Statutory First Appeal Assistant (Section 19(1))
+            </h3>
+            <FirstAppealGenerator
+              initialData={{
+                originalRtiRefId: selectedCase.id,
+                filingDate: selectedCase.createdAt.split("T")[0],
+                targetAuthority: selectedCase.aiResponse?.authority.organization || selectedCase.localBodyName,
+                applicantName: selectedCase.applicantName || "",
+                applicantAddress: selectedCase.applicantAddress || "",
+                responseStatus: selectedCase.status === "Pending" ? "no_response" : "incomplete_info",
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
