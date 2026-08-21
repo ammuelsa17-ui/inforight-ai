@@ -144,7 +144,7 @@ function OfficialDashboardContent() {
 
           {/* Cases Data Table / Cards */}
           {filteredCases.length > 0 ? (
-            <div className="bg-white border border-borders rounded-lg overflow-hidden shadow-2xs">
+            <div className="bg-white border border-borders rounded-lg overflow-x-auto shadow-2xs">
               <table className="min-w-full divide-y divide-borders text-left text-xs">
                 <thead className="bg-slate-50 text-secondary-text font-bold uppercase tracking-wider">
                   <tr>

@@ -59,6 +59,7 @@ export function DocumentIntegrityChecksum({ documentText }: DocumentIntegrityChe
         <button
           onClick={handleCopy}
           className="text-[11px] text-slate-600 dark:text-slate-400 hover:text-blue-600 flex items-center gap-1 font-medium"
+          aria-label="Copy SHA-256 integrity hash to clipboard"
         >
           {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
           <span>{copied ? "Copied" : "Copy Hash"}</span>

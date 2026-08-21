@@ -66,7 +66,7 @@ export default function Navbar() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg text-[#526176] hover:text-[#102A56] hover:bg-[#E0F2FE]"
-              aria-label="Toggle menu"
+              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -77,6 +77,9 @@ export default function Navbar() {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-[#BCD7EE] bg-white px-4 py-4 space-y-3">
+          <div className="pb-2 border-b border-[#BCD7EE]">
+            <AccessibilityToolbar textToRead="Welcome to InfoRight AI. Convert municipal road complaints into clear record-based RTI applications with verified official sources." />
+          </div>
           <Link
             href="/"
             onClick={() => setMobileMenuOpen(false)}

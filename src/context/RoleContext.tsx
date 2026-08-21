@@ -221,15 +221,44 @@ export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
   const [cases, setCases] = useState<Case[]>(() => {
     if (typeof window === "undefined") return INITIAL_CASES;
+
+    // Safe one-time migration from legacy key
+    let legacyCases: Case[] = [];
+    try {
+      const legacySaved = localStorage.getItem("inforight_citizen_cases");
+      if (legacySaved) {
+        legacyCases = JSON.parse(legacySaved) as Case[];
+        localStorage.removeItem("inforight_citizen_cases");
+      }
+    } catch {
+      // Ignore legacy parse error safely
+    }
+
     const saved = localStorage.getItem("inforight_cases");
+    let currentCases = INITIAL_CASES;
     if (saved) {
       try {
-        return JSON.parse(saved) as Case[];
+        currentCases = JSON.parse(saved) as Case[];
       } catch {
-        return INITIAL_CASES;
+        currentCases = INITIAL_CASES;
       }
     }
-    return INITIAL_CASES;
+
+    if (legacyCases.length > 0) {
+      const existingIds = new Set(currentCases.map((c) => c.id));
+      const newLegacy = legacyCases.filter((c) => c.id && !existingIds.has(c.id));
+      if (newLegacy.length > 0) {
+        const merged = [...newLegacy, ...currentCases];
+        try {
+          localStorage.setItem("inforight_cases", JSON.stringify(merged));
+        } catch {
+          // Ignore quota error safely
+        }
+        return merged;
+      }
+    }
+
+    return currentCases;
   });
   const [savedRights, setSavedRights] = useState<string[]>(() => {
     if (typeof window === "undefined") return [];

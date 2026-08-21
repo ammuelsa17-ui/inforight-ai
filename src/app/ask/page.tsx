@@ -320,6 +320,15 @@ export default function AskPage() {
             data={result}
             applicantDetails={applicantLocalDetails}
             sources={[]}
+            civicContext={{
+              issue,
+              state,
+              district,
+              localBodyName,
+              locality,
+              ward,
+              dateRange,
+            }}
           />
 
           {/* Evidence Completeness Scorecard */}
