@@ -2,6 +2,7 @@ import { POST as triageHandler } from "@/app/api/triage/route";
 import { POST as rtiHandler } from "@/app/api/rti/generate/route";
 import { POST as rightsHandler } from "@/app/api/rights/navigate/route";
 import { POST as schemesHandler } from "@/app/api/schemes/match/route";
+import { POST as translateHandler } from "@/app/api/translate/route";
 import { NextRequest } from "next/server";
 
 async function runRouteHandlerContractTests() {
@@ -122,7 +123,7 @@ async function runRouteHandlerContractTests() {
       method: "POST",
       body: JSON.stringify({
         problemDescription: "Pothole repair on DB Road",
-        applicantName: "Leaked Name", // UNKNOWN FIELD
+        applicantName: "Leaked Name",
       }),
     });
     const res = await triageHandler(req);
@@ -145,7 +146,7 @@ async function runRouteHandlerContractTests() {
         localBodyName: "Coimbatore Corporation",
         locality: "R.S. Puram",
         sourceIds: ["RTI_ACT_2005_AMENDED"],
-        applicantName: "K. Harsha", // PROHIBITED FIELD
+        applicantName: "K. Harsha",
       }),
     });
     const res = await rtiHandler(req);
@@ -163,7 +164,7 @@ async function runRouteHandlerContractTests() {
         localBodyName: "Coimbatore Corporation",
         locality: "R.S. Puram",
         sourceIds: ["RTI_ACT_2005_AMENDED"],
-        applicantAddress: "42 R.S. Puram, Coimbatore", // PROHIBITED FIELD
+        applicantAddress: "42 R.S. Puram, Coimbatore",
       }),
     });
     const res = await rtiHandler(req);
@@ -176,7 +177,6 @@ async function runRouteHandlerContractTests() {
       method: "POST",
       body: JSON.stringify({
         issue: "Potholes on DB Road",
-        // missing state, district, localBodyName
       }),
     });
     const res = await rtiHandler(req);
@@ -386,7 +386,7 @@ async function runRouteHandlerContractTests() {
       body: JSON.stringify({
         state: "Tamil Nadu",
         age: 20,
-        annualIncome: 250000, // Exact limit for TN Post-Matric Scholarship
+        annualIncome: 250000,
         occupation: "student",
         isStudent: true,
         areaType: "urban",
@@ -405,7 +405,7 @@ async function runRouteHandlerContractTests() {
       body: JSON.stringify({
         state: "Tamil Nadu",
         age: 20,
-        annualIncome: -5000, // INVALID NEGATIVE INCOME
+        annualIncome: -5000,
         occupation: "student",
         isStudent: true,
         areaType: "urban",
@@ -431,6 +431,191 @@ async function runRouteHandlerContractTests() {
     });
     const res = await schemesHandler(req);
     assert(res.status === 400, "Scheme matcher strictly rejects unknown fields with HTTP 400");
+  }
+
+  // ---------------------------------------------------------
+  // SECTION 5: BHARAT LANGUAGE ACCESS TRANSLATION TESTS (/api/translate)
+  // ---------------------------------------------------------
+  console.log("\n--- SECTION 5: /api/translate Route-Handler Safety Tests ---");
+
+  // Test 26: Missing Credentials Returns Honest English Fallback
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        targetLanguage: "ta",
+        fields: { title: "Public Information Officer" },
+      }),
+    });
+    const res = await translateHandler(req);
+    const data = await res.json();
+    assert(res.status === 200, "Translate API HTTP 200");
+    assert(data.provider === "englishFallback" && data.translated === false, "Missing BHASHINI credentials honestly returns provider 'englishFallback' and translated === false");
+  }
+
+  // Test 27: Protected Field Key Extraction & Preservation
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        targetLanguage: "ta",
+        fields: {
+          citationIds: ["RTI_ACT_2005"],
+          sourceUrls: ["https://consumerhelpline.gov.in/"],
+          authorityName: "Public Information Officer",
+        },
+      }),
+    });
+    const res = await translateHandler(req);
+    const data = await res.json();
+    assert(data.translatedFields?.citationIds?.[0] === "RTI_ACT_2005", "Protected citationIds remain 100% unchanged");
+    assert(data.translatedFields?.sourceUrls?.[0] === "https://consumerhelpline.gov.in/", "Protected sourceUrls remain 100% unchanged");
+  }
+
+  // Test 28: Source Language Validation (Invalid -> HTTP 400)
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        sourceLanguage: "invalid_klingon_source",
+        targetLanguage: "ta",
+        fields: { title: "Test" },
+      }),
+    });
+    const res = await translateHandler(req);
+    assert(res.status === 400, "Translate API rejects invalid sourceLanguage with HTTP 400");
+  }
+
+  // Test 29: Unsupported Target Language Rejection -> HTTP 400
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        targetLanguage: "unsupported_fake_lang",
+        fields: { title: "Test" },
+      }),
+    });
+    const res = await translateHandler(req);
+    assert(res.status === 400, "Translate API rejects unsupported targetLanguage with HTTP 400");
+  }
+
+  // Test 30: Unknown Top-Level Field Rejection -> HTTP 400
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        targetLanguage: "hi",
+        fields: { title: "Test" },
+        unknownField: "unauthorized_extra",
+      }),
+    });
+    const res = await translateHandler(req);
+    assert(res.status === 400, "Translate API strictly rejects unknown top-level fields with HTTP 400");
+  }
+
+  // Test 31: Case-Insensitive PII Identity Key Rejection -> HTTP 400
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        targetLanguage: "hi",
+        fields: {
+          APPLICANTNAME: "Leaked Upper Name", // CASE INSENSITIVE REJECTION
+        },
+      }),
+    });
+    const res = await translateHandler(req);
+    assert(res.status === 400, "Translate API rejects case-insensitive identity key APPLICANTNAME with HTTP 400");
+  }
+
+  // Test 32: Free-Text Phone Number Scanning & Rejection -> HTTP 400
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        targetLanguage: "hi",
+        fields: {
+          summary: "Dispute context with mobile number 9876543210 included.",
+        },
+      }),
+    });
+    const res = await translateHandler(req);
+    assert(res.status === 400, "Translate API rejects free-text phone number (9876543210) with HTTP 400");
+  }
+
+  // Test 33: Free-Text Email Address Scanning & Rejection -> HTTP 400
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        targetLanguage: "hi",
+        fields: {
+          summary: "Grievance details involving citizen@example.com email.",
+        },
+      }),
+    });
+    const res = await translateHandler(req);
+    assert(res.status === 400, "Translate API rejects free-text email address with HTTP 400");
+  }
+
+  // Test 34: Free-Text Aadhaar-like Number Scanning & Rejection -> HTTP 400
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        targetLanguage: "hi",
+        fields: {
+          summary: "Applicant identification number 2345 6789 0123 provided.",
+        },
+      }),
+    });
+    const res = await translateHandler(req);
+    assert(res.status === 400, "Translate API rejects free-text Aadhaar pattern with HTTP 400");
+  }
+
+  // Test 35: Non-String / Nested Object Field Value Rejection -> HTTP 400
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        targetLanguage: "hi",
+        fields: {
+          title: { nested: "object" }, // INVALID NESTED OBJECT
+        },
+      }),
+    });
+    const res = await translateHandler(req);
+    assert(res.status === 400, "Translate API rejects non-string nested object field value with HTTP 400");
+  }
+
+  // Test 36: Unknown Translation Field Key Rejection -> HTTP 400
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        targetLanguage: "hi",
+        fields: {
+          unrecognizedKey: "Some text", // NOT IN TRANSLATABLE OR PROTECTED ALLOWLIST
+        },
+      }),
+    });
+    const res = await translateHandler(req);
+    assert(res.status === 400, "Translate API rejects unknown translation field key with HTTP 400");
+  }
+
+  // Test 37: English Target Pass-Through & English Fallback Provenance
+  {
+    const req = new NextRequest("http://localhost/api/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        targetLanguage: "en",
+        fields: { title: "Public Information Officer" },
+      }),
+    });
+    const res = await translateHandler(req);
+    const data = await res.json();
+    assert(res.status === 200, "Translate API HTTP 200 for English target");
+    assert(data.provider === "englishFallback" && data.translated === false, "English target returns provider 'englishFallback' and translated === false");
   }
 
   console.log("\n=================================================================");

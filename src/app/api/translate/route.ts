@@ -1,12 +1,51 @@
 import { NextRequest, NextResponse } from "next/server";
+import { processTranslationRequest } from "@/lib/translation/translation-service";
+import { TranslateRequest } from "@/lib/translation/types";
+import { VALID_LANGUAGE_CODES } from "@/i18n/languages";
 
-export interface TranslateRequest {
-  sourceLanguage?: string;
-  targetLanguage: string;
-  fields: Record<string, string | string[]>;
-}
+const ALLOWED_TOP_LEVEL_KEYS = new Set(["sourceLanguage", "targetLanguage", "fields"]);
+const TRANSLATABLE_FIELDS = new Set([
+  "title",
+  "summary",
+  "actions",
+  "evidenceChecklist",
+  "escalationSteps",
+  "representationLetter",
+  "whatThisMeans",
+  "whatYouShouldDoNow",
+  "documentsToCollect",
+  "whereToSubmit",
+  "whatIfNoResponse",
+  "problemDescription",
+  "issue",
+  "issueTitle",
+  "disclaimer",
+  "reasons",
+  "questions",
+  "explanation",
+  "body",
+  "subject",
+  "text",
+]);
 
-const ALLOWED_KEYS = new Set(["sourceLanguage", "targetLanguage", "fields"]);
+const PROTECTED_FIELDS = new Set([
+  "citationIds",
+  "sourceUrls",
+  "schemeIds",
+  "authority",
+  "authorityName",
+  "portalUrl",
+  "portalName",
+  "helplinePhone",
+  "legalReferences",
+  "dates",
+  "amounts",
+  "amountInDispute",
+  "annualIncome",
+  "age",
+  "state",
+  "district",
+]);
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,8 +58,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Strict Unknown Top-Level Field Rejection
     const keys = Object.keys(body);
-    const unknownKeys = keys.filter((k) => !ALLOWED_KEYS.has(k));
+    const unknownKeys = keys.filter((k) => !ALLOWED_TOP_LEVEL_KEYS.has(k));
     if (unknownKeys.length > 0) {
       return NextResponse.json(
         { error: `Unknown request fields detected: ${unknownKeys.join(", ")}.` },
@@ -28,60 +68,63 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { targetLanguage, fields } = body as unknown as TranslateRequest;
+    const { sourceLanguage = "en", targetLanguage, fields } = body as unknown as TranslateRequest;
 
-    if (!targetLanguage || !fields || typeof fields !== "object") {
+    if (!targetLanguage || typeof targetLanguage !== "string") {
       return NextResponse.json(
-        { error: "Missing required fields: targetLanguage and fields dictionary are required." },
+        { error: "Missing required string field: 'targetLanguage'." },
         { status: 400 }
       );
     }
 
-    // Pass-through if targetLanguage is English
-    if (targetLanguage === "en") {
-      return NextResponse.json({ translatedFields: fields, disclaimer: null }, { status: 200 });
+    if (sourceLanguage && !VALID_LANGUAGE_CODES.has(sourceLanguage)) {
+      return NextResponse.json(
+        { error: `Invalid sourceLanguage '${sourceLanguage}'. Must be a supported language code.` },
+        { status: 400 }
+      );
     }
 
-    // Stage 1 Translation Layer (Tamil & Hindi presentation translation)
-    const translatedFields: Record<string, string | string[]> = {};
+    if (!VALID_LANGUAGE_CODES.has(targetLanguage)) {
+      return NextResponse.json(
+        { error: `Invalid targetLanguage '${targetLanguage}'. Must be a supported language code.` },
+        { status: 400 }
+      );
+    }
 
-    for (const [key, value] of Object.entries(fields)) {
-      // Never translate URLs, Citation IDs, or Authority IDs
-      if (key.includes("Url") || key.includes("Id") || key.includes("authority")) {
-        translatedFields[key] = value;
-        continue;
+    // Strict Fields Validation
+    if (!fields || typeof fields !== "object" || Array.isArray(fields)) {
+      return NextResponse.json(
+        { error: "Field 'fields' must be a non-null plain object." },
+        { status: 400 }
+      );
+    }
+
+    for (const [k, v] of Object.entries(fields)) {
+      if (!TRANSLATABLE_FIELDS.has(k) && !PROTECTED_FIELDS.has(k)) {
+        return NextResponse.json(
+          { error: `Unknown translation field '${k}' detected.` },
+          { status: 400 }
+        );
       }
 
-      if (typeof value === "string") {
-        if (targetLanguage === "ta") {
-          translatedFields[key] = value
-            .replace(/Public Information Officer/g, "பொது தகவல் அலுவலர்")
-            .replace(/National Consumer Helpline/g, "தேசிய நுகர்வோர் உதவி மையம்")
-            .replace(/State Rent Authority/g, "மாநில வாடகை ஆணையம்")
-            .replace(/District Labour Commissioner/g, "மாவட்ட தொழிலாளர் ஆணையர்");
-        } else if (targetLanguage === "hi") {
-          translatedFields[key] = value
-            .replace(/Public Information Officer/g, "लोक सूचना अधिकारी")
-            .replace(/National Consumer Helpline/g, "राष्ट्रीय उपभोक्ता हेल्पलाइन")
-            .replace(/State Rent Authority/g, "राज्य किराया प्राधिकरण")
-            .replace(/District Labour Commissioner/g, "जिला श्रम आयुक्त");
-        } else {
-          translatedFields[key] = value;
-        }
-      } else if (Array.isArray(value)) {
-        translatedFields[key] = value;
-      } else {
-        translatedFields[key] = value;
+      if (typeof v !== "string" && !Array.isArray(v)) {
+        return NextResponse.json(
+          { error: `Field '${k}' has invalid type. Values must be string or string[].` },
+          { status: 400 }
+        );
       }
     }
 
-    return NextResponse.json(
-      {
-        translatedFields,
-        disclaimer: "This is a translated guidance version. Where interpretation differs, refer to the official source and English source-grounded result.",
-      },
-      { status: 200 }
-    );
+    const result = await processTranslationRequest(fields, targetLanguage, sourceLanguage);
+
+    if (result.errorCode === "FREE_TEXT_PII_DETECTED" || result.errorCode === "INVALID_FIELD_TYPE") {
+      return NextResponse.json(
+        { error: result.disclaimer },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json(result, { status: 200 });
   } catch {
     return NextResponse.json(
       { error: "Internal Server Error in Translate Route." },

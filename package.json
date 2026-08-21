@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:api": "tsx scripts/test-v2-api-contracts.ts"
+    "test:api": "tsx scripts/test-v2-api-contracts.ts",
+    "test:unit": "tsx scripts/test-translation-service.ts",
+    "test:bhashini": "tsx scripts/test-bhashini-live.ts",
+    "test:matrix": "tsx scripts/test-bhashini-language-matrix.ts"
   },
   "dependencies": {
     "lucide-react": "^1.33.0",
