@@ -142,7 +142,9 @@ export interface SourceRecord {
   verificationStatus: "verified" | "partial";
 }
 
-// Re-export Unified Source Data Architecture & Navigator types
+// -------------------------------------------------------------
+// 3. Unified Source Data Architecture & Navigator Types
+// -------------------------------------------------------------
 export * from "./source-data";
 export * from "./consumer-navigator";
 export * from "./tenant-navigator";
