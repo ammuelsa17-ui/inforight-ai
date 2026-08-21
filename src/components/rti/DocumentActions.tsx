@@ -9,6 +9,8 @@ interface DocumentActionsProps {
   onDownloadPdf?: () => void;
   isEditing?: boolean;
   onToggleEdit?: () => void;
+  onSaveToDashboard?: () => void;
+  isSaved?: boolean;
 }
 
 export default function DocumentActions({
@@ -17,6 +19,8 @@ export default function DocumentActions({
   onDownloadPdf,
   isEditing = false,
   onToggleEdit,
+  onSaveToDashboard,
+  isSaved = false,
 }: DocumentActionsProps) {
   const [copied, setCopied] = useState(false);
 
@@ -76,6 +80,21 @@ export default function DocumentActions({
         <Printer className="w-4 h-4" />
         <span>Print Document</span>
       </button>
+
+      {onSaveToDashboard && (
+        <button
+          onClick={onSaveToDashboard}
+          disabled={isSaved}
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors border ${
+            isSaved
+              ? "bg-emerald-50 text-emerald-700 border-emerald-300 cursor-default"
+              : "bg-indigo-50 text-[#4F46E5] border-indigo-200 hover:bg-indigo-100"
+          }`}
+        >
+          <Check className={`w-4 h-4 ${isSaved ? "text-emerald-600" : "hidden"}`} />
+          <span>{isSaved ? "Saved to Dashboard" : "Save to My Dashboard"}</span>
+        </button>
+      )}
 
       <button
         onClick={onDownloadPdf || handlePrint}

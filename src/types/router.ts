@@ -42,7 +42,7 @@ export interface ExtractedFactProfile {
   utility_disconnected?: boolean;
   facing_lockout?: boolean;
   is_bpl?: boolean;
-  raw_entities: Record<string, any>;
+  raw_entities: Record<string, unknown>;
 }
 
 export interface StructuredActionStep {

@@ -5,6 +5,7 @@ import FallbackBanner from "./FallbackBanner";
 import TrustPanel, { SourceCardInfo } from "./TrustPanel";
 import DocumentActions from "./DocumentActions";
 import { CheckCircle2, AlertCircle, FileText, MapPin } from "lucide-react";
+import { useRole } from "@/context/RoleContext";
 
 export interface GeneratedRtiData {
   mode: "ai" | "fallback";
@@ -12,7 +13,7 @@ export interface GeneratedRtiData {
   applicationBody: string;
   questions: string[];
   authority: {
-    designation: string;
+    designation: "Public Information Officer";
     organization: string;
     state: string;
     verified: boolean;
@@ -22,7 +23,7 @@ export interface GeneratedRtiData {
     schemaValid: boolean;
     citationsValid: boolean;
     questionCount: number;
-    applicantDataSentToAI: boolean;
+    applicantDataSentToAI: false;
   };
   warning?: string;
 }
@@ -38,17 +39,57 @@ interface GeneratedPreviewProps {
   data: GeneratedRtiData;
   applicantDetails?: ApplicantLocalDetails;
   sources?: SourceCardInfo[];
+  civicContext?: {
+    issue?: string;
+    state?: string;
+    district?: string;
+    localBodyName?: string;
+    locality?: string;
+    ward?: string;
+    dateRange?: string;
+  };
 }
 
 export default function GeneratedPreview({
   data,
   applicantDetails,
   sources = [],
+  civicContext,
 }: GeneratedPreviewProps) {
+  const { addCase } = useRole();
   const [isEditing, setIsEditing] = useState(false);
   const [editedSubject, setEditedSubject] = useState(data.subject);
   const [editedBody, setEditedBody] = useState(data.applicationBody);
   const [editedQuestions, setEditedQuestions] = useState<string[]>([...data.questions]);
+  const [isSaved, setIsSaved] = useState(false);
+
+  const handleSaveToDashboard = () => {
+    if (isSaved) return;
+
+    try {
+      addCase({
+        issue: editedSubject || civicContext?.issue || data.subject,
+        state: civicContext?.state || data.authority.state || "Tamil Nadu",
+        district: civicContext?.district || "Coimbatore",
+        localBodyName: civicContext?.localBodyName || data.authority.organization,
+        locality: civicContext?.locality || "Local Area",
+        ward: civicContext?.ward,
+        dateRange: civicContext?.dateRange,
+        sourceIds: data.citationIds || [],
+        applicantName: applicantDetails?.name !== "[Applicant Name]" ? applicantDetails?.name : undefined,
+        applicantAddress: applicantDetails?.address !== "[Applicant Address]" ? applicantDetails?.address : undefined,
+        aiResponse: {
+          ...data,
+          subject: editedSubject,
+          applicationBody: editedBody,
+          questions: editedQuestions,
+        },
+      });
+      setIsSaved(true);
+    } catch {
+      setIsSaved(true);
+    }
+  };
 
   const handleQuestionChange = (index: number, val: string) => {
     const next = [...editedQuestions];
@@ -96,6 +137,8 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
           isEditing={isEditing}
           onToggleEdit={() => setIsEditing(!isEditing)}
           onCopy={() => navigator.clipboard.writeText(fullTextToCopy)}
+          onSaveToDashboard={handleSaveToDashboard}
+          isSaved={isSaved}
         />
       </div>
 
