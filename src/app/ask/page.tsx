@@ -5,6 +5,7 @@ import Link from "next/link";
 import { generateRtiApplication } from "@/services/api";
 import { GenerateRtiResponse } from "@/types/api";
 import GeneratedPreview, { ApplicantLocalDetails } from "@/components/rti/GeneratedPreview";
+import ConversationalFormFiller from "@/components/ConversationalFormFiller";
 import { ArrowLeft, Sparkles, AlertCircle, Info, ShieldCheck } from "lucide-react";
 
 const PREFILLED_SCENARIOS = [
@@ -138,6 +139,9 @@ export default function AskPage() {
           Convert your civic road complaint into clear, record-based requests for official government records.
         </p>
       </div>
+
+      {/* Direction #4: Conversational Form-Filler Component */}
+      <ConversationalFormFiller />
 
       {/* Demo Scenario Selectors */}
       <div className="space-y-2">
