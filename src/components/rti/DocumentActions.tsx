@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Edit3, Copy, Printer, Check } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface DocumentActionsProps {
   onCopy?: () => void;
@@ -22,6 +23,7 @@ export default function DocumentActions({
   onSaveToDashboard,
   isSaved = false,
 }: DocumentActionsProps) {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -52,7 +54,7 @@ export default function DocumentActions({
           }`}
         >
           <Edit3 className="w-4 h-4" />
-          <span>{isEditing ? "Save Edits" : "Edit Application"}</span>
+          <span>{isEditing ? t("common.save") : t("common.edit")}</span>
         </button>
       )}
 
@@ -63,12 +65,12 @@ export default function DocumentActions({
         {copied ? (
           <>
             <Check className="w-4 h-4 text-[#0F9D76]" />
-            <span className="text-[#0F9D76]">Copied!</span>
+            <span className="text-[#0F9D76]">{t("common.copied")}</span>
           </>
         ) : (
           <>
             <Copy className="w-4 h-4" />
-            <span>Copy to Clipboard</span>
+            <span>{t("common.copy")}</span>
           </>
         )}
       </button>
@@ -78,7 +80,7 @@ export default function DocumentActions({
         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-white text-[#102A56] border border-[#BCD7EE] hover:bg-[#F4F9FF] transition-colors"
       >
         <Printer className="w-4 h-4" />
-        <span>Print Document</span>
+        <span>{t("common.print")}</span>
       </button>
 
       {onSaveToDashboard && (
@@ -92,7 +94,7 @@ export default function DocumentActions({
           }`}
         >
           <Check className={`w-4 h-4 ${isSaved ? "text-emerald-600" : "hidden"}`} />
-          <span>{isSaved ? "Saved to Dashboard" : "Save to My Dashboard"}</span>
+          <span>{isSaved ? t("common.copied") : t("common.save")}</span>
         </button>
       )}
 
@@ -101,7 +103,7 @@ export default function DocumentActions({
         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-sm"
       >
         <Printer className="w-4 h-4" />
-        <span>Print / Save as PDF</span>
+        <span>{t("common.downloadPdf")}</span>
       </button>
     </div>
   );

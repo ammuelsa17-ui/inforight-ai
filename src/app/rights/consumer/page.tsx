@@ -5,8 +5,10 @@ import Link from "next/link";
 import { navigateRightsDispute } from "@/services/api";
 import { RightsNavigateResponse } from "@/types/api";
 import { ArrowLeft, Sparkles, AlertCircle, ExternalLink, Copy, Printer, Check } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function ConsumerRightsPage() {
+  const { t } = useLanguage();
   const [description, setDescription] = useState(
     "Purchased an electronics laptop online 2 weeks ago; item delivered with broken screen display. E-commerce seller and customer care refused refund, closing ticket arbitrarily."
   );
@@ -51,7 +53,7 @@ export default function ConsumerRightsPage() {
       <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-4">
         <Link href="/rights" className="inline-flex items-center gap-2 text-sm text-[#526176] hover:text-[#102A56] font-medium">
           <ArrowLeft className="w-4 h-4" />
-          <span>Back to Rights Overview</span>
+          <span>{t("common.backToHome")}</span>
         </Link>
         <span className="text-xs font-semibold text-[#0369A1] uppercase tracking-wider px-3 py-1 bg-[#E0F2FE] rounded-full border border-[#7DD3FC]">
           Consumer Protection Act 2019

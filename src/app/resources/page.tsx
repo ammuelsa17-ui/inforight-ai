@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Search, Phone, ExternalLink, ShieldAlert, ChevronDown, ChevronUp } from "lucide-react";
 import { Card } from "@/components/Card";
 import { StatusBadge } from "@/components/Feedback";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Resource {
   title: string;
@@ -94,6 +95,7 @@ const FAQS_LIST = [
 ];
 
 export default function ResourcesPage() {
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [faqOpenIdx, setFaqOpenIdx] = useState<number | null>(null);
@@ -115,12 +117,12 @@ export default function ResourcesPage() {
       
       {/* Page Header */}
       <div className="border-b border-borders pb-4">
-        <span className="text-[10.5px] font-bold text-indigo-primary uppercase tracking-wider block">Help & Resources</span>
+        <span className="text-[10.5px] font-bold text-indigo-primary uppercase tracking-wider block">{t("resources.badge")}</span>
         <h1 className="text-2xl font-bold tracking-tight text-dark-text sm:text-3xl uppercase">
-          Reference Library & Helplines
+          {t("resources.title")}
         </h1>
         <p className="text-xs sm:text-sm text-secondary-text mt-1">
-          Access emergency toll-free contact numbers, verified government dispute portals, and frequently asked legal questions.
+          {t("resources.subtitle")}
         </p>
       </div>
 

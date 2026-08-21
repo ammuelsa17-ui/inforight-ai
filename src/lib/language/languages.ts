@@ -18,7 +18,7 @@ export const BHARAT_LANGUAGES: Record<BharatLanguageCode, LanguageMetadata> = {
   "ks-IN": { code: "ks-IN", name: "Kashmiri", nativeName: "कॉशुर", translationSupported: true, sttSupported: true, ttsSupported: false },
   "kok-IN": { code: "kok-IN", name: "Konkani", nativeName: "कोंकणी", translationSupported: true, sttSupported: true, ttsSupported: false },
   "mai-IN": { code: "mai-IN", name: "Maithili", nativeName: "मैथिली", translationSupported: true, sttSupported: true, ttsSupported: false },
-  "mni-IN": { code: "mni-IN", name: "Manipuri", nativeName: "মৈতৈলোন্", translationSupported: true, sttSupported: true, ttsSupported: false },
+  "mni-IN": { code: "mni-IN", name: "Manipuri", nativeName: "ꯃꯤꯇꯩ ꯂꯣꯟ", translationSupported: true, sttSupported: true, ttsSupported: false },
   "ne-IN": { code: "ne-IN", name: "Nepali", nativeName: "नेपाली", translationSupported: true, sttSupported: true, ttsSupported: false },
   "sa-IN": { code: "sa-IN", name: "Sanskrit", nativeName: "संस्कृतम्", translationSupported: true, sttSupported: true, ttsSupported: false },
   "sat-IN": { code: "sat-IN", name: "Santali", nativeName: "ᱥᱟᱱᱛᱟᱲᱤ", translationSupported: true, sttSupported: true, ttsSupported: false },

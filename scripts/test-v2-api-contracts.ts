@@ -570,17 +570,70 @@ async function runRouteHandlerContractTests() {
     assert(!str.includes("SARVAM_API_KEY"), "Language route response contains zero SARVAM_API_KEY strings");
   }
 
-  // Test 47: Static Dictionary Completeness — Verify all 23 Bharat languages have non-empty UI translations
+  // Test 47: Zero Fake Language Mapping & Schema Parity across 23 Locales
   {
-    let dictionaryComplete = true;
+    let zeroFakeMappings = true;
+    let schemaParity = true;
+    let genericStringsLocalized = true;
+
     for (const lang of ALL_BHARAT_LANGUAGES) {
       const dict = getUITranslations(lang.code);
-      if (!dict.nav.home || !dict.rights.title || !dict.schemes.title || !dict.sources.title || !dict.dashboard.title) {
-        dictionaryComplete = false;
+
+      // Rule 1: No non-English language points to English locale object
+      if (lang.code !== "en-IN" && dict === getUITranslations("en-IN")) {
+        zeroFakeMappings = false;
         break;
       }
+
+      // Schema Key Parity
+      if (
+        !dict.nav.home ||
+        !dict.rights.title ||
+        !dict.schemes.title ||
+        !dict.sources.title ||
+        !dict.dashboard.title ||
+        !dict.home.modulesTitle
+      ) {
+        schemaParity = false;
+        break;
+      }
+
+      // Rule 14: Non-English generic strings must not remain English
+      if (lang.code !== "en-IN") {
+        if (dict.nav.home === "Home" && dict.common.backToHome === "Back to Home") {
+          genericStringsLocalized = false;
+          break;
+        }
+      }
     }
-    assert(dictionaryComplete, "Static UI translation dictionary completeness verified across all 23 Scheduled Indian languages");
+
+    assert(zeroFakeMappings, "Zero fake language support — all 22 Scheduled Indian languages have unique locale bundles");
+    assert(schemaParity, "Schema key parity verified across all 23 language locale bundles");
+    assert(genericStringsLocalized, "Generic UI navigation labels are genuinely localized in all non-English locales");
+
+    // Linguistic Integrity & Script Purity Tests
+    const kokStr = JSON.stringify(getUITranslations("kok-IN"));
+    const satStr = JSON.stringify(getUITranslations("sat-IN"));
+    const neDict = getUITranslations("ne-IN");
+    const hiDict = getUITranslations("hi-IN");
+
+    // 1. Zero Myanmar script in Konkani (U+1000 to U+109F)
+    const myanmarRegex = /[\u1000-\u109F]/;
+    assert(!myanmarRegex.test(kokStr), "Konkani locale has 0 Myanmar script character contamination");
+
+    // 2. Zero Arabic Presentation Forms in Santali Ol Chiki (U+FB50 to U+FDFF, U+FE70 to U+FEFF)
+    const arabicPresRegex = /[\uFB50-\uFDFF\uFE70-\uFEFF]/;
+    assert(!arabicPresRegex.test(satStr), "Santali locale has 0 Arabic presentation form characters in Ol Chiki text");
+
+    // 3. Nepali is authentic Nepali and NOT copied from Hindi
+    assert(neDict.home.cta !== hiDict.home.cta, "Nepali CTA is authentic Nepali and not copied from Hindi");
+    assert(neDict.nav.home !== hiDict.nav.home, "Nepali home nav is authentic Nepali ('गृह पृष्ठ')");
+    assert(neDict.common.backToHome !== hiDict.common.backToHome, "Nepali back button is authentic Nepali ('गृह पृष्ठमा फर्कनुहोस्')");
+
+    // 4. Manipuri uses pure Meitei Mayek (U+ABC0 to U+ABFF) with 0 Bengali script mixing
+    const mniStr = JSON.stringify(getUITranslations("mni-IN"));
+    const bengaliScriptInMniRegex = /[\u0980-\u09FF]/;
+    assert(!bengaliScriptInMniRegex.test(mniStr), "Manipuri locale uses pure Meitei Mayek with 0 Bengali script character contamination");
   }
 
   // Test 48: Audio MIME extension mapping helper

@@ -67,7 +67,7 @@ export default function SchemesPage() {
       <form onSubmit={handleMatch} className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">State Domicile</label>
+            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.stateLabel")}</label>
             <input
               type="text"
               value={state}
@@ -78,7 +78,7 @@ export default function SchemesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">Age (Years)</label>
+            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.ageLabel")}</label>
             <input
               type="number"
               value={age}
@@ -89,7 +89,7 @@ export default function SchemesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">Annual Household Income (₹)</label>
+            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.annualIncomeLabel")}</label>
             <input
               type="number"
               value={annualIncome}
@@ -100,7 +100,7 @@ export default function SchemesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">Primary Occupation</label>
+            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.occupationLabel")}</label>
             <select
               value={occupation}
               onChange={(e) => setOccupation(e.target.value as SchemeMatchRequest["occupation"])}
@@ -116,7 +116,7 @@ export default function SchemesPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">Location Type</label>
+            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.locationLabel")}</label>
             <select
               value={areaType}
               onChange={(e) => setAreaType(e.target.value as SchemeMatchRequest["areaType"])}
