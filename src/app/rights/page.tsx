@@ -1,144 +1,102 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { RIGHTS_DATA, RightCategory } from "@/data/rights";
-import { Search, Scale, ShoppingBag, Home, Briefcase, UserCheck, GraduationCap, Heart, HelpCircle, Shield, Globe } from "lucide-react";
-import { Card } from "@/components/Card";
-import { Input } from "@/components/Input";
-import { useRole } from "@/context/RoleContext";
-import { Toast } from "@/components/Feedback";
+import React from "react";
+import Link from "next/link";
+import { ArrowRight, Scale, ShoppingBag, Home, Briefcase, ArrowLeft } from "lucide-react";
 
-// Map string keys to Lucide Components
-const ICON_MAP = {
-  Scale,
-  ShoppingBag,
-  Home,
-  Briefcase,
-  UserCheck,
-  GraduationCap,
-  Heart,
-  HelpCircle,
-  Shield,
-  Globe
-};
-
-export default function RightsDirectoryPage() {
-  const router = useRouter();
-  const { savedRights, toggleSaveRight } = useRole();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [toastMsg, setToastMsg] = useState("");
-
-  const handleSaveToggle = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
-    toggleSaveRight(id);
-    const isSaved = savedRights.includes(id);
-    setToastMsg(isSaved ? "Right removed from dashboard bookmarks" : "Right bookmarked to your citizen dashboard!");
-  };
-
-  const filteredCategories = Object.values(RIGHTS_DATA).filter((category) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      category.title.toLowerCase().includes(query) ||
-      category.description.toLowerCase().includes(query) ||
-      category.details.law.toLowerCase().includes(query)
-    );
-  });
-
+export default function RightsPage() {
   return (
-    <div className="flex-1 space-y-6 max-w-6xl mx-auto w-full py-4">
-      {toastMsg && <Toast type="success" message={toastMsg} onClose={() => setToastMsg("")} />}
+    <div className="w-full py-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-4">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#526176] hover:text-[#102A56] font-medium">
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back to Home</span>
+        </Link>
+        <span className="text-xs font-semibold text-[#4F46E5] uppercase tracking-wider flex items-center gap-1.5 px-3 py-1 bg-[#EEF2FF] rounded-full border border-[#C7D2FE]">
+          <Scale className="w-4 h-4" />
+          Statutory Dispute Navigation
+        </span>
+      </div>
 
-      <div className="border-b border-borders pb-4">
-        <h1 className="text-2xl font-bold tracking-tight text-dark-text sm:text-3xl">
-          Know Your Rights
-        </h1>
-        <p className="text-xs sm:text-sm text-secondary-text mt-1">
-          Explore legal guarantees, statutory codes, required documentation, and help lines across civic domains.
+      <div className="space-y-2">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56]">Rights Navigator</h1>
+        <p className="text-sm text-[#526176]">
+          Select your dispute category to receive simple-language legal rights explanations, evidence checklists, official escalation links, and a generated draft representation letter.
         </p>
       </div>
 
-      {/* Search Header */}
-      <div className="flex flex-col sm:flex-row items-center gap-4 bg-white border border-borders rounded-lg p-4 shadow-2xs">
-        <div className="relative flex-1 w-full">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-text" />
-          <input
-            type="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search rights, e.g., 'rent control', 'minimum wage', 'equal pay', 'RTI'..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-borders text-sm text-dark-text bg-white transition-colors focus:border-indigo-primary focus:outline-none"
-          />
+      {/* 3 Categories Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Category 1: Consumer Protection */}
+        <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-4 flex flex-col justify-between">
+          <div className="space-y-3">
+            <div className="w-12 h-12 rounded-xl bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center font-bold">
+              <ShoppingBag className="w-6 h-6" />
+            </div>
+            <h2 className="text-xl font-bold text-[#102A56]">Consumer Disputes</h2>
+            <p className="text-xs text-[#526176] leading-relaxed">
+              Defective products, online laptop refund denials, misleading advertisements, and non-delivery of service under Consumer Protection Act 2019.
+            </p>
+            <div className="text-[11px] text-[#0369A1] bg-[#E0F2FE] p-2 rounded-lg border border-[#7DD3FC] font-medium">
+              Official Escalation: NCH 1915 & e-Jagriti Portal
+            </div>
+          </div>
+          <Link
+            href="/rights/consumer"
+            className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] transition-colors"
+          >
+            <span>Navigate Consumer Rights</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
-        <div className="text-xs text-secondary-text font-semibold shrink-0">
-          Showing {filteredCategories.length} Categories
+
+        {/* Category 2: Tenant Rights */}
+        <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-4 flex flex-col justify-between">
+          <div className="space-y-3">
+            <div className="w-12 h-12 rounded-xl bg-[#E0F2FE] text-[#0284C7] flex items-center justify-center font-bold">
+              <Home className="w-6 h-6" />
+            </div>
+            <h2 className="text-xl font-bold text-[#102A56]">Tenant Rights</h2>
+            <p className="text-xs text-[#526176] leading-relaxed">
+              Security deposit withholding, unreasonable rent hikes, structural repair delays, and arbitrary eviction notices under state rent control acts.
+            </p>
+            <div className="text-[11px] text-[#D97706] bg-[#FEF3C7] p-2 rounded-lg border border-[#FDE68A] font-medium">
+              Official Escalation: State Rent Authority & Rent Court
+            </div>
+          </div>
+          <Link
+            href="/rights/tenant"
+            className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] transition-colors"
+          >
+            <span>Navigate Tenant Rights</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        {/* Category 3: Workplace Rights */}
+        <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-4 flex flex-col justify-between">
+          <div className="space-y-3">
+            <div className="w-12 h-12 rounded-xl bg-[#E6F4EA] text-[#0F9D76] flex items-center justify-center font-bold">
+              <Briefcase className="w-6 h-6" />
+            </div>
+            <h2 className="text-xl font-bold text-[#102A56]">Workplace Rights</h2>
+            <p className="text-xs text-[#526176] leading-relaxed">
+              Unpaid monthly salary dues, post-resignation settlement delays, wrongful termination, and workplace grievance conciliation.
+            </p>
+            <div className="text-[11px] text-[#0F9D76] bg-[#E6F4EA] p-2 rounded-lg border border-[#A8DADC] font-medium">
+              Official Escalation: SAMADHAN 2.0 Conciliation Portal
+            </div>
+          </div>
+          <Link
+            href="/rights/workplace"
+            className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] transition-colors"
+          >
+            <span>Navigate Workplace Rights</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
-
-      {/* Categories Grid */}
-      {filteredCategories.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCategories.map((category) => {
-            const Icon = ICON_MAP[category.iconName] || Scale;
-            const isBookmarked = savedRights.includes(category.id);
-
-            return (
-              <div
-                key={category.id}
-                onClick={() => router.push(`/rights/${category.id}`)}
-                className="bg-white border border-borders rounded-lg p-5.5 shadow-2xs hover:border-indigo-primary/40 hover:shadow-xs transition-all cursor-pointer group flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex justify-between items-start mb-4.5">
-                    <div className="bg-indigo-primary/5 text-indigo-primary p-2.5 rounded-lg w-fit group-hover:bg-indigo-primary/10 transition-colors">
-                      <Icon className="h-5.5 w-5.5 text-indigo-primary" />
-                    </div>
-                    
-                    <button
-                      onClick={(e) => handleSaveToggle(e, category.id)}
-                      className={`text-xs font-semibold px-2.5 py-1 rounded border cursor-pointer transition-all ${
-                        isBookmarked
-                          ? "bg-indigo-primary/10 border-indigo-primary/30 text-indigo-primary"
-                          : "bg-slate-50 border-borders text-secondary-text hover:text-dark-text hover:bg-slate-100"
-                      }`}
-                      title={isBookmarked ? "Remove bookmark" : "Bookmark this right"}
-                    >
-                      {isBookmarked ? "Bookmarked" : "Save"}
-                    </button>
-                  </div>
-                  
-                  <h3 className="text-sm font-bold text-dark-text tracking-tight uppercase mb-2">
-                    {category.title}
-                  </h3>
-                  <p className="text-xs text-secondary-text leading-relaxed line-clamp-3">
-                    {category.description}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between mt-5 pt-3 border-t border-slate-50">
-                  <span className="text-[10px] text-secondary-text font-semibold uppercase tracking-wider block">
-                    Law: {category.details.law.split(";")[0].substring(0, 30)}...
-                  </span>
-                  <div className="inline-flex items-center gap-1 text-xs font-bold text-indigo-primary group-hover:text-indigo-primary/80">
-                    <span>Explore</span>
-                    <span className="transition-transform group-hover:translate-x-0.5">&rarr;</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="text-center p-12 bg-white border border-borders rounded-lg">
-          <p className="text-sm text-secondary-text">No rights categories found matching &quot;{searchQuery}&quot;.</p>
-          <button
-            onClick={() => setSearchQuery("")}
-            className="mt-3 text-xs font-bold text-indigo-primary hover:underline cursor-pointer"
-          >
-            Clear Search Filter
-          </button>
-        </div>
-      )}
     </div>
   );
 }

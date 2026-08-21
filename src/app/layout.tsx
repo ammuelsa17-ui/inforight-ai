@@ -1,22 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
-import { RoleProvider } from "@/context/RoleContext";
-import LayoutClientShell from "./layout-client";
+import Navbar from "@/components/Navbar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "InfoRight AI — Civic & Legal Empowerment",
-  description: "AI-assisted guidance for citizen rights, civic problems, and RTI record requests.",
+  title: "InfoRight AI — Privacy-Conscious RTI Drafting Agent",
+  description:
+    "Convert municipal road complaints into clear record-based RTI applications with verified official sources and safe fallback protection.",
 };
 
 export default function RootLayout({
@@ -25,14 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full bg-white text-dark-text flex flex-col font-sans">
-        <RoleProvider>
-          <LayoutClientShell>{children}</LayoutClientShell>
-        </RoleProvider>
+    <html lang="en">
+      <body className={`${inter.className} min-h-screen flex flex-col antialiased text-[#172033]`}>
+        <Navbar />
+        <main className="flex-1 flex flex-col min-w-0">{children}</main>
       </body>
     </html>
   );
