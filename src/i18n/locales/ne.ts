@@ -118,7 +118,8 @@ export const neLocale: UITranslationSchema = {
     "recordingMaxSuffix": "अधिकतम ३० सेकेन्ड",
     "scenario1Label": "कोइम्बतुर आर.एस. पुरम खाल्डाहरू",
     "scenario2Label": "पिलामेडू ढल नोक्सानी",
-    "scenario3Label": "गांधीपुरम सडक कालोपत्रे अनुगमन"
+    "scenario3Label": "गांधीपुरम सडक कालोपत्रे अनुगमन",
+    "writeOwnProblem": "मेरो आफ्नै समस्या लेख्नुहोस्"
   },
   "rights": {
     "badge": "कानूनी अधिकार मार्गदर्शक",

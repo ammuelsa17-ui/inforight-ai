@@ -59,6 +59,7 @@ export default function AskPage() {
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [voiceTranscript, setVoiceTranscript] = useState("");
+  const [voiceError, setVoiceError] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -97,12 +98,20 @@ export default function AskPage() {
     setError(null);
   };
 
+  const startManualProblem = () => {
+    setIssue("");
+    setIssueInputSource("manual");
+    setIssueInputLanguage(selectedLanguage);
+    setError(null);
+  };
+
   const startVoiceRecording = async () => {
     try {
       if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
         alert(t("ask.voiceUnsupported"));
         return;
       }
+      setVoiceError(null);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioChunksRef.current = [];
       const mediaRecorder = new MediaRecorder(stream);
@@ -121,8 +130,10 @@ export default function AskPage() {
         try {
           const res = await transcribeAudio(audioBlob, selectedLanguage);
           setVoiceTranscript(res.transcript);
+          setVoiceError(null);
         } catch {
-          setVoiceTranscript(t("ask.transcriptionError"));
+          setVoiceTranscript("");
+          setVoiceError(t("ask.transcriptionError"));
         } finally {
           setIsTranscribing(false);
           setRecordingSeconds(0);
@@ -199,13 +210,9 @@ export default function AskPage() {
       });
 
       setResult(response);
-    } catch (err) {
+    } catch {
       setResult(null);
-      setError(
-        err instanceof Error && err.message
-          ? err.message
-          : t("ask.genericGenerationError")
-      );
+      setError(t("ask.genericGenerationError"));
     } finally {
       setLoading(false);
     }
@@ -303,6 +310,13 @@ export default function AskPage() {
             </div>
           </div>
 
+          {voiceError && (
+            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{voiceError}</span>
+            </div>
+          )}
+
           {voiceTranscript && (
             <div className="p-3 bg-white border border-sky-300 rounded-lg space-y-2 text-xs">
               <span className="font-bold text-sky-900 block">{t("ask.transcriptReview")}</span>
@@ -334,12 +348,24 @@ export default function AskPage() {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-[#102A56]">
-            {t("ask.problemLabel")} <span className="text-red-500">*</span>
-          </label>
+          <div className="flex items-center justify-between">
+            <label className="block text-sm font-bold text-[#102A56]">
+              {t("ask.problemLabel")} <span className="text-red-500">*</span>
+            </label>
+            {issueInputSource === "prefilled" && (
+              <button
+                type="button"
+                onClick={startManualProblem}
+                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 underline"
+              >
+                {t("ask.writeOwnProblem")}
+              </button>
+            )}
+          </div>
           <textarea
             rows={3}
             value={issue}
+            readOnly={issueInputSource === "prefilled"}
             onChange={(e) => {
               setIssue(e.target.value);
               if (issueInputSource !== "prefilled") {
@@ -348,7 +374,11 @@ export default function AskPage() {
               }
             }}
             placeholder={t("ask.problemPlaceholder")}
-            className="w-full p-3 bg-white border border-[#BCD7EE] rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
+            className={`w-full p-3 border rounded-xl text-sm text-[#172033] focus:outline-none ${
+              issueInputSource === "prefilled"
+                ? "bg-slate-50 border-[#BCD7EE] cursor-not-allowed"
+                : "bg-white border-[#BCD7EE] placeholder-slate-400 focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
+            }`}
             required
           />
         </div>

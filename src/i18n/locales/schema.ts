@@ -117,6 +117,7 @@ export interface UITranslationSchema {
     scenario1Label: string;
     scenario2Label: string;
     scenario3Label: string;
+    writeOwnProblem: string;
   };
   rights: {
     badge: string;

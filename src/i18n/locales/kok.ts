@@ -118,7 +118,8 @@ export const kokLocale: UITranslationSchema = {
     "recordingMaxSuffix": "जास्तीत जास्त ३० सेकंद",
     "scenario1Label": "कोइम्बतूर आर.एस. पुरम खड्डे",
     "scenario2Label": "पीलामेडू गटार नुकसान",
-    "scenario3Label": "गांधीपुरम रस्तो डांबरीकरण तपासणी"
+    "scenario3Label": "गांधीपुरम रस्तो डांबरीकरण तपासणी",
+    "writeOwnProblem": "म्हजी स्वताची समस्या लिहा"
   },
   "rights": {
     "badge": "कायदेशीर हक्क मार्गदर्शक",

@@ -118,7 +118,8 @@ export const taLocale: UITranslationSchema = {
     "recordingMaxSuffix": "அதிகபட்சம் 30 வினாடிகள்",
     "scenario1Label": "கோயம்புத்தூர் ஆர்.எஸ். புரம் சாலைப் பள்ளங்கள்",
     "scenario2Label": "பீளமேடு மழைநீர் வடிகால் சேதம்",
-    "scenario3Label": "காந்திபுரம் சாலை தார் பூச்சு ஆய்வு"
+    "scenario3Label": "காந்திபுரம் சாலை தார் பூச்சு ஆய்வு",
+    "writeOwnProblem": "எனது சொந்த பிரச்சனையை எழுதுங்கள்"
   },
   "rights": {
     "badge": "சட்டப்பூர்வ உரிமைகள் வழிகாட்டி",

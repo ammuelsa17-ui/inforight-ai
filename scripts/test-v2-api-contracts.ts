@@ -668,8 +668,11 @@ async function runRouteHandlerContractTests() {
     assert(askPageCode.includes('issueInputLanguage'), "/ask/page.tsx uses issueInputLanguage state for input-language safety");
     assert(askPageCode.includes('issueInputSource'), "/ask/page.tsx tracks issueInputSource provenance");
     assert(askPageCode.includes('setIssueInputSource("prefilled")'), "applyScenario explicitly sets issueInputSource to prefilled");
-    assert(askPageCode.includes('issueInputSource !== "prefilled"'), "Editing prefilled scenarios preserves canonical en-IN input language");
-    assert(askPageCode.includes('if (issueInputLanguage !== "en-IN")'), "handleGenerate only translates if issueInputLanguage is non-English");
+    assert(askPageCode.includes('readOnly={issueInputSource === "prefilled"}'), "Prefilled scenario textarea is protected readOnly");
+    assert(askPageCode.includes('startManualProblem'), "startManualProblem explicitly transitions to manual mode");
+    assert(askPageCode.includes('setVoiceTranscript("")') && askPageCode.includes('setVoiceError(t("ask.transcriptionError"))'), "STT failure isolates error from voiceTranscript to prevent accidental grievance submission");
+    assert(!askPageCode.includes('err instanceof Error && err.message ? err.message'), "No raw err.message is exposed to citizens in /ask catch path");
+    assert(askPageCode.includes('setError(t("ask.genericGenerationError"))'), "Catch block uses normalized localized error");
   }
 
   // Test 48: Audio MIME extension mapping helper
