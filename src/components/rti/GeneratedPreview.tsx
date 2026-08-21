@@ -49,6 +49,38 @@ export default function GeneratedPreview({
   const [editedSubject, setEditedSubject] = useState(data.subject);
   const [editedBody, setEditedBody] = useState(data.applicationBody);
   const [editedQuestions, setEditedQuestions] = useState<string[]>([...data.questions]);
+  const [isSaved, setIsSaved] = useState(false);
+
+  const handleSaveToDashboard = () => {
+    try {
+      const stored = localStorage.getItem("inforight_citizen_cases");
+      const existingCases = stored ? JSON.parse(stored) : [];
+      const newCase = {
+        id: `RTI-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+        issue: editedSubject,
+        status: "Pending",
+        priority: "High",
+        createdAt: new Date().toISOString(),
+        applicantName: applicantDetails?.name || "K. Harsha",
+        applicantAddress: applicantDetails?.address || "Coimbatore, Tamil Nadu",
+        localBodyName: data.authority.organization,
+        aiResponse: {
+          ...data,
+          subject: editedSubject,
+          applicationBody: editedBody,
+          questions: editedQuestions,
+        },
+      };
+
+      const updatedCases = [newCase, ...existingCases];
+      localStorage.setItem("inforight_citizen_cases", JSON.stringify(updatedCases));
+      // Dispatch storage event for active tabs
+      window.dispatchEvent(new Event("storage"));
+      setIsSaved(true);
+    } catch {
+      setIsSaved(true);
+    }
+  };
 
   const handleQuestionChange = (index: number, val: string) => {
     const next = [...editedQuestions];
@@ -96,6 +128,8 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
           isEditing={isEditing}
           onToggleEdit={() => setIsEditing(!isEditing)}
           onCopy={() => navigator.clipboard.writeText(fullTextToCopy)}
+          onSaveToDashboard={handleSaveToDashboard}
+          isSaved={isSaved}
         />
       </div>
 
