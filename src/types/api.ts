@@ -141,3 +141,15 @@ export interface SourceRecord {
   lastVerified: string;
   verificationStatus: "verified" | "partial";
 }
+
+// -------------------------------------------------------------
+// 3. Unified Source Data Architecture & Navigator Types
+// -------------------------------------------------------------
+export * from "./source-data";
+export * from "./consumer-navigator";
+export * from "./tenant-navigator";
+export * from "./rti-navigator";
+export * from "./scheme-navigator";
+export * from "./workplace-navigator";
+export * from "./form-filler";
+export * from "./router";
