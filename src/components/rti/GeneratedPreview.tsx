@@ -4,8 +4,11 @@ import React, { useState } from "react";
 import FallbackBanner from "./FallbackBanner";
 import TrustPanel, { SourceCardInfo } from "./TrustPanel";
 import DocumentActions from "./DocumentActions";
-import { CheckCircle2, AlertCircle, FileText, MapPin } from "lucide-react";
+import { CheckCircle2, AlertCircle, FileText, MapPin, Globe, Volume2, Loader2 } from "lucide-react";
 import { useRole } from "@/context/RoleContext";
+import { BharatLanguageCode } from "@/lib/language/types";
+import { supportsTTS, getLanguage } from "@/lib/language/languages";
+import { translateText, speakText } from "@/services/language";
 
 export interface GeneratedRtiData {
   mode: "ai" | "fallback";
@@ -48,6 +51,7 @@ interface GeneratedPreviewProps {
     ward?: string;
     dateRange?: string;
   };
+  targetLanguage?: BharatLanguageCode;
 }
 
 export default function GeneratedPreview({
@@ -55,6 +59,7 @@ export default function GeneratedPreview({
   applicantDetails,
   sources = [],
   civicContext,
+  targetLanguage = "en-IN",
 }: GeneratedPreviewProps) {
   const { addCase } = useRole();
   const [isEditing, setIsEditing] = useState(false);
@@ -62,6 +67,77 @@ export default function GeneratedPreview({
   const [editedBody, setEditedBody] = useState(data.applicationBody);
   const [editedQuestions, setEditedQuestions] = useState<string[]>([...data.questions]);
   const [isSaved, setIsSaved] = useState(false);
+
+  // Bharat Language Translation & TTS state
+  const [activeDisplayMode, setActiveDisplayMode] = useState<"canonical" | "translated">("canonical");
+  const [translatedSubject, setTranslatedSubject] = useState("");
+  const [translatedBody, setTranslatedBody] = useState("");
+  const [translatedQuestions, setTranslatedQuestions] = useState<string[]>([]);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translationDisclaimer, setTranslationDisclaimer] = useState<string | null>(null);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [audioError, setAudioError] = useState<string | null>(null);
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+
+  const handleFetchTranslation = async () => {
+    if (targetLanguage === "en-IN") return;
+    setIsTranslating(true);
+    setTranslationDisclaimer(null);
+
+    try {
+      const subjectRes = await translateText(editedSubject, targetLanguage, "en-IN");
+      const bodyRes = await translateText(editedBody, targetLanguage, "en-IN");
+
+      const qResults = await Promise.all(
+        editedQuestions.map((q) => translateText(q, targetLanguage, "en-IN"))
+      );
+
+      setTranslatedSubject(subjectRes.translatedText);
+      setTranslatedBody(bodyRes.translatedText);
+      setTranslatedQuestions(qResults.map((r) => r.translatedText));
+      setTranslationDisclaimer(subjectRes.disclaimer || "Translated from canonical English legal draft using Sarvam AI Formal Legal Translation.");
+      setActiveDisplayMode("translated");
+    } catch {
+      setTranslationDisclaimer("Multilingual translation service unavailable. Displaying official source-grounded English version.");
+      setActiveDisplayMode("canonical");
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const handlePlaySarvamAudio = async () => {
+    if (isPlayingAudio && audioRef.current) {
+      audioRef.current.pause();
+      setIsPlayingAudio(false);
+      return;
+    }
+
+    setAudioError(null);
+    try {
+      const textToSpeak = `${editedSubject}. ${editedQuestions.join(". ")}`;
+      const res = await speakText(textToSpeak, targetLanguage);
+
+      if (!res.audioBase64) {
+        throw new Error("No audio returned from speech synthesizer.");
+      }
+
+      const audioSrc = `data:${res.mimeType};base64,${res.audioBase64}`;
+      const audio = new Audio(audioSrc);
+      audioRef.current = audio;
+
+      audio.onended = () => setIsPlayingAudio(false);
+      audio.onerror = () => {
+        setIsPlayingAudio(false);
+        setAudioError("Audio playback error.");
+      };
+
+      await audio.play();
+      setIsPlayingAudio(true);
+    } catch (err: unknown) {
+      setIsPlayingAudio(false);
+      setAudioError(err instanceof Error ? err.message : "Speech synthesis unavailable");
+    }
+  };
 
   const handleSaveToDashboard = () => {
     if (isSaved) return;
@@ -124,6 +200,62 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
         warning={data.warning}
         verifiedAuthority={data.authority.verified}
       />
+
+      {/* Bharat Language Presentation Banner */}
+      {targetLanguage !== "en-IN" && (
+        <div className="bg-sky-50 border border-sky-200 rounded-xl p-4 space-y-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Globe className="w-5 h-5 text-sky-600" />
+              <div>
+                <span className="text-xs font-bold text-sky-900 block">
+                  Bharat Language Presentation ({getLanguage(targetLanguage)?.nativeName || targetLanguage})
+                </span>
+                <span className="text-[11px] text-sky-700 block">
+                  Canonical RTI draft remains preserved in English. Click below to view translated guidance.
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={handleFetchTranslation}
+                disabled={isTranslating}
+                className="px-3 py-1.5 bg-sky-600 text-white rounded-lg text-xs font-bold hover:bg-sky-700 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+              >
+                {isTranslating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Globe className="w-3.5 h-3.5" />}
+                <span>{activeDisplayMode === "translated" ? "Refresh Translation" : "Translate Guidance"}</span>
+              </button>
+
+              {supportsTTS(targetLanguage) && (
+                <button
+                  onClick={handlePlaySarvamAudio}
+                  disabled={isPlayingAudio}
+                  className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold hover:bg-indigo-700 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                  aria-label="Listen to Sarvam Voice output"
+                >
+                  <Volume2 className="w-3.5 h-3.5" />
+                  <span>{isPlayingAudio ? "Playing Voice..." : "Listen Voice"}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {activeDisplayMode === "translated" && (
+            <div className="flex items-center justify-between border-t border-sky-200 pt-2 text-[11px] text-sky-800">
+              <span className="font-semibold">{translationDisclaimer}</span>
+              <button
+                onClick={() => setActiveDisplayMode("canonical")}
+                className="text-sky-900 underline font-bold"
+              >
+                View Canonical English Original
+              </button>
+            </div>
+          )}
+
+          {audioError && <p className="text-xs text-red-600 font-semibold">{audioError}</p>}
+        </div>
+      )}
 
       {/* Action Controls Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-[#BCD7EE] shadow-xs">
@@ -194,7 +326,7 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
             />
           ) : (
             <p className="text-base font-bold text-[#102A56] bg-[#F4F9FF] p-3 rounded-lg border border-[#BCD7EE]">
-              {editedSubject}
+              {activeDisplayMode === "translated" && translatedSubject ? translatedSubject : editedSubject}
             </p>
           )}
         </div>
@@ -213,7 +345,7 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
             />
           ) : (
             <p className="text-sm text-[#172033] bg-[#F4F9FF] p-4 rounded-lg border border-[#BCD7EE] leading-relaxed">
-              {editedBody}
+              {activeDisplayMode === "translated" && translatedBody ? translatedBody : editedBody}
             </p>
           )}
         </div>
@@ -241,11 +373,11 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
                     rows={2}
                     value={question}
                     onChange={(e) => handleQuestionChange(idx, e.target.value)}
-                    className="w-full px-3 py-1.5 bg-white border border-[#BCD7EE] rounded text-[#172033] text-sm focus:outline-none focus:border-[#4F46E5]"
+                    className="w-full bg-white border border-[#BCD7EE] rounded-md p-2 text-xs text-[#172033] focus:outline-none focus:border-[#4F46E5]"
                   />
                 ) : (
-                  <p className="text-sm text-[#172033] leading-relaxed font-normal">
-                    {question}
+                  <p className="text-sm font-semibold text-[#102A56] leading-snug">
+                    {activeDisplayMode === "translated" && translatedQuestions[idx] ? translatedQuestions[idx] : question}
                   </p>
                 )}
               </div>

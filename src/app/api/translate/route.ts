@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sarvamProvider } from "@/lib/language/sarvam";
+import { BharatLanguageCode } from "@/lib/language/types";
 
 export interface TranslateRequest {
   sourceLanguage?: string;
@@ -42,36 +44,71 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ translatedFields: fields, disclaimer: null }, { status: 200 });
     }
 
-    // Stage 1 Translation Layer (Tamil & Hindi presentation translation)
+    // Stage 1 Translation Layer (Tamil & Hindi presentation translation or Sarvam AI integration)
     const translatedFields: Record<string, string | string[]> = {};
 
-    for (const [key, value] of Object.entries(fields)) {
-      // Never translate URLs, Citation IDs, or Authority IDs
-      if (key.includes("Url") || key.includes("Id") || key.includes("authority")) {
-        translatedFields[key] = value;
-        continue;
-      }
+    const targetLangCode = (targetLanguage === "ta" ? "ta-IN" : targetLanguage === "hi" ? "hi-IN" : `${targetLanguage}-IN`) as BharatLanguageCode;
 
-      if (typeof value === "string") {
-        if (targetLanguage === "ta") {
-          translatedFields[key] = value
-            .replace(/Public Information Officer/g, "பொது தகவல் அலுவலர்")
-            .replace(/National Consumer Helpline/g, "தேசிய நுகர்வோர் உதவி மையம்")
-            .replace(/State Rent Authority/g, "மாநில வாடகை ஆணையம்")
-            .replace(/District Labour Commissioner/g, "மாவட்ட தொழிலாளர் ஆணையர்");
-        } else if (targetLanguage === "hi") {
-          translatedFields[key] = value
-            .replace(/Public Information Officer/g, "लोक सूचना अधिकारी")
-            .replace(/National Consumer Helpline/g, "राष्ट्रीय उपभोक्ता हेल्पलाइन")
-            .replace(/State Rent Authority/g, "राज्य किराया प्राधिकरण")
-            .replace(/District Labour Commissioner/g, "जिला श्रम आयुक्त");
+    if (sarvamProvider.isAvailable()) {
+      for (const [key, value] of Object.entries(fields)) {
+        if (key.includes("Url") || key.includes("Id") || key.includes("authority")) {
+          translatedFields[key] = value;
+          continue;
+        }
+
+        if (typeof value === "string" && value.trim().length > 0) {
+          const res = await sarvamProvider.translate({
+            text: value,
+            sourceLanguage: "en-IN",
+            targetLanguage: targetLangCode,
+          });
+          translatedFields[key] = res.translatedText;
+        } else if (Array.isArray(value)) {
+          const translatedArray: string[] = [];
+          for (const item of value) {
+            if (typeof item === "string" && item.trim().length > 0) {
+              const res = await sarvamProvider.translate({
+                text: item,
+                sourceLanguage: "en-IN",
+                targetLanguage: targetLangCode,
+              });
+              translatedArray.push(res.translatedText);
+            } else {
+              translatedArray.push(item);
+            }
+          }
+          translatedFields[key] = translatedArray;
         } else {
           translatedFields[key] = value;
         }
-      } else if (Array.isArray(value)) {
-        translatedFields[key] = value;
-      } else {
-        translatedFields[key] = value;
+      }
+    } else {
+      for (const [key, value] of Object.entries(fields)) {
+        // Never translate URLs, Citation IDs, or Authority IDs
+        if (key.includes("Url") || key.includes("Id") || key.includes("authority")) {
+          translatedFields[key] = value;
+          continue;
+        }
+
+        if (typeof value === "string") {
+          if (targetLanguage === "ta") {
+            translatedFields[key] = value
+              .replace(/Public Information Officer/g, "பொது தகவல் அலுவலர்")
+              .replace(/National Consumer Helpline/g, "தேசிய நுகர்வோர் உதவி மையம்")
+              .replace(/State Rent Authority/g, "மாநில வாடகை ஆணையம்")
+              .replace(/District Labour Commissioner/g, "மாவட்ட தொழிலாளர் ஆணையர்");
+          } else if (targetLanguage === "hi") {
+            translatedFields[key] = value
+              .replace(/Public Information Officer/g, "लोक सूचना अधिकारी")
+              .replace(/National Consumer Helpline/g, "राष्ट्रीय उपभोक्ता हेल्पलाइन")
+              .replace(/State Rent Authority/g, "राज्य किराया प्राधिकरण")
+              .replace(/District Labour Commissioner/g, "जिला श्रम आयुक्त");
+          } else {
+            translatedFields[key] = value;
+          }
+        } else {
+          translatedFields[key] = value;
+        }
       }
     }
 

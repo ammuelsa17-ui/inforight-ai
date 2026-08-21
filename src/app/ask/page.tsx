@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import { generateRtiApplication } from "@/services/api";
 import { GenerateRtiResponse } from "@/types/api";
@@ -9,7 +9,10 @@ import RtiFeeCalculator from "@/components/RtiFeeCalculator";
 import RtiStatutoryTimeline from "@/components/RtiStatutoryTimeline";
 import EvidenceCompletenessScore from "@/components/EvidenceCompletenessScore";
 import EvidenceOrganizer from "@/components/EvidenceOrganizer";
-import { ArrowLeft, Sparkles, AlertCircle, Info, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Sparkles, AlertCircle, Info, ShieldCheck, Mic, MicOff, Globe, Check } from "lucide-react";
+import { ALL_BHARAT_LANGUAGES } from "@/lib/language/languages";
+import { BharatLanguageCode } from "@/lib/language/types";
+import { translateText, transcribeAudio } from "@/services/language";
 
 const PREFILLED_SCENARIOS = [
   {
@@ -45,6 +48,16 @@ const PREFILLED_SCENARIOS = [
 ];
 
 export default function AskPage() {
+  // Language & Voice State
+  const [selectedLanguage, setSelectedLanguage] = useState<BharatLanguageCode>("en-IN");
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [voiceTranscript, setVoiceTranscript] = useState("");
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
   // Step form state
   const [issue, setIssue] = useState("");
   const [state, setState] = useState("Tamil Nadu");
@@ -75,6 +88,65 @@ export default function AskPage() {
     setError(null);
   };
 
+  const startVoiceRecording = async () => {
+    try {
+      if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+        alert("Voice recording is not supported in this browser environment.");
+        return;
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioChunksRef.current = [];
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      setRecordingSeconds(0);
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        if (timerRef.current) clearInterval(timerRef.current);
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+        setIsTranscribing(true);
+        try {
+          const res = await transcribeAudio(audioBlob, selectedLanguage);
+          setVoiceTranscript(res.transcript);
+        } catch {
+          setVoiceTranscript("Voice transcription error. Please try again or type text.");
+        } finally {
+          setIsTranscribing(false);
+          setRecordingSeconds(0);
+        }
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+
+      let seconds = 0;
+      timerRef.current = setInterval(() => {
+        seconds++;
+        setRecordingSeconds(seconds);
+        if (seconds >= 30) {
+          if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+          }
+        }
+      }, 1000);
+    } catch {
+      alert("Microphone permission denied or unsupported browser.");
+    }
+  };
+
+  const stopVoiceRecording = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!issue.trim() || !locality.trim()) {
@@ -91,10 +163,17 @@ export default function AskPage() {
     setShowSuitabilityBanner(isOpinionQuery);
 
     try {
+      // Step A: Translate Indic input to canonical English normalized input if non-English
+      let canonicalEnglishIssue = issue;
+      if (selectedLanguage !== "en-IN") {
+        const transRes = await translateText(issue, "en-IN", selectedLanguage);
+        canonicalEnglishIssue = transRes.translatedText;
+      }
+
       // STRICT PRIVACY BOUNDARY: Payload contains ONLY civic context
       // Prohibited applicantName and applicantAddress are strictly EXCLUDED
       const response = await generateRtiApplication({
-        issue,
+        issue: canonicalEnglishIssue,
         state,
         district,
         localBodyName,
@@ -132,7 +211,7 @@ export default function AskPage() {
         </Link>
         <span className="text-xs font-semibold text-[#0369A1] uppercase tracking-wider flex items-center gap-1.5 px-3 py-1 bg-[#E0F2FE] rounded-full border border-[#7DD3FC]">
           <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
-          Applicant identity stays in this browser
+          Applicant identity fields & evidence files strictly excluded
         </span>
       </div>
 
@@ -167,6 +246,76 @@ export default function AskPage() {
 
       {/* Guided RTI Form */}
       <form onSubmit={handleGenerate} className="p-6 sm:p-8 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-6">
+        {/* Bharat Language & Voice Controls */}
+        <div className="bg-sky-50 border border-sky-200 rounded-xl p-4 space-y-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Globe className="w-5 h-5 text-sky-600 shrink-0" />
+              <div>
+                <span className="text-xs font-bold text-sky-900 block">Select Input Language (22 Scheduled Languages)</span>
+                <span className="text-[11px] text-sky-700 block">Sarvam AI formal translation normalizes your query to canonical English</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value as BharatLanguageCode)}
+                className="px-3 py-1.5 bg-white border border-sky-300 rounded-lg text-xs font-bold text-sky-900 focus:outline-none focus:border-sky-600"
+              >
+                {ALL_BHARAT_LANGUAGES.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.nativeName} ({lang.name})
+                  </option>
+                ))}
+              </select>
+
+              <button
+                type="button"
+                onClick={isRecording ? stopVoiceRecording : startVoiceRecording}
+                disabled={isTranscribing}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 ${
+                  isRecording
+                    ? "bg-red-600 text-white animate-pulse"
+                    : "bg-indigo-600 text-white hover:bg-indigo-700"
+                }`}
+                title="Record voice input in selected language"
+                aria-label="Voice input recording"
+              >
+                {isRecording ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
+                <span>{isRecording ? `Stop (${recordingSeconds}s / 30s max)` : isTranscribing ? "Transcribing..." : "Voice Input"}</span>
+              </button>
+            </div>
+          </div>
+
+          {voiceTranscript && (
+            <div className="p-3 bg-white border border-sky-300 rounded-lg space-y-2 text-xs">
+              <span className="font-bold text-sky-900 block">Voice Transcript Review (Saaras v3 STT):</span>
+              <p className="text-slate-800 bg-slate-50 p-2 rounded border border-slate-200">{voiceTranscript}</p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIssue(voiceTranscript);
+                    setVoiceTranscript("");
+                  }}
+                  className="px-2.5 py-1 bg-emerald-600 text-white rounded text-[11px] font-bold hover:bg-emerald-700 flex items-center gap-1"
+                >
+                  <Check className="w-3 h-3" />
+                  <span>Use Transcript</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setVoiceTranscript("")}
+                  className="px-2.5 py-1 bg-slate-200 text-slate-700 rounded text-[11px] font-semibold hover:bg-slate-300"
+                >
+                  Discard
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="space-y-2">
           <label className="block text-sm font-bold text-[#102A56]">
             1. Describe the Civic Road Problem <span className="text-red-500">*</span>
@@ -329,6 +478,7 @@ export default function AskPage() {
               ward,
               dateRange,
             }}
+            targetLanguage={selectedLanguage}
           />
 
           {/* Evidence Completeness Scorecard */}
