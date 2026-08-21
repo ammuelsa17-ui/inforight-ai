@@ -192,6 +192,11 @@ export interface AuthorityContact {
   organization: string;
   office_address?: string;
   portal_url?: string;
+  portal_type?: "ONLINE_APPLICATION_PORTAL" | "FIRST_APPEAL_PORTAL" | "SECOND_APPEAL_PORTAL" | "INFORMATION_COMMISSION_WEBSITE" | "INFORMATION_PAGE_ONLY" | "OFFLINE_ONLY";
+  initial_application_portal?: string | null;
+  first_appeal_portal?: string | null;
+  second_appeal_portal?: string | null;
+  information_commission_website?: string;
   helpline_number?: string;
   filing_modes?: Array<"ONLINE" | "POSTAL" | "PHYSICAL_COUNTER" | "EMAIL">;
 }
@@ -201,6 +206,15 @@ export interface StatutoryRulesCriteria {
   exclusions?: string[];
   time_limits_days?: number;
   statutory_fees?: string;
+  application_fee_amount?: number;
+  first_appeal_fee_amount?: number;
+  second_appeal_fee_amount?: number;
+  first_appeal_filing_deadline_days?: number;
+  first_appeal_delay_condonation?: boolean;
+  first_appeal_disposal_normal_days?: number;
+  first_appeal_disposal_max_days?: number;
+  second_appeal_filing_deadline_days?: number;
+  second_appeal_delay_condonation?: boolean;
   required_documents?: string[];
   escalation_route?: string[];
   prohibited_actions?: string[];

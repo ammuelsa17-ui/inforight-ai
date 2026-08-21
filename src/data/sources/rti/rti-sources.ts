@@ -232,10 +232,24 @@ export const RTI_CORE_SOURCES: VerifiedSourceRecord[] = [
       designation: "Central Public Information Officer (CPIO)",
       organization: "Central Ministries, Departments, and Central Public Sector Undertakings",
       portal_url: "https://rtionline.gov.in",
+      portal_type: "ONLINE_APPLICATION_PORTAL",
+      initial_application_portal: "https://rtionline.gov.in",
+      first_appeal_portal: "https://rtionline.gov.in",
+      second_appeal_portal: null,
+      information_commission_website: "https://cic.gov.in",
       filing_modes: ["ONLINE"]
     },
     rules_or_criteria: {
       statutory_fees: "₹10 via Internet Banking, UPI, Debit/Credit Card (Zero fee for BPL applicants with uploaded card)",
+      application_fee_amount: 10,
+      first_appeal_fee_amount: 0,
+      second_appeal_fee_amount: 0,
+      first_appeal_filing_deadline_days: 30,
+      first_appeal_delay_condonation: true,
+      first_appeal_disposal_normal_days: 30,
+      first_appeal_disposal_max_days: 45,
+      second_appeal_filing_deadline_days: 90,
+      second_appeal_delay_condonation: true,
       time_limits_days: 30,
       prohibited_actions: [
         "Routing State Government or Municipal RTI queries to rtionline.gov.in (will be rejected or delayed in transfer)"

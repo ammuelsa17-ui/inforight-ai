@@ -57,7 +57,7 @@ export const CONSUMER_SECTOR_ROUTES: VerifiedSourceRecord[] = [
         "Tier 1: Branch Manager / Bank Customer Care",
         "Tier 2: Bank Principal Nodal Officer (PNO) / Internal Ombudsman (Wait 30 days)",
         "Tier 3: RBI Integrated Ombudsman (via cms.rbi.org.in or 14448)",
-        "Alternative: District Consumer Commission via e-Jagriti (ejagriti.gov.in) if banking deficiency remains unresolved"
+        "Alternative: District Consumer Commission via e-Jagriti (e-jagriti.gov.in) if banking deficiency remains unresolved"
       ]
     },
     keywords: [
@@ -123,7 +123,7 @@ export const CONSUMER_SECTOR_ROUTES: VerifiedSourceRecord[] = [
         "Tier 1: Grievance Redressal Officer (GRO) of the Insurance Company",
         "Tier 2: IRDAI Bima Bharosa Portal (bimabharosa.irdai.gov.in / 155255)",
         "Tier 3: Regional Insurance Ombudsman (cioins.co.in) [Award binding on insurer]",
-        "Alternative: Consumer Disputes Redressal Commission (District/State) via e-Jagriti (ejagriti.gov.in)"
+        "Alternative: Consumer Disputes Redressal Commission (District/State) via e-Jagriti (e-jagriti.gov.in)"
       ]
     },
     keywords: [
@@ -439,7 +439,7 @@ export const CONSUMER_SECTOR_ROUTES: VerifiedSourceRecord[] = [
       escalation_route: [
         "Tier 1: Formal legal notice to developer demanding interest for delay under Section 18",
         "Option A: State RERA Authority (Online filing via State RERA portal for possession/interest/refund)",
-        "Option B: Consumer Disputes Redressal Commission via e-Jagriti (ejagriti.gov.in) (Pecuniary: District up to ₹50L, State ₹50L–₹2Cr, National >₹2Cr)",
+        "Option B: Consumer Disputes Redressal Commission via e-Jagriti (e-jagriti.gov.in) (Pecuniary: District up to ₹50L, State ₹50L–₹2Cr, National >₹2Cr)",
         "Note: Homebuyer can choose RERA or Consumer Court based on relief sought (*Imperia Structures* ruling)"
       ]
     },

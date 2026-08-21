@@ -112,7 +112,7 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
       {
         field_id: "is_bpl",
         official_label: "Whether Applicant Belongs to Below Poverty Line (BPL)",
-        plain_language_question: "Do you hold a Below Poverty Line (BPL) card (for ₹10 fee exemption)?",
+        plain_language_question: "Do you hold a Below Poverty Line (BPL) card (for application fee exemption)?",
         required: true,
         data_type: "boolean",
         sensitive: false
@@ -131,7 +131,7 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
       {
         doc_id: "DOC-FEE-PROOF",
         document_name: "Application Fee Proof / IPO / Court Fee Stamp",
-        official_description: "Proof of ₹10 application fee payment or BPL card copy",
+        official_description: "Proof of statutory application fee payment or BPL card copy",
         mandatory: true,
         accepted_formats: ["PDF", "JPG", "PNG"],
         max_size_mb: 2
@@ -263,11 +263,11 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
       government_level: "DISTRICT"
     },
     official_source: "Consumer Protection (Consumer Commission Procedure) Regulations, 2020 & e-Jagriti Integrated Consumer Portal",
-    official_blank_form_url: "https://ejagriti.gov.in",
+    official_blank_form_url: "https://e-jagriti.gov.in",
     submission: {
       online: true,
       offline: true,
-      portal: "https://ejagriti.gov.in",
+      portal: "https://e-jagriti.gov.in",
       statutory_fee: "Exempt up to ₹5 Lakhs; Nominal scale for higher claims as prescribed"
     },
     last_verified: "2026-08-20",

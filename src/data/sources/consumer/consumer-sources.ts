@@ -65,7 +65,7 @@ export const CONSUMER_CORE_SOURCES: VerifiedSourceRecord[] = [
       escalation_route: [
         "Direct formal written notice / letter of demand to seller or service provider",
         "National Consumer Helpline (NCH) pre-litigation docket for mediation",
-        "District Consumer Disputes Redressal Commission (DCDRC) via e-Jagriti (ejagriti.gov.in)",
+        "District Consumer Disputes Redressal Commission (DCDRC) via e-Jagriti (e-jagriti.gov.in)",
         "State Consumer Disputes Redressal Commission (SCDRC) on appeal",
         "National Consumer Disputes Redressal Commission (NCDRC)"
       ]
@@ -114,7 +114,7 @@ export const CONSUMER_CORE_SOURCES: VerifiedSourceRecord[] = [
     authority_details: {
       designation: "President & Members",
       organization: "Consumer Disputes Redressal Commissions (District / State / National)",
-      portal_url: "https://ejagriti.gov.in",
+      portal_url: "https://e-jagriti.gov.in",
       filing_modes: ["ONLINE", "PHYSICAL_COUNTER"]
     },
     rules_or_criteria: {
@@ -175,7 +175,7 @@ export const CONSUMER_CORE_SOURCES: VerifiedSourceRecord[] = [
     authority_details: {
       designation: "Nodal Officer / Empaneled Mediator",
       organization: "Consumer Mediation Cell (Attached to Commission)",
-      portal_url: "https://ejagriti.gov.in",
+      portal_url: "https://e-jagriti.gov.in",
       filing_modes: ["ONLINE", "PHYSICAL_COUNTER"]
     },
     rules_or_criteria: {
@@ -234,7 +234,7 @@ export const CONSUMER_CORE_SOURCES: VerifiedSourceRecord[] = [
     authority_details: {
       designation: "District / State / National Commission",
       organization: "Consumer Disputes Redressal Commission",
-      portal_url: "https://ejagriti.gov.in",
+      portal_url: "https://e-jagriti.gov.in",
       filing_modes: ["ONLINE", "PHYSICAL_COUNTER"]
     },
     rules_or_criteria: {
@@ -257,7 +257,7 @@ export const CONSUMER_CORE_SOURCES: VerifiedSourceRecord[] = [
         "Obtain written Service Job Sheet / Inspection Report from authorized service center",
         "Lodge grievance on National Consumer Helpline (1915 / consumerhelpline.gov.in)",
         "Issue formal legal notice giving 15 days to replace product or refund amount",
-        "File consumer complaint under Section 35 via e-Jagriti portal (ejagriti.gov.in)"
+        "File consumer complaint under Section 35 via e-Jagriti portal (e-jagriti.gov.in)"
       ]
     },
     keywords: [
@@ -363,7 +363,7 @@ export const CONSUMER_CORE_SOURCES: VerifiedSourceRecord[] = [
     authority_details: {
       designation: "Registrar",
       organization: "Consumer Disputes Redressal Commission (District / State / National)",
-      portal_url: "https://ejagriti.gov.in",
+      portal_url: "https://e-jagriti.gov.in",
       filing_modes: ["ONLINE", "PHYSICAL_COUNTER"]
     },
     rules_or_criteria: {
@@ -378,7 +378,7 @@ export const CONSUMER_CORE_SOURCES: VerifiedSourceRecord[] = [
         "Internal customer grievance escalation / Principal Nodal Officer of service provider",
         "Sectoral Statutory Ombudsman / Regulator (where applicable)",
         "National Consumer Helpline (NCH 1915)",
-        "Consumer Commission complaint via e-Jagriti (ejagriti.gov.in)"
+        "Consumer Commission complaint via e-Jagriti (e-jagriti.gov.in)"
       ]
     },
     keywords: [
@@ -452,7 +452,7 @@ export const CONSUMER_CORE_SOURCES: VerifiedSourceRecord[] = [
         "Formal escalation to designated Resident Grievance Officer (email and postal address published on website under Rule 4(4))",
         "National Consumer Helpline (NCH 1915 / consumerhelpline.gov.in)",
         "Complaint to CCPA for unfair trade practices across platform under Section 17",
-        "e-Jagriti consumer court complaint (ejagriti.gov.in)"
+        "e-Jagriti consumer court complaint (e-jagriti.gov.in)"
       ]
     },
     keywords: [
@@ -709,7 +709,7 @@ export const CONSUMER_CORE_SOURCES: VerifiedSourceRecord[] = [
         "Request restaurant management to remove service charge from bill",
         "Lodge complaint on NCH 1915 / NCH Mobile App",
         "Submit grievance to District Collector for investigation under Section 19",
-        "File complaint via e-Jagriti (ejagriti.gov.in) before District Consumer Commission"
+        "File complaint via e-Jagriti (e-jagriti.gov.in) before District Consumer Commission"
       ]
     },
     keywords: [

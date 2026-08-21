@@ -207,7 +207,7 @@ export function routeUserQuery(request: UnifiedRouterRequest): UnifiedRouterResp
     suggestedForm = {
       form_id: "FORM-CONS-EJAGRITI",
       form_name: "Consumer Complaint Petition (e-Jagriti)",
-      portal_url: "https://ejagriti.gov.in",
+      portal_url: "https://e-jagriti.gov.in",
       submission_mode: "ONLINE_PORTAL"
     };
     plainLanguageExplanation = "Under the Consumer Protection Act, 2019 and Consumer Protection (E-Commerce) Rules, 2020, e-commerce platforms and sellers cannot arbitrarily refuse returns or refunds for defective, damaged, or spurious items (Rule 6(4)). E-commerce platforms must appoint a Resident Grievance Officer who must acknowledge complaints within 48 hours and resolve within 30 days (Rule 4(4)).";
@@ -238,7 +238,7 @@ export function routeUserQuery(request: UnifiedRouterRequest): UnifiedRouterResp
         action_title: "File Consumer Complaint via e-Jagriti",
         action_type: "ESCALATION_STEP",
         target_authority: "District Consumer Disputes Redressal Commission",
-        portal_url: "https://ejagriti.gov.in",
+        portal_url: "https://e-jagriti.gov.in",
         description: "File online consumer petition before the District Commission via e-Jagriti (Exempt from court fees up to ₹5 Lakhs)."
       }
     );
