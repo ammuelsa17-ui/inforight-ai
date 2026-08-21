@@ -118,7 +118,8 @@ export const satLocale: UITranslationSchema = {
     "recordingMaxSuffix": "30s max",
     "scenario1Label": "Coimbatore R.S. Puram Potholes",
     "scenario2Label": "Peelamedu Drain Damage",
-    "scenario3Label": "Gandhipuram Road Inspection"
+    "scenario3Label": "Gandhipuram Road Inspection",
+    "writeOwnProblem": " Write my own problem"
   },
   "rights": {
     "badge": " ᱦᱚᱠ ᱱᱮᱵᱷᱤᱜᱮᱴᱚᱨ",

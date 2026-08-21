@@ -118,7 +118,8 @@ export const mniLocale: UITranslationSchema = {
     "recordingMaxSuffix": "30s max",
     "scenario1Label": "Coimbatore Potholes",
     "scenario2Label": "Peelamedu Drain Damage",
-    "scenario3Label": "Gandhipuram Inspection"
+    "scenario3Label": "Gandhipuram Inspection",
+    "writeOwnProblem": " ꯃꯅꯤꯡ ꯇꯝꯅ ꯏꯕꯥ"
   },
   "rights": {
     "badge": "Rights Navigator",

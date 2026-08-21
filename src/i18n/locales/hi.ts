@@ -118,7 +118,8 @@ export const hiLocale: UITranslationSchema = {
     "recordingMaxSuffix": "अधिकतम 30 सेकंड",
     "scenario1Label": "कोयंबटूर आर.एस. पुरम गड्ढे",
     "scenario2Label": "पीलामेडू तूफान नाला क्षति",
-    "scenario3Label": "गांधीपुरम सड़क पुनः डामरीकरण निरीक्षण"
+    "scenario3Label": "गांधीपुरम सड़क पुनः डामरीकरण निरीक्षण",
+    "writeOwnProblem": "मेरी अपनी समस्या लिखें"
   },
   "rights": {
     "badge": "वैधानिक अधिकार नेविगेटर",

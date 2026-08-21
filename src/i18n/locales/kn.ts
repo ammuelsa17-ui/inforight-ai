@@ -118,7 +118,8 @@ export const knLocale: UITranslationSchema = {
     "recordingMaxSuffix": "ಗರಿಷ್ಠ 30 ಸೆಕೆಂಡುಗಳು",
     "scenario1Label": "ಕೊಯಮತ್ತೂರು ಆರ್.ಎಸ್. ಪುರಂ ಗುಂಡಿಗಳು",
     "scenario2Label": "ಪೀಲಮೇಡು ಚರಂಡಿ ಹಾನಿ",
-    "scenario3Label": "ಗಾಂಧಿಪುರಂ ರಸ್ತೆ ಡಾಂಬರೀಕರಣ ಪರಿಶೀಲನೆ"
+    "scenario3Label": "ಗಾಂಧಿಪುರಂ ರಸ್ತೆ ಡಾಂಬರೀಕರಣ ಪರಿಶೀಲನೆ",
+    "writeOwnProblem": "ನನ್ನ ಸ್ವಂತ ಸಮಸ್ಯೆಯನ್ನು ಬರೆಯಿರಿ"
   },
   "rights": {
     "badge": "ಶಾಸನಬದ್ಧ ಹಕ್ಕುಗಳ ಮಾರ್ಗದರ್ಶಿ",

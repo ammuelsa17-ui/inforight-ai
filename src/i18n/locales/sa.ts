@@ -118,7 +118,8 @@ export const saLocale: UITranslationSchema = {
     "recordingMaxSuffix": "30s max",
     "scenario1Label": "Coimbatore R.S. Puram Potholes",
     "scenario2Label": "Peelamedu Storm Drain Damage",
-    "scenario3Label": "Gandhipuram Road Re-tarring Inspection"
+    "scenario3Label": "Gandhipuram Road Re-tarring Inspection",
+    "writeOwnProblem": "Write my own problem"
   },
   "rights": {
     "badge": "Statutory Rights Navigator",
