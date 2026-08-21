@@ -32,13 +32,13 @@ export default function TrustPanel({
   ];
 
   return (
-    <div className="w-full space-y-6 bg-slate-900/60 border border-slate-800 p-6 rounded-xl">
+    <div className="w-full space-y-6 bg-white border border-[#BCD7EE] p-6 rounded-xl shadow-xs">
       {/* Verification Trust Panel Header */}
-      <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-        <ShieldCheck className="w-6 h-6 text-teal-400 shrink-0" />
+      <div className="flex items-center gap-3 border-b border-[#BCD7EE] pb-4">
+        <ShieldCheck className="w-6 h-6 text-[#4F46E5] shrink-0" />
         <div>
-          <h3 className="text-base font-semibold text-white">Safety & Trust Panel</h3>
-          <p className="text-xs text-slate-400">
+          <h3 className="text-base font-bold text-[#102A56]">Safety & Trust Panel</h3>
+          <p className="text-xs text-[#526176]">
             Real-time verification metrics and privacy guarantees
           </p>
         </div>
@@ -49,10 +49,14 @@ export default function TrustPanel({
         {trustBadges.map((badge, idx) => (
           <div
             key={idx}
-            className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg bg-slate-800/50 border border-slate-700/50 text-xs text-slate-200"
+            className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg bg-[#F4F9FF] border border-[#BCD7EE] text-xs text-[#172033]"
           >
-            <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0" />
-            <span>{badge.text}</span>
+            <CheckCircle2
+              className={`w-4 h-4 shrink-0 ${
+                badge.status ? "text-[#0F9D76]" : "text-[#D97706]"
+              }`}
+            />
+            <span className="font-medium">{badge.text}</span>
           </div>
         ))}
       </div>
@@ -60,39 +64,39 @@ export default function TrustPanel({
       {/* Source Transparency Section */}
       {sources.length > 0 && (
         <div className="space-y-3 pt-2">
-          <h4 className="text-sm font-medium text-slate-300 flex items-center gap-2">
-            <FileText className="w-4 h-4 text-teal-400" />
+          <h4 className="text-sm font-bold text-[#102A56] flex items-center gap-2">
+            <FileText className="w-4 h-4 text-[#4F46E5]" />
             Official Source Cards ({sources.length})
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {sources.map((source) => (
               <div
                 key={source.id}
-                className="p-4 rounded-lg bg-slate-800/80 border border-slate-700/70 space-y-2 text-xs"
+                className="p-4 rounded-lg bg-[#F4F9FF] border border-[#BCD7EE] space-y-2 text-xs"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <h5 className="font-semibold text-slate-100 text-sm">{source.title}</h5>
+                  <h5 className="font-bold text-[#102A56] text-sm">{source.title}</h5>
                   <span
-                    className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
                       source.verified
-                        ? "bg-teal-950 text-teal-300 border border-teal-500/30"
-                        : "bg-amber-950 text-amber-300 border border-amber-500/30"
+                        ? "bg-[#E6F4EA] text-[#0F9D76] border border-[#A8DADC]"
+                        : "bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]"
                     }`}
                   >
                     {source.verified ? "Verified" : "Unverified"}
                   </span>
                 </div>
-                <p className="text-slate-400">
-                  <strong className="text-slate-300">Authority:</strong> {source.authority}
+                <p className="text-[#526176]">
+                  <strong className="text-[#102A56]">Authority:</strong> {source.authority}
                 </p>
-                <p className="text-slate-400 flex items-center gap-1">
-                  <strong className="text-slate-300">Domain:</strong> {source.domain}
-                  <ExternalLink className="w-3 h-3 text-slate-500" />
+                <p className="text-[#526176] flex items-center gap-1">
+                  <strong className="text-[#102A56]">Domain:</strong> {source.domain}
+                  <ExternalLink className="w-3 h-3 text-[#526176]" />
                 </p>
-                <p className="text-slate-400">
-                  <strong className="text-slate-300">Supports:</strong> {source.supports}
+                <p className="text-[#526176]">
+                  <strong className="text-[#102A56]">Supports:</strong> {source.supports}
                 </p>
-                <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-700/40">
+                <div className="text-[11px] text-[#526176] pt-1 border-t border-[#BCD7EE]">
                   Verified: {source.lastVerifiedDate}
                 </div>
               </div>

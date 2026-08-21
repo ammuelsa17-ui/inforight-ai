@@ -260,7 +260,7 @@ This document defines the automated and manual verification suite for the InfoRi
 ## 4. Architecture & Limitations Summary
 
 ### Architecture Highlights:
-* **Client-Side Privacy**: Applicant name, address, and signature handled 100% in browser.
+* **Client-Side Privacy**: Applicant name, address, and signature handled in browser state.
 * **Deterministic Core**: Authority resolution, citation allowlisting, and fallback templates execute deterministically without AI dependency.
 * **AI Guardrails**: Gemini restricted strictly to objective, record-based question generation.
 

@@ -1,61 +1,48 @@
 # InfoRight AI — System Architecture Overview
 
+> **Target Version 2.0 Architecture**: Verified Source-Grounded Architecture for Civic and Legal Empowerment.
+
+---
+
 ## 1. System Objective
 
-InfoRight AI converts ordinary plain-language municipal road complaints into structured, legally aligned, record-based Right to Information (RTI) applications using verified official government source records.
+InfoRight AI converts ordinary plain-language municipal road complaints, consumer disputes, tenancy issues, workplace grievances, and welfare queries into structured, actionable, record-based requests and representation letters using verified official government source records.
 
 Rather than relying on unstructured AI text generation or subjective grievances, InfoRight AI enforces a strict privacy boundary, deterministic authority matching, server-side citation allowlisting, and guaranteed fallback response handling.
 
 ---
 
-## 2. System Architecture & Data Flow
+## 2. Target Version 2.0 System Architecture & Data Flow
 
 ```mermaid
 flowchart TD
-    subgraph Browser ["Client Environment (Browser)"]
-        Form["Browser RTI Form"]
-        Separation["Client-Side Separation of Applicant Identity"]
-        Preview["Editable Preview & PDF / Print Export"]
-    end
-
-    subgraph Server ["Server Environment (Vercel Next.js Server Route)"]
-        API["POST /api/rti/generate"]
-        Parse["Strict Request Parsing (GenerateRtiRequest)"]
-        PII["In-Text PII Detection & Redaction"]
-        Allowlist["Server-Side Citation Allowlist Intersection"]
-        ValPipeline["Output Schema & Citation Validation"]
-        DetAuth["Deterministic Authority Construction"]
-        DocComp["Document Composition"]
-        FallbackEngine["Deterministic Fallback Template Engine"]
-    end
-
-    subgraph External ["External AI Service"]
-        Gemini["Gemini API (Structured Drafting)"]
-    end
-
-    Form --> Separation
-    Separation -->|Permitted Request Fields| API
-    API --> Parse
-    Parse --> PII
-    PII --> Allowlist
-    Allowlist -->|sanitizedIssue & validatedSourceIds| Gemini
-
-    Gemini -->|Draft Response| ValPipeline
-
-    ValPipeline -->|Pass| DetAuth
-    Gemini -- "Timeout / API Failure" --> FallbackEngine
-    PII -- "Unsafe Unredactable PII" --> FallbackEngine
-    ValPipeline -- "Malformed Output / Invalid Citations / Subjective Questions" --> FallbackEngine
-    FallbackEngine --> DetAuth
-    DetAuth --> DocComp
-    DocComp --> Preview
+    A["Citizen problem and guided form"] --> B["Validation and safety checks"]
+    B --> C["Intent router"]
+    C --> D["RTI drafting"]
+    C --> E["Rights navigation"]
+    C --> F["Scheme matching"]
+    D --> G["Curated official source registry"]
+    E --> G
+    F --> G
+    G --> H["Validation and citation guard"]
+    H --> I["Guidance, draft document and export"]
 ```
 
 ---
 
-## 3. Privacy Boundary Architecture
+## 3. Module Responsibilities & System Boundaries
 
-InfoRight AI enforces a hybrid client-server privacy boundary to reduce the risk of exposing applicant personal data to the AI service:
+* **RTI Drafting Agent**: Gemini (`gemini-1.5-flash`) drafts objective record-based questions; authority selection (`Public Information Officer`), verification status, and citation allowlisting remain strictly deterministic.
+* **Rights Navigator**: Provides simple-language procedural steps, evidence checklists, and escalation pathways (e.g., National Consumer Helpline 1915, **e-Jagriti**, **SAMADHAN 2.0**) combined with explicit state-jurisdiction warnings. Gemini simplifies legal explanations but does not alter escalation rules.
+* **Scheme Eligibility Reader**: Rule-based matching engine evaluating eligibility strictly against deterministic rules (referencing **myScheme** framework). Gemini explains matching reasons but does not decide eligibility.
+* **Conversational Form-Filler**: Asks guided questions one at a time to auto-populate draft RTI applications, representation letters, or scheme checklists.
+* **Official Source Transparency**: Resolved exclusively from Mithun's curated source registry (`src/data/sources/`). AI is prohibited from inventing government URLs or verification dates.
+
+---
+
+## 4. Privacy Boundary Architecture
+
+InfoRight AI enforces a hybrid client-server privacy boundary to prevent personal applicant data from reaching external AI services:
 
 ### Browser-Only Data (Never Sent to API or AI):
 * `applicantName`
@@ -66,107 +53,30 @@ InfoRight AI enforces a hybrid client-server privacy boundary to reduce the risk
 
 > **Applicant Identity Separation**: Personal applicant details remain strictly in local browser memory. They are injected client-side into the document template only during preview rendering and PDF/print export.
 
-### Civic Request Received by the Server
-
-The browser sends only the civic fields permitted by `GenerateRtiRequest`:
-
-* `issue`
-* `state`
-* `district`
-* `localBodyName`
-* `locality`
-* `ward` (optional)
-* `dateRange` (optional)
-* `sourceIds` (untrusted client input)
-
-The server then derives:
-
-* `sanitizedIssue` after in-text PII detection and redaction.
-* `validatedSourceIds` after intersecting `sourceIds` with the official server-side allowlist.
-
-Only the sanitized and validated values may be included in the Gemini prompt.
-
-### Server-Side Privacy Protections:
-* **Strict Schema Parsing**: Rejects any request containing prohibited or unknown keys before processing.
-* **In-Text PII Redaction**: Scans issue text for phone numbers, email addresses, and Aadhaar-like numbers, redacting detected patterns.
-* **Fail-Safe Fallback**: If suspected personal data cannot be safely redacted, the server aborts the AI call and immediately triggers deterministic fallback mode.
+### Server-Side Privacy & Safety Safeguards:
+* **Strict Request Schema Parsing**: Rejects any request containing prohibited personal data keys (`applicantName`, `applicantAddress`, etc.) before processing.
+* **In-Text PII Redaction**: Scans input text for phone numbers (`[REDACTED_PHONE]`), email addresses (`[REDACTED_EMAIL]`), and Aadhaar-like number patterns (`[REDACTED_AADHAAR]`).
+* **Fail-Safe Fallback**: If personal data cannot be safely redacted, the server aborts the AI call and immediately triggers deterministic fallback mode.
 * **Privacy Indicator**: `validation.applicantDataSentToAI` is explicitly set to `false` in every response.
 
 ---
 
-## 4. Deterministic Responsibilities
+## 5. Engineering Foundation & Quality Controls
 
-To improve reliability, predictability, and reduce hallucination risk, the following components are executed **deterministically outside Gemini**:
-
-* **Public Authority Construction**: Constructed strictly from normalized state and local body names (`designation: "Public Information Officer"`, `organization`, `state`, `verified`).
-* **Verification Status**: Coimbatore authorities matched against curated source registries are marked `verified: true`; other authorities are marked `verified: false` with a verification warning.
-* **Official Citation URLs**: Resolved exclusively from server-side source records.
-* **Fees and Legal Procedure Claims**: Never generated by Gemini. Phase 1 displays only curated, verified information when available; otherwise the interface asks the citizen to confirm it through the responsible authority.
-* **Fallback Activation**: Triggered deterministically on API error, timeout, malformed JSON, invalid citations, subjective questions, or unsafe PII.
-
----
-
-## 5. Gemini AI Responsibilities
-
-Gemini functions strictly as a structured drafting assistant and generates **only** these four fields:
-
-1. `subject`: Concise, formal RTI application subject title.
-2. `applicationBody`: Short, objective context statement describing the civic road issue.
-3. `questions`: Array of **3 to 5 record-based requests** for existing government records.
-4. `citationIds`: Array of citation IDs selected strictly from `validatedSourceIds`.
-
-> **Prohibited AI Decisions**: Gemini never determines public authority details, verification status, RTI fees, legal sections, official URLs, or applicant identity details. Gemini is prohibited from generating subjective questions (e.g., "Why was the road not repaired?").
+| Category | Control Status | Implementation Details |
+| :--- | :---: | :--- |
+| **Development** | ✓ Implemented | GitHub feature branches & pull-request review isolation (`AGENTS.md`). |
+| **Testing** | ✓ Implemented<br>□ Pending | ✓ Lint (`npm run lint`), ✓ Production build (`npm run build`).<br>□ Unit tests, □ API contract tests, □ End-to-end smoke tests. |
+| **Deployment** | ✓ Implemented | Vercel production hosting (`https://inforight-ai.vercel.app`) with server-side environment variables. |
+| **Security & Reliability** | ✓ Implemented | Server-side API key (`GEMINI_API_KEY`), applicant identity excluded from AI request payload, citation allowlist, deterministic fallback mode. |
+| **Observability** | ✓ Implemented<br>□ Pending | ✓ Vercel runtime logs.<br>□ Structured error tracking. |
 
 ---
 
-## 6. Reliability Path & Fallback Engine
+## 6. Known Prototype Limitations & Boundaries
 
-InfoRight AI provides a usable document path through two execution modes:
-
-### 1. Normal AI Mode (`mode: "ai"`)
-Activated when Gemini returns valid JSON matching the response schema, containing 3–5 record-based questions, and referencing only allowlisted citation IDs.
-
-### 2. Deterministic Fallback Mode (`mode: "fallback"`)
-Activated automatically if:
-* Gemini API times out or fails (HTTP 5xx / 429).
-* Gemini output fails schema parsing or JSON validation.
-* Gemini returns invalid or non-allowlisted citation IDs.
-* Gemini generates subjective or non-record questions.
-* Unsafe personal information is detected in input and cannot be safely redacted.
-
-Fallback responses return predetermined record-based questions defined in the fallback template for road inspection, estimates, Measurement Book (MB) entries, expenditure statements, and complaint registers using stable source citations.
-
----
-
-## 7. Official Source Registry
-
-Phase 1 uses curated official source records identified by stable IDs:
-
-* `RTI_ACT_2005_AMENDED`: Right to Information Act 2005 (National legislation reference).
-* `CCMC_RTI_AUTHORITY`: Coimbatore City Municipal Corporation RTI authority page.
-* `CCMC_ENGINEERING_ROADS`: Coimbatore City Municipal Corporation Engineering Department page describing road-related functions.
-
----
-
-## 8. Deployment Architecture
-
-```mermaid
-flowchart LR
-    User["Citizen Browser"] -->|HTTPS / Next.js Client| Vercel["Vercel-Hosted Next.js Application"]
-    Vercel -->|Route Handler /api/rti/generate| ServerRoute["Next.js App Router Server Route"]
-    ServerRoute -->|Internal Module| Registry["Bundled Local JSON Source Registry & Fallback Templates"]
-    ServerRoute -->|Sanitized JSON Request| GeminiAPI["Gemini API (Google AI)"]
-```
-
-* **Environment Safety**: `GEMINI_API_KEY` is configured strictly in Vercel Environment Variables.
-* **Bundled Local Registry**: Source registries and fallback templates reside inside the application bundle, eliminating external database dependencies.
-
----
-
-## 9. Known Phase 1 Limitations
-
-* **Geographic Scope**: Official authority verification is curated specifically for Coimbatore City Municipal Corporation. Other authorities display an unverified status warning.
+* **Verified Scope**: Official authority verification is curated specifically for Coimbatore City Municipal Corporation. Authorities outside verified coverage display an unverified status warning.
 * **Manual Portal Submission**: InfoRight AI formats applications for manual filing (print, copy, PDF export). Automatic government portal submission is excluded.
 * **Zero Persistence**: No user accounts, authentication, application history, or database storage.
-* **No Vector DB / RAG**: No vector database or general RAG pipelines are used.
-* **No Media Assets**: Image uploads, video processing, and geolocation services are outside Phase 1 scope.
+* **No Vector DB / RAG**: No vector database, Supabase pgvector, or general RAG pipelines are used.
+* **No Media Assets**: Image uploads, video processing, and geolocation services are outside Phase 1 prototype scope.

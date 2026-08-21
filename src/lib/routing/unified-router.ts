@@ -14,6 +14,7 @@ import {
 } from "@/data/sources";
 import { getFormById, ALL_OFFICIAL_FORMS } from "@/data/forms";
 import { VerifiedSourceRecord } from "@/types/source-data";
+import { EligibilityEvaluationState } from "@/types/scheme-navigator";
 
 /**
  * Extracts facts and profile attributes from the user query
@@ -132,7 +133,7 @@ export function routeUserQuery(request: UnifiedRouterRequest): UnifiedRouterResp
   };
 
   let suggestedForm: { form_id: string; form_name: string; portal_url?: string; submission_mode: string } | undefined = undefined;
-  let schemeState: any = undefined;
+  let schemeState: EligibilityEvaluationState | undefined = undefined;
 
   // =========================================================================
   // DOMAIN-SPECIFIC SYNTHESIS
