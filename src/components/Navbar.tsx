@@ -5,9 +5,11 @@ import Link from "next/link";
 import { FileText, Menu, X, ArrowRight } from "lucide-react";
 import LanguageSelector from "@/components/LanguageSelector";
 import AccessibilityToolbar from "@/components/AccessibilityToolbar";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#BCD7EE]">
@@ -31,19 +33,19 @@ export default function Navbar() {
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-[#102A56]">
             <Link href="/" className="hover:text-[#4F46E5] transition-colors">
-              Home
+              {t("nav.home")}
             </Link>
             <Link href="/ask" className="hover:text-[#4F46E5] transition-colors">
-              RTI Drafting
+              {t("nav.rtiDrafting")}
             </Link>
             <Link href="/rights" className="hover:text-[#4F46E5] transition-colors">
-              Rights Navigator
+              {t("nav.rightsNavigator")}
             </Link>
             <Link href="/schemes" className="hover:text-[#4F46E5] transition-colors">
-              Welfare Schemes
+              {t("nav.welfareSchemes")}
             </Link>
             <Link href="/sources" className="hover:text-[#4F46E5] transition-colors">
-              Official Sources
+              {t("nav.officialSources")}
             </Link>
           </nav>
 
@@ -55,7 +57,7 @@ export default function Navbar() {
               href="/ask"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-sm"
             >
-              <span>Describe Problem</span>
+              <span>{t("nav.describeProblem")}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -85,35 +87,35 @@ export default function Navbar() {
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
-            Home
+            {t("nav.home")}
           </Link>
           <Link
             href="/ask"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
-            RTI Drafting
+            {t("nav.rtiDrafting")}
           </Link>
           <Link
             href="/rights"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
-            Rights Navigator
+            {t("nav.rightsNavigator")}
           </Link>
           <Link
             href="/schemes"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
-            Welfare Schemes
+            {t("nav.welfareSchemes")}
           </Link>
           <Link
             href="/sources"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
-            Official Sources
+            {t("nav.officialSources")}
           </Link>
           <div className="pt-2 border-t border-[#BCD7EE]">
             <Link
@@ -121,7 +123,7 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors"
             >
-              <span>Describe Problem</span>
+              <span>{t("nav.describeProblem")}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

@@ -68,6 +68,7 @@ export interface TTSRequest {
 
 export interface TTSResult {
   audioBase64: string;
+  audioSegmentsBase64: string[];
   languageCode: BharatLanguageCode;
   mimeType: string;
   provider: string;

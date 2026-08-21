@@ -5,8 +5,10 @@ import Link from "next/link";
 import { matchWelfareSchemes } from "@/services/api";
 import { SchemeMatchResponse, SchemeMatchRequest } from "@/types/api";
 import { ArrowLeft, Sparkles, AlertCircle, ExternalLink, CheckCircle2, Info } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function SchemesPage() {
+  const { t } = useLanguage();
   const [state, setState] = useState("Tamil Nadu");
   const [age, setAge] = useState<number>(20);
   const [annualIncome, setAnnualIncome] = useState<number>(150000);
@@ -47,17 +49,17 @@ export default function SchemesPage() {
       <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-4">
         <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#526176] hover:text-[#102A56] font-medium">
           <ArrowLeft className="w-4 h-4" />
-          <span>Back to Home</span>
+          <span>{t("common.backToHome")}</span>
         </Link>
         <span className="text-xs font-semibold text-[#0F9D76] uppercase tracking-wider px-3 py-1 bg-[#E6F4EA] rounded-full border border-[#A8DADC]">
-          myScheme Reference Framework
+          {t("schemes.badge")}
         </span>
       </div>
 
       <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56]">Scheme Eligibility Reader</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56]">{t("schemes.title")}</h1>
         <p className="text-sm text-[#526176]">
-          Enter your profile details to evaluate eligibility against verified National and Tamil Nadu welfare schemes with rule-based matching.
+          {t("schemes.subtitle")}
         </p>
       </div>
 

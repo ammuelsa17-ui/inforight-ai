@@ -33,8 +33,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(result, { status: 200 });
-  } catch (err: unknown) {
-    const errMsg = err instanceof Error ? err.message : "Speech synthesis failed";
-    return NextResponse.json({ error: errMsg }, { status: 500 });
+  } catch {
+    console.error("Sarvam TTS failed", { status: 500, code: "SPEECH_SYNTHESIS_FAILED" });
+    return NextResponse.json({ error: "SPEECH_SYNTHESIS_FAILED" }, { status: 500 });
   }
 }
