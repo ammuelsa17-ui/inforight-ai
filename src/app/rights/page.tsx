@@ -39,7 +39,7 @@ export default function RightsPage() {
             </div>
             <h2 className="text-xl font-bold text-[#102A56]">{t("rights.consumerTitle")}</h2>
             <p className="text-xs text-[#526176] leading-relaxed">
-              {t("rights.consumerDescription")}
+              {t("rights.consumerDesc")}
             </p>
             <div className="text-[11px] text-[#0369A1] bg-[#E0F2FE] p-2 rounded-lg border border-[#7DD3FC] font-medium">
               {t("rights.consumerEscalation")}
@@ -49,7 +49,7 @@ export default function RightsPage() {
             href="/rights/consumer"
             className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] transition-colors"
           >
-            <span>{t("rights.consumerButton")}</span>
+            <span>{t("rights.consumerCta")}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -62,17 +62,17 @@ export default function RightsPage() {
             </div>
             <h2 className="text-xl font-bold text-[#102A56]">{t("rights.tenantTitle")}</h2>
             <p className="text-xs text-[#526176] leading-relaxed">
-              {t("rights.tenantDescription")}
+              {t("rights.tenantDesc")}
             </p>
-            <div className="text-[11px] text-[#D97706] bg-[#FEF3C7] p-2 rounded-lg border border-[#FDE68A] font-medium">
+            <div className="text-[11px] text-[#0369A1] bg-[#E0F2FE] p-2 rounded-lg border border-[#7DD3FC] font-medium">
               {t("rights.tenantEscalation")}
             </div>
           </div>
           <Link
             href="/rights/tenant"
-            className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold text-white bg-[#0284C7] hover:bg-[#0369A1] transition-colors"
           >
-            <span>{t("rights.tenantButton")}</span>
+            <span>{t("rights.tenantCta")}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -85,17 +85,17 @@ export default function RightsPage() {
             </div>
             <h2 className="text-xl font-bold text-[#102A56]">{t("rights.workplaceTitle")}</h2>
             <p className="text-xs text-[#526176] leading-relaxed">
-              {t("rights.workplaceDescription")}
+              {t("rights.workplaceDesc")}
             </p>
-            <div className="text-[11px] text-[#0F9D76] bg-[#E6F4EA] p-2 rounded-lg border border-[#A8DADC] font-medium">
+            <div className="text-[11px] text-[#0F9D76] bg-[#E6F4EA] p-2 rounded-lg border border-[#A7F3D0] font-medium">
               {t("rights.workplaceEscalation")}
             </div>
           </div>
           <Link
             href="/rights/workplace"
-            className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] transition-colors"
+            className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold text-white bg-[#0F9D76] hover:bg-[#0B7A5C] transition-colors"
           >
-            <span>{t("rights.workplaceButton")}</span>
+            <span>{t("rights.workplaceCta")}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

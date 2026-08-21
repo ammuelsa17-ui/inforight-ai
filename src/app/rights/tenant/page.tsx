@@ -5,8 +5,10 @@ import Link from "next/link";
 import { navigateRightsDispute } from "@/services/api";
 import { RightsNavigateResponse } from "@/types/api";
 import { ArrowLeft, Sparkles, AlertCircle, ExternalLink, Copy, Printer, Check, AlertTriangle } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function TenantRightsPage() {
+  const { t } = useLanguage();
   const [description, setDescription] = useState(
     "Vacated rental apartment in Chennai 3 weeks ago after full key handover and utility bill settlement. Landlord refuses to return ₹50,000 security deposit without repair bills."
   );
@@ -51,7 +53,7 @@ export default function TenantRightsPage() {
       <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-4">
         <Link href="/rights" className="inline-flex items-center gap-2 text-sm text-[#526176] hover:text-[#102A56] font-medium">
           <ArrowLeft className="w-4 h-4" />
-          <span>Back to Rights Overview</span>
+          <span>{t("common.backToHome")}</span>
         </Link>
         <span className="text-xs font-semibold text-[#D97706] uppercase tracking-wider px-3 py-1 bg-[#FEF3C7] rounded-full border border-[#FDE68A]">
           State Tenancy Jurisdiction

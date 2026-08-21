@@ -16,6 +16,7 @@ import {
 import { Card, StatCard } from "@/components/Card";
 import { Input } from "@/components/Input";
 import { StatusBadge, EmptyState } from "@/components/Feedback";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function OfficialDashboardPage() {
   return (
@@ -26,6 +27,7 @@ export default function OfficialDashboardPage() {
 }
 
 function OfficialDashboardContent() {
+  const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const filterParam = searchParams.get("filter") || "all";
@@ -60,14 +62,7 @@ function OfficialDashboardContent() {
 
     // Status filter
     const matchesStatus = statusFilter === "all" ? true : c.status === statusFilter;
-
-    // Priority filter (from dropdown or sidebar query param)
-    let matchesPriority = true;
-    if (priorityFilter !== "all") {
-      matchesPriority = c.priority === priorityFilter;
-    } else if (filterParam === "urgent") {
-      matchesPriority = c.priority === "Urgent";
-    }
+    const matchesPriority = priorityFilter === "all" ? true : c.priority === priorityFilter;
 
     return matchesSearch && matchesStatus && matchesPriority;
   });
@@ -75,14 +70,14 @@ function OfficialDashboardContent() {
   return (
     <div className="flex-1 space-y-6 max-w-6xl mx-auto w-full py-4 bg-slate-50/20">
       
-      {/* Welcome Header */}
+      {/* Page Header */}
       <div className="border-b border-borders pb-4">
-        <span className="text-[10.5px] font-bold text-indigo-primary uppercase tracking-wider block">Official Panel</span>
+        <span className="text-[10.5px] font-bold text-indigo-primary uppercase tracking-wider block">{t("official.badge")}</span>
         <h1 className="text-2xl font-bold tracking-tight text-dark-text sm:text-3xl uppercase">
-          Submitted Cases & Requests
+          {t("official.title")}
         </h1>
         <p className="text-xs sm:text-sm text-secondary-text mt-1">
-          Review, investigate, assign officials, and update statuses on citizen-submitted RTI inquiries.
+          {t("official.subtitle")}
         </p>
       </div>
 

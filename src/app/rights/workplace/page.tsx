@@ -5,8 +5,10 @@ import Link from "next/link";
 import { navigateRightsDispute } from "@/services/api";
 import { RightsNavigateResponse } from "@/types/api";
 import { ArrowLeft, Sparkles, AlertCircle, ExternalLink, Copy, Printer, Check } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function WorkplaceRightsPage() {
+  const { t } = useLanguage();
   const [description, setDescription] = useState(
     "Resigned 2 months ago post 30-day notice handover. Employer withholding final salary payment for 2 months and full and final settlement dues."
   );
@@ -51,7 +53,7 @@ export default function WorkplaceRightsPage() {
       <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-4">
         <Link href="/rights" className="inline-flex items-center gap-2 text-sm text-[#526176] hover:text-[#102A56] font-medium">
           <ArrowLeft className="w-4 h-4" />
-          <span>Back to Rights Overview</span>
+          <span>{t("common.backToHome")}</span>
         </Link>
         <span className="text-xs font-semibold text-[#0F9D76] uppercase tracking-wider px-3 py-1 bg-[#E6F4EA] rounded-full border border-[#A8DADC]">
           Payment of Wages Act 1936
