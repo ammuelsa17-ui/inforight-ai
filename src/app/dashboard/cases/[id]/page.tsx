@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/Feedback";
 import DocumentIntegrityChecksum from "@/components/DocumentIntegrityChecksum";
 import RtiStatutoryTimeline from "@/components/RtiStatutoryTimeline";
 import FirstAppealGenerator from "@/components/FirstAppealGenerator";
+import { calculateStatutoryTimeline } from "@/lib/statutory/timeline-engine";
 
 export default function CitizenCasePage() {
   const { id } = useParams();
@@ -129,24 +130,48 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
           <RtiStatutoryTimeline initialFilingDate={selectedCase.createdAt.split("T")[0]} />
         </div>
 
-        {/* Section: First Appeal Generator (Rendered ONLY when eligible: Pending/In Progress or Urgent) */}
-        {(selectedCase.status === "Pending" || selectedCase.status === "In Progress" || selectedCase.priority === "Urgent" || selectedCase.priority === "High") && (
-          <div className="mt-6 border-t border-borders pt-6">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
-              Statutory First Appeal Assistant (Section 19(1))
-            </h3>
-            <FirstAppealGenerator
-              initialData={{
-                originalRtiRefId: selectedCase.id,
-                filingDate: selectedCase.createdAt.split("T")[0],
-                targetAuthority: selectedCase.aiResponse?.authority.organization || selectedCase.localBodyName,
-                applicantName: selectedCase.applicantName || "",
-                applicantAddress: selectedCase.applicantAddress || "",
-                responseStatus: selectedCase.status === "Pending" ? "no_response" : "incomplete_info",
-              }}
-            />
-          </div>
-        )}
+        {/* Section: First Appeal Generator (Deterministic Statutory Eligibility Check) */}
+        {(() => {
+          const filingDateStr = selectedCase.createdAt.split("T")[0];
+          const timeline = calculateStatutoryTimeline(filingDateStr, false, "no_response");
+          const todayStr = new Date().toISOString().split("T")[0];
+          const isDeadlineExpired = todayStr >= timeline.standardResponseDeadline;
+          const isExplicitResponseRecorded = selectedCase.status === "In Progress" || selectedCase.status === "Resolved";
+          const isEligibleForAppeal = isDeadlineExpired || isExplicitResponseRecorded;
+
+          if (isEligibleForAppeal) {
+            return (
+              <div className="mt-6 border-t border-borders pt-6">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+                  Statutory First Appeal Assistant (Section 19(1))
+                </h3>
+                <FirstAppealGenerator
+                  initialData={{
+                    originalRtiRefId: selectedCase.id,
+                    filingDate: filingDateStr,
+                    targetAuthority: selectedCase.aiResponse?.authority.organization || selectedCase.localBodyName,
+                    applicantName: selectedCase.applicantName || "",
+                    applicantAddress: selectedCase.applicantAddress || "",
+                    responseStatus: isDeadlineExpired && !isExplicitResponseRecorded ? "no_response" : "incomplete_info",
+                  }}
+                />
+              </div>
+            );
+          }
+
+          return (
+            <div className="mt-6 border-t border-borders pt-6">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+                  Section 19(1) First Appeal Status: Pending Response Period
+                </span>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  First Appeal becomes available once the statutory 30-day PIO response deadline ({timeline.standardResponseDeadline}) passes or a qualifying PIO decision/refusal is recorded.
+                </p>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
