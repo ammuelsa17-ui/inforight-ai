@@ -7,10 +7,10 @@ import { VerifiedSourceRecord } from "@/types/source-data";
 export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
   {
     "id": "SRC-SCH-AP-CHEYUTHA",
-    "title": "YSR Cheyutha (Financial Support for Women Livelihoods)",
+    "title": "YSR Cheyutha (Under State Policy Review / Transition)",
     "domain": "WELFARE_SCHEMES",
     "subdomain": "4A_WOMEN_CHILDREN_FAMILY",
-    "summary": "Andhra Pradesh women empowerment scheme: Provides ₹18,750 per year (total ₹75,000 in 4 equal installments) directly via DBT to SC, ST, BC, and Minority women aged 45–60 years to set up sustainable livelihoods in animal husbandry, retail, and agriculture.",
+    "summary": "Historical welfare livelihood scheme providing ₹18,750/year (total ₹75,000 in 4 installments) to SC, ST, BC, and Minority women aged 45–60 years. NOTE: Following the 2024 state governance transition, legacy YSR Cheyutha is under administrative review and transitioning to the Super Six (Aadabidda Nidhi / NTR Bharosa) welfare architecture. New application intake is not open until revised operational guidelines are officially notified.",
     "jurisdiction": {
       "country": "IN",
       "state_ut": "Andhra Pradesh",
@@ -18,16 +18,16 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
       "jurisdiction_type": "EXCLUSIVE"
     },
     "provenance": {
-      "official_source_name": "Panchayat Raj & Rural Development Department, Government of Andhra Pradesh",
+      "official_source_name": "Panchayat Raj & Rural Development Department / Social Welfare, Government of Andhra Pradesh",
       "official_source_url": "https://gramawardsachivalayam.ap.gov.in",
       "source_type": "OFFICIAL_GOVT_PORTAL",
       "administering_authority": "Society for Elimination of Rural Poverty (SERP) / Village & Ward Secretariats",
       "effective_from": "2020-08-12",
-      "source_updated_date": "2024-02-01",
+      "source_updated_date": "2024-06-01",
       "last_verified": "2026-08-20",
-      "verification_status": "CURRENT",
+      "verification_status": "NEEDS_REVERIFICATION",
       "source_priority": 4,
-      "legal_basis": "G.O.Ms.No. 405, PR & RD Department, AP"
+      "legal_basis": "G.O.Ms.No. 405 (Historical) & Super Six Welfare Transition Policy (Govt of AP)"
     },
     "supported_use_cases": [
       "scheme_eligibility",
@@ -36,20 +36,17 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
     ],
     "authority_details": {
       "designation": "Welfare and Education Assistant (WEA) / Village Secretariat",
-      "organization": "Village and Ward Secretariats Department",
+      "organization": "Village and Ward Secretariats Department & Social Welfare",
       "portal_url": "https://gramawardsachivalayam.ap.gov.in",
-      "helpline_number": "1902 (Spandana / Citizen Helpline)",
+      "helpline_number": "1902 (Citizen Helpline)",
       "filing_modes": [
-        "PHYSICAL_COUNTER",
-        "ONLINE"
+        "PHYSICAL_COUNTER"
       ]
     },
     "rules_or_criteria": {
       "eligibility_conditions": [
-        "Women belonging to SC, ST, BC, or Minority communities",
-        "Age between 45 and 60 years",
-        "Total family income <= ₹10,000/month in rural areas or <= ₹12,000/month in urban areas",
-        "Total family landholding <= 3 acres wetland or <= 10 acres dryland"
+        "Historical criteria: Women belonging to SC, ST, BC, or Minority communities aged 45 to 60 years with rural family income <= ₹10,000/month or urban <= ₹12,000/month",
+        "Current status: Policy transition under Super Six guarantees pending publication of operational guidelines"
       ],
       "required_documents": [
         "Aadhaar Card",
@@ -59,17 +56,18 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
       ]
     },
     "keywords": [
-      "ysr cheyutha 18750",
-      "ap women livelihood 45 60 years",
-      "andhra pradesh cheyutha serp"
+      "ysr cheyutha historical",
+      "ap women livelihood transition",
+      "aadabidda nidhi review",
+      "andhra pradesh cheyutha review"
     ]
   },
   {
     "id": "SRC-SCH-AP-AAROGYASRI",
-    "title": "Dr. YSR Aarogyasri Health Scheme",
+    "title": "Dr. NTR Vaidya Seva (Universal Health Assurance Scheme - Andhra Pradesh)",
     "domain": "WELFARE_SCHEMES",
     "subdomain": "4L_HEALTH_MEDICAL_WELFARE",
-    "summary": "Cashless health assurance scheme providing comprehensive coverage for 3,257 notified medical/surgical procedures with financial limit up to ₹25,00,000 per family per year in empaneled network hospitals across Andhra Pradesh, Hyderabad, Chennai, and Bengaluru.",
+    "summary": "Cashless health assurance scheme (administered by Dr. NTR Vaidya Seva Trust, formerly Dr. YSR Aarogyasri): Provides 100% cashless medical and surgical treatment cover up to ₹25,00,000 per family per year for 3,257+ notified procedures in empaneled network hospitals across Andhra Pradesh, Hyderabad, Chennai, and Bengaluru for Rice Card / BPL cardholders.",
     "jurisdiction": {
       "country": "IN",
       "state_ut": "Andhra Pradesh",
@@ -77,16 +75,16 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
       "jurisdiction_type": "EXCLUSIVE"
     },
     "provenance": {
-      "official_source_name": "Dr. YSR Aarogyasri Health Care Trust, Government of Andhra Pradesh",
+      "official_source_name": "Dr. NTR Vaidya Seva Trust, Health, Medical & Family Welfare Department, Government of Andhra Pradesh",
       "official_source_url": "https://ysraarogyasri.ap.gov.in",
       "source_type": "OFFICIAL_GOVT_PORTAL",
-      "administering_authority": "Dr. YSR Aarogyasri Health Care Trust / Health, Medical & Family Welfare Department",
+      "administering_authority": "Dr. NTR Vaidya Seva Trust / Health, Medical & Family Welfare Department, AP",
       "effective_from": "2007-04-01",
-      "source_updated_date": "2024-01-01",
+      "source_updated_date": "2024-06-15",
       "last_verified": "2026-08-20",
       "verification_status": "CURRENT",
       "source_priority": 4,
-      "legal_basis": "Dr. YSR Aarogyasri Scheme Guidelines & Trust Rules"
+      "legal_basis": "Dr. NTR Vaidya Seva Scheme Guidelines & Trust Rules (Govt of AP)"
     },
     "supported_use_cases": [
       "scheme_eligibility",
@@ -95,7 +93,7 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
     ],
     "authority_details": {
       "designation": "Aarogya Mithra / District Coordinator",
-      "organization": "Dr. YSR Aarogyasri Health Care Trust",
+      "organization": "Dr. NTR Vaidya Seva Trust & Empaneled Hospitals",
       "portal_url": "https://ysraarogyasri.ap.gov.in",
       "helpline_number": "104 / 1800-425-1818",
       "filing_modes": [
@@ -105,19 +103,21 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
     },
     "rules_or_criteria": {
       "eligibility_conditions": [
-        "Families residing in Andhra Pradesh holding YSR Rice Card / BPL White Ration Card",
+        "Families residing in Andhra Pradesh holding Rice Card / BPL White Ration Card",
         "Annual family income <= ₹5,00,000 per annum"
       ],
       "required_documents": [
-        "YSR Aarogyasri Card / Rice Card",
+        "Aarogyasri / NTR Vaidya Seva Card / Rice Card",
         "Aadhaar Card",
         "Doctor referral from Primary Health Centre"
       ]
     },
     "keywords": [
-      "ysr aarogyasri health card",
+      "dr ntr vaidya seva health card",
+      "ntr aarogya seva 25 lakh",
+      "ysr aarogyasri legacy alias",
       "ap cashless health 25 lakh",
-      "aarogyasri trust 104 helpline"
+      "andhra pradesh cashless hospital 104"
     ]
   },
   {
@@ -1722,10 +1722,10 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
   },
   {
     "id": "SRC-SCH-OD-BSKY",
-    "title": "Biju Swasthya Kalyan Yojana (BSKY - Odisha)",
+    "title": "Gopabandhu Jan Arogya Yojana (GJAY - Odisha, converged with Ayushman Bharat PM-JAY)",
     "domain": "WELFARE_SCHEMES",
     "subdomain": "4L_HEALTH_MEDICAL_WELFARE",
-    "summary": "Odisha cashless health assurance scheme: Delivers 100% cashless hospitalization and critical treatment cover up to ₹5,00,000 per family per year (enhanced to ₹10,00,000 for women members of the family) in 800+ empaneled government and private network hospitals across Odisha and major Indian cities.",
+    "summary": "Odisha universal health assurance scheme (successor to Biju Swasthya Kalyan Yojana / BSKY, officially integrated with Ayushman Bharat PM-JAY): Delivers 100% cashless secondary and tertiary hospitalization treatment cover up to ₹5,00,000 per family per year (₹10,00,000 for women members) across 800+ empaneled public and private network hospitals across Odisha and premier national health institutions.",
     "jurisdiction": {
       "country": "IN",
       "state_ut": "Odisha",
@@ -1733,16 +1733,16 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
       "jurisdiction_type": "EXCLUSIVE"
     },
     "provenance": {
-      "official_source_name": "Health & Family Welfare Department, Government of Odisha",
-      "official_source_url": "https://bsky.odisha.gov.in",
+      "official_source_name": "State Health Assurance Society (SHAS), Health & Family Welfare Department, Government of Odisha",
+      "official_source_url": "https://gjay.odisha.gov.in",
       "source_type": "OFFICIAL_GOVT_PORTAL",
-      "administering_authority": "State Health Assurance Society (SHAS), Odisha",
+      "administering_authority": "State Health Assurance Society (SHAS), Odisha / National Health Authority (NHA)",
       "effective_from": "2018-08-15",
-      "source_updated_date": "2024-01-01",
+      "source_updated_date": "2024-07-01",
       "last_verified": "2026-08-20",
       "verification_status": "CURRENT",
       "source_priority": 4,
-      "legal_basis": "BSKY Smart Health Card Guidelines"
+      "legal_basis": "Gopabandhu Jan Arogya Yojana Guidelines & Ayushman Bharat Convergence Notification (Govt of Odisha)"
     },
     "supported_use_cases": [
       "scheme_eligibility",
@@ -1750,9 +1750,9 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
       "citation_provenance"
     ],
     "authority_details": {
-      "designation": "BSKY Swasthya Mitra / District Coordinator",
-      "organization": "SHAS Odisha & Hospital BSKY Helpdesk",
-      "portal_url": "https://bsky.odisha.gov.in",
+      "designation": "GJAY Swasthya Mitra / District Coordinator",
+      "organization": "State Health Assurance Society (SHAS) Odisha & Hospital Helpdesk",
+      "portal_url": "https://gjay.odisha.gov.in",
       "helpline_number": "104 / 155369",
       "filing_modes": [
         "PHYSICAL_COUNTER",
@@ -1761,18 +1761,20 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
     },
     "rules_or_criteria": {
       "eligibility_conditions": [
-        "All families holding NFSA / SFSS (State Food Security Scheme) BSKY Smart Health Cards of Odisha"
+        "All families holding NFSA / SFSS (State Food Security Scheme) Cards or GJAY / BSKY Smart Health Cards of Odisha",
+        "Converged beneficiaries under Ayushman Bharat PM-JAY database in Odisha"
       ],
       "required_documents": [
-        "BSKY Smart Health Card / Ration Card",
+        "GJAY / BSKY Smart Health Card / Ration Card",
         "Aadhaar Card of patient"
       ]
     },
     "keywords": [
-      "bsky odisha health card",
-      "biju swasthya kalyan yojana 10 lakh women",
-      "bsky odisha gov in",
-      "swasthya mitra bsky"
+      "gopabandhu jan arogya yojana gjay",
+      "gjay odisha gov in",
+      "bsky legacy alias odisha",
+      "ayushman bharat odisha convergence 10 lakh",
+      "swasthya mitra gjay"
     ]
   },
   {
@@ -1835,10 +1837,10 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
   },
   {
     "id": "SRC-SCH-RJ-CHIRANJEEVI",
-    "title": "Mukhyamantri Ayushman Arogya Yojana (Formerly Chiranjeevi Swasthya Bima)",
+    "title": "Mukhyamantri Ayushman Arogya Yojana (MAAY - Rajasthan)",
     "domain": "WELFARE_SCHEMES",
     "subdomain": "4L_HEALTH_MEDICAL_WELFARE",
-    "summary": "Flagship universal health assurance scheme of Rajasthan: Provides completely cashless secondary and tertiary hospital treatment cover of up to ₹25,00,000 per family per year in 1,800+ empaneled government and private network hospitals across Rajasthan, with zero premium for NFSA, SECC, small farmers, and contractual workers.",
+    "summary": "Flagship universal health assurance scheme of Rajasthan (officially renamed from Chiranjeevi Swasthya Bima Yojana): Provides completely cashless secondary and tertiary hospital treatment cover of up to ₹25,00,000 per family per year in 1,800+ empaneled government and private network hospitals across Rajasthan, with zero premium for NFSA, SECC, small farmers, contractual workers, and EWS families.",
     "jurisdiction": {
       "country": "IN",
       "state_ut": "Rajasthan",
@@ -1846,16 +1848,16 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
       "jurisdiction_type": "EXCLUSIVE"
     },
     "provenance": {
-      "official_source_name": "Rajasthan State Health Assurance Agency, Medical & Health Department",
+      "official_source_name": "Rajasthan State Health Assurance Agency, Medical & Health Department, Government of Rajasthan",
       "official_source_url": "https://health.rajasthan.gov.in/mmay",
       "source_type": "OFFICIAL_GOVT_PORTAL",
       "administering_authority": "Rajasthan State Health Assurance Agency (RSHAA)",
       "effective_from": "2021-05-01",
-      "source_updated_date": "2024-01-01",
+      "source_updated_date": "2024-06-01",
       "last_verified": "2026-08-20",
       "verification_status": "CURRENT",
       "source_priority": 4,
-      "legal_basis": "Mukhyamantri Ayushman Arogya Yojana Operational Guidelines"
+      "legal_basis": "Mukhyamantri Ayushman Arogya Yojana (MAAY) Operational Guidelines"
     },
     "supported_use_cases": [
       "scheme_eligibility",
@@ -1865,7 +1867,7 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
     "authority_details": {
       "designation": "Swasthya Margdarshak / Block Chief Medical Officer",
       "organization": "RSHAA & Jan Aadhaar Portal",
-      "portal_url": "https://health.rajasthan.gov.in",
+      "portal_url": "https://health.rajasthan.gov.in/mmay",
       "helpline_number": "181 (CM Helpline) / 104",
       "filing_modes": [
         "ONLINE",
@@ -1884,9 +1886,10 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
       ]
     },
     "keywords": [
-      "chiranjeevi swasthya bima rajasthan 25 lakh",
-      "mukhyamantri ayushman arogya yojana",
-      "jan aadhaar chiranjeevi card",
+      "mukhyamantri ayushman arogya yojana maay",
+      "rajasthan health insurance 25 lakh",
+      "chiranjeevi legacy alias rajasthan",
+      "jan aadhaar maay card",
       "rajasthan cashless hospital 181"
     ]
   },
@@ -2179,10 +2182,10 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
   },
   {
     "id": "SRC-SCH-TS-RYTHUBHAROSA",
-    "title": "Rythu Bharosa / Rythu Bandhu (Telangana Farmer Investment Support)",
+    "title": "Rythu Bharosa (Telangana Agricultural Investment & Labour Support Scheme)",
     "domain": "WELFARE_SCHEMES",
     "subdomain": "4H_FARMERS_AGRICULTURE",
-    "summary": "Telangana agricultural investment support: Provides ₹15,000 per acre per year (₹7,500 per acre per crop season for Kharif and Rabi) deposited directly via DBT into bank accounts of land-owning farmers and tenant farmers holding Pattadar Passbooks.",
+    "summary": "Telangana flagship agricultural investment support scheme (successor to Rythu Bandhu): Provides ₹15,000 per acre per year (₹7,500 per acre per crop season for Kharif and Rabi) directly deposited via DBT into bank accounts of land-owning farmers holding Pattadar Passbooks, and ₹12,000 per year financial assistance for landless agricultural labourers.",
     "jurisdiction": {
       "country": "IN",
       "state_ut": "Telangana",
@@ -2195,7 +2198,7 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
       "source_type": "OFFICIAL_GOVT_PORTAL",
       "administering_authority": "Department of Agriculture, Telangana",
       "effective_from": "2018-05-10",
-      "source_updated_date": "2024-01-01",
+      "source_updated_date": "2024-06-01",
       "last_verified": "2026-08-20",
       "verification_status": "CURRENT",
       "source_priority": 4,
@@ -2218,8 +2221,8 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
     },
     "rules_or_criteria": {
       "eligibility_conditions": [
-        "Farmer owning agricultural land in Telangana holding Dharani Pattadar Passbook",
-        "Tenant farmers verified under official revenue enumeration"
+        "Farmers owning agricultural land in Telangana holding Dharani Pattadar Passbooks (₹15,000/acre/year)",
+        "Landless agricultural labourers verified through village enumeration (₹12,000/year)"
       ],
       "required_documents": [
         "Dharani Pattadar Passbook / Title Deed",
@@ -2229,17 +2232,18 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
     },
     "keywords": [
       "rythu bharosa telangana 15000",
-      "rythu bandhu 7500 per acre",
-      "dharani passbook farmer dbt",
-      "telangana agriculture investment support"
+      "telangana farmer investment 7500 per season",
+      "rythu bandhu predecessor alias",
+      "landless labourer 12000 telangana",
+      "dharani passbook farmer dbt"
     ]
   },
   {
     "id": "SRC-SCH-TS-DALITBANDHU",
-    "title": "Telangana Dalit Bandhu Scheme",
+    "title": "Telangana Dalit Bandhu Scheme (Under State Administrative Review)",
     "domain": "WELFARE_SCHEMES",
     "subdomain": "4C_SC_WELFARE",
-    "summary": "One-time 100% direct capital grant of ₹10,00,000 per family to Scheduled Caste (SC) households in Telangana without bank loan linkage or collateral, to establish independent enterprises in transport, retail, dairy, manufacturing, or services.",
+    "summary": "Historical direct capital grant scheme for Scheduled Caste (SC) households (₹10,00,000 one-time enterprise grant). NOTE: Following the state governance transition, the scheme is currently under comprehensive administrative review and restructuring into the Ambedkar Abhaya Hastham welfare framework. New applications and guaranteed capital disbursals are paused pending revised state guidelines.",
     "jurisdiction": {
       "country": "IN",
       "state_ut": "Telangana",
@@ -2252,11 +2256,11 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
       "source_type": "OFFICIAL_GOVT_PORTAL",
       "administering_authority": "Telangana Scheduled Castes Co-operative Development Corporation (TSCCDC)",
       "effective_from": "2021-08-04",
-      "source_updated_date": "2024-01-01",
+      "source_updated_date": "2024-06-01",
       "last_verified": "2026-08-20",
-      "verification_status": "CURRENT",
+      "verification_status": "NEEDS_REVERIFICATION",
       "source_priority": 4,
-      "legal_basis": "Dalit Bandhu Operational Guidelines (G.O.Ms.No. 23 SCDD)"
+      "legal_basis": "Dalit Bandhu G.O.Ms.No. 23 (Historical) & Ambedkar Abhaya Hastham Policy Transition (Govt of Telangana)"
     },
     "supported_use_cases": [
       "scheme_eligibility",
@@ -2273,8 +2277,8 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
     },
     "rules_or_criteria": {
       "eligibility_conditions": [
-        "Household belonging to Scheduled Caste (SC) community resident of Telangana",
-        "Holder of Food Security Card (White Ration Card)"
+        "Historical criteria: SC households resident of Telangana holding Food Security / White Ration Card",
+        "Current status: Policy transition and executive review under Ambedkar Abhaya Hastham pending publication of fresh operational guidelines"
       ],
       "required_documents": [
         "SC Community Certificate",
@@ -2284,8 +2288,9 @@ export const STATE_SCHEME_SOURCES: VerifiedSourceRecord[] = [
       ]
     },
     "keywords": [
-      "dalit bandhu telangana 10 lakh",
-      "sc 10 lakh grant telangana",
+      "dalit bandhu telangana review",
+      "ambedkar abhaya hastham transition",
+      "sc welfare telangana review",
       "dalitbandhu telangana gov in"
     ]
   },
