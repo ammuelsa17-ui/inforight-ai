@@ -17,7 +17,7 @@ import { useLanguage } from "@/context/LanguageContext";
 
 const PREFILLED_SCENARIOS = [
   {
-    label: "Coimbatore R.S. Puram Potholes",
+    labelKey: "ask.scenario1Label" as const,
     issue: "Deep potholes and unpaved trench cuts along DB Road, R.S. Puram causing severe traffic slowdowns and accidents.",
     state: "Tamil Nadu",
     district: "Coimbatore",
@@ -27,7 +27,7 @@ const PREFILLED_SCENARIOS = [
     dateRange: "January 2026 to Present",
   },
   {
-    label: "Peelamedu Storm Drain Damage",
+    labelKey: "ask.scenario2Label" as const,
     issue: "Open storm water drain and broken slab covers near Peelamedu bus stop posing danger to pedestrians.",
     state: "Tamil Nadu",
     district: "Coimbatore",
@@ -37,7 +37,7 @@ const PREFILLED_SCENARIOS = [
     dateRange: "Last 6 Months",
   },
   {
-    label: "Gandhipuram Road Re-tarring Inspection",
+    labelKey: "ask.scenario3Label" as const,
     issue: "Road re-tarring work completed 2 months ago is peeling off and damaged after rain; request inspection and MB records.",
     state: "Tamil Nadu",
     district: "Coimbatore",
@@ -47,6 +47,8 @@ const PREFILLED_SCENARIOS = [
     dateRange: "FY 2025-26",
   },
 ];
+
+type IssueInputSource = "manual" | "voice" | "prefilled";
 
 export default function AskPage() {
   // Sync with Global Language Context
@@ -63,6 +65,8 @@ export default function AskPage() {
 
   // Step form state
   const [issue, setIssue] = useState("");
+  const [issueInputSource, setIssueInputSource] = useState<IssueInputSource>("manual");
+  const [issueInputLanguage, setIssueInputLanguage] = useState<BharatLanguageCode>("en-IN");
   const [state, setState] = useState("Tamil Nadu");
   const [district, setDistrict] = useState("Coimbatore");
   const [localBodyName, setLocalBodyName] = useState("Coimbatore City Municipal Corporation");
@@ -82,6 +86,8 @@ export default function AskPage() {
 
   const applyScenario = (scenario: typeof PREFILLED_SCENARIOS[0]) => {
     setIssue(scenario.issue);
+    setIssueInputSource("prefilled");
+    setIssueInputLanguage("en-IN"); // Canonical prefilled scenarios are ALWAYS en-IN
     setState(scenario.state);
     setDistrict(scenario.district);
     setLocalBodyName(scenario.localBodyName);
@@ -94,7 +100,7 @@ export default function AskPage() {
   const startVoiceRecording = async () => {
     try {
       if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
-        alert("Voice recording is not supported in this browser environment.");
+        alert(t("ask.voiceUnsupported"));
         return;
       }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -116,7 +122,7 @@ export default function AskPage() {
           const res = await transcribeAudio(audioBlob, selectedLanguage);
           setVoiceTranscript(res.transcript);
         } catch {
-          setVoiceTranscript("Voice transcription error. Please try again or type text.");
+          setVoiceTranscript(t("ask.transcriptionError"));
         } finally {
           setIsTranscribing(false);
           setRecordingSeconds(0);
@@ -139,7 +145,7 @@ export default function AskPage() {
         }
       }, 1000);
     } catch {
-      alert("Microphone permission denied or unsupported browser.");
+      alert(t("ask.microphoneDenied"));
     }
   };
 
@@ -154,7 +160,7 @@ export default function AskPage() {
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!issue.trim() || !locality.trim()) {
-      setError("Please describe the civic problem and enter the locality.");
+      setError(t("ask.requiredFieldsError"));
       return;
     }
 
@@ -167,14 +173,14 @@ export default function AskPage() {
     setShowSuitabilityBanner(isOpinionQuery);
 
     try {
-      // Step A: Translate Indic input to canonical English normalized input if non-English
+      // Step A: Translate Indic input to canonical English normalized input ONLY IF issueInputLanguage is not en-IN
       let canonicalEnglishIssue = issue;
-      if (selectedLanguage !== "en-IN") {
-        const transRes = await translateText(issue, "en-IN", selectedLanguage);
+      if (issueInputLanguage !== "en-IN") {
+        const transRes = await translateText(issue, "en-IN", issueInputLanguage);
         if (transRes.fallbackOccurred) {
-          throw new Error(
-            "Translation is currently unavailable. Your grievance has not been submitted for legal processing. Please retry or switch input language to English."
-          );
+          setError(t("ask.translationUnavailableError"));
+          setLoading(false);
+          return;
         }
         canonicalEnglishIssue = transRes.translatedText;
       }
@@ -196,9 +202,9 @@ export default function AskPage() {
     } catch (err) {
       setResult(null);
       setError(
-        err instanceof Error
+        err instanceof Error && err.message
           ? err.message
-          : "Unable to generate the RTI application. Please try again."
+          : t("ask.genericGenerationError")
       );
     } finally {
       setLoading(false);
@@ -234,7 +240,7 @@ export default function AskPage() {
       {/* Demo Scenario Selectors */}
       <div className="space-y-2">
         <label className="text-xs font-bold text-[#526176] uppercase tracking-wider">
-          Quick Prefilled Scenarios (Coimbatore)
+          {t("ask.quickScenariosLabel")}
         </label>
         <div className="flex flex-wrap gap-2">
           {PREFILLED_SCENARIOS.map((sc, idx) => (
@@ -244,12 +250,12 @@ export default function AskPage() {
               onClick={() => applyScenario(sc)}
               className="px-3 py-1.5 rounded-lg bg-white border border-[#BCD7EE] text-xs font-semibold text-[#102A56] hover:bg-[#F4F9FF] hover:border-[#4F46E5] transition-colors shadow-xs"
             >
-              {sc.label}
+              {t(sc.labelKey)}
             </button>
           ))}
         </div>
         <p className="text-[11px] text-[#526176]">
-          Demo inputs are hypothetical. Verify the locality, ward and date range before filing.
+          {t("ask.quickScenariosHelp")}
         </p>
       </div>
 
@@ -288,11 +294,11 @@ export default function AskPage() {
                     ? "bg-red-600 text-white animate-pulse"
                     : "bg-indigo-600 text-white hover:bg-indigo-700"
                 }`}
-                title="Record voice input in selected language"
-                aria-label="Voice input recording"
+                title={t("ask.recordVoiceTitle")}
+                aria-label={t("ask.recordVoiceAria")}
               >
                 {isRecording ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
-                <span>{isRecording ? `${t("ask.stopRecording")} (${recordingSeconds}s / 30s max)` : isTranscribing ? t("ask.transcribing") : t("ask.startRecording")}</span>
+                <span>{isRecording ? `${t("ask.stopRecording")} (${recordingSeconds}s / ${t("ask.recordingMaxSuffix")})` : isTranscribing ? t("ask.transcribing") : t("ask.startRecording")}</span>
               </button>
             </div>
           </div>
@@ -306,17 +312,19 @@ export default function AskPage() {
                   type="button"
                   onClick={() => {
                     setIssue(voiceTranscript);
+                    setIssueInputSource("voice");
+                    setIssueInputLanguage(selectedLanguage);
                     setVoiceTranscript("");
                   }}
-                  className="px-2.5 py-1 bg-emerald-600 text-white rounded text-[11px] font-bold hover:bg-emerald-700 flex items-center gap-1"
+                  className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs flex items-center gap-1"
                 >
-                  <Check className="w-3 h-3" />
-                  <span>{t("ask.useTranscript")}</span>
+                  <Check className="w-3.5 h-3.5" />
+                  {t("ask.useTranscript")}
                 </button>
                 <button
                   type="button"
                   onClick={() => setVoiceTranscript("")}
-                  className="px-2.5 py-1 bg-slate-200 text-slate-700 rounded text-[11px] font-semibold hover:bg-slate-300"
+                  className="px-3 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded font-bold text-xs"
                 >
                   {t("ask.discard")}
                 </button>
@@ -327,13 +335,19 @@ export default function AskPage() {
 
         <div className="space-y-2">
           <label className="block text-sm font-bold text-[#102A56]">
-            1. Describe the Civic Road Problem <span className="text-red-500">*</span>
+            {t("ask.problemLabel")} <span className="text-red-500">*</span>
           </label>
           <textarea
             rows={3}
             value={issue}
-            onChange={(e) => setIssue(e.target.value)}
-            placeholder="E.g., Deep potholes and broken pavement along DB Road near R.S. Puram causing traffic congestion and accidents."
+            onChange={(e) => {
+              setIssue(e.target.value);
+              if (issueInputSource !== "prefilled") {
+                setIssueInputSource("manual");
+                setIssueInputLanguage(selectedLanguage);
+              }
+            }}
+            placeholder={t("ask.problemPlaceholder")}
             className="w-full p-3 bg-white border border-[#BCD7EE] rounded-xl text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
             required
           />
@@ -342,7 +356,7 @@ export default function AskPage() {
         {/* Location Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">State</label>
+            <label className="block text-xs font-bold text-[#102A56]">{t("ask.stateLabel")}</label>
             <input
               type="text"
               value={state}
@@ -353,7 +367,7 @@ export default function AskPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">District</label>
+            <label className="block text-xs font-bold text-[#102A56]">{t("ask.districtLabel")}</label>
             <input
               type="text"
               value={district}
@@ -364,7 +378,7 @@ export default function AskPage() {
           </div>
 
           <div className="space-y-2 sm:col-span-2">
-            <label className="block text-xs font-bold text-[#102A56]">Local Body Name</label>
+            <label className="block text-xs font-bold text-[#102A56]">{t("ask.localBodyLabel")}</label>
             <input
               type="text"
               value={localBodyName}
@@ -376,36 +390,36 @@ export default function AskPage() {
 
           <div className="space-y-2">
             <label className="block text-xs font-bold text-[#102A56]">
-              Locality / Road Name <span className="text-red-500">*</span>
+              {t("ask.localityLabel")} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={locality}
               onChange={(e) => setLocality(e.target.value)}
-              placeholder="E.g., DB Road, R.S. Puram"
+              placeholder={t("ask.localityPlaceholder")}
               className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">Ward Number (Optional)</label>
+            <label className="block text-xs font-bold text-[#102A56]">{t("ask.wardLabel")}</label>
             <input
               type="text"
               value={ward}
               onChange={(e) => setWard(e.target.value)}
-              placeholder="E.g., Ward 23"
+              placeholder={t("ask.wardPlaceholder")}
               className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
             />
           </div>
 
           <div className="space-y-2 sm:col-span-2">
-            <label className="block text-xs font-bold text-[#102A56]">Date Range (Optional)</label>
+            <label className="block text-xs font-bold text-[#102A56]">{t("ask.dateRangeLabel")}</label>
             <input
               type="text"
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
-              placeholder="E.g., January 2026 to Present"
+              placeholder={t("ask.dateRangePlaceholder")}
               className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
             />
           </div>
@@ -415,26 +429,26 @@ export default function AskPage() {
         <div className="p-4 rounded-xl bg-[#F4F9FF] border border-[#BCD7EE] space-y-4">
           <div className="flex items-center gap-2 text-xs font-bold text-[#0369A1] uppercase tracking-wider">
             <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
-            Applicant details — kept in this browser session
+            {t("ask.applicantDetailsTitle")}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="block text-xs font-semibold text-[#526176]">Applicant Name</label>
+              <label className="block text-xs font-semibold text-[#526176]">{t("ask.applicantNameLabel")}</label>
               <input
                 type="text"
                 value={applicantName}
                 onChange={(e) => setApplicantName(e.target.value)}
-                placeholder="E.g., K. Harsha"
+                placeholder={t("ask.applicantNamePlaceholder")}
                 className="w-full p-2 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
               />
             </div>
             <div className="space-y-1">
-              <label className="block text-xs font-semibold text-[#526176]">Applicant Address</label>
+              <label className="block text-xs font-semibold text-[#526176]">{t("ask.applicantAddressLabel")}</label>
               <input
                 type="text"
                 value={applicantAddress}
                 onChange={(e) => setApplicantAddress(e.target.value)}
-                placeholder="E.g., 42 R.S. Puram, Coimbatore - 641002"
+                placeholder={t("ask.applicantAddressPlaceholder")}
                 className="w-full p-2 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
               />
             </div>
@@ -454,7 +468,7 @@ export default function AskPage() {
           className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] transition-colors shadow-md shadow-indigo-100 disabled:opacity-50"
         >
           <Sparkles className="w-5 h-5" />
-          <span>{loading ? "Generating Record Requests..." : "Generate RTI Application"}</span>
+          <span>{loading ? t("ask.generating") : t("ask.generateBtn")}</span>
         </button>
       </form>
 
@@ -463,9 +477,9 @@ export default function AskPage() {
         <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-sm shadow-xs">
           <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <h4 className="font-bold text-blue-950">RTI Suitability Guidance</h4>
+            <h4 className="font-bold text-blue-950">{t("ask.suitabilityTitle")}</h4>
             <p className="text-blue-900/90 leading-relaxed">
-              RTI generally requests existing official records rather than explanations or subjective opinions. We converted your concern into requests for work orders, estimates, Measurement Book (MB) entries, and expenditure records.
+              {t("ask.suitabilityBody")}
             </p>
           </div>
         </div>

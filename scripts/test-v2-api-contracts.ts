@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+import assert from "assert";
 import { POST as triageHandler } from "@/app/api/triage/route";
 import { POST as rtiHandler } from "@/app/api/rti/generate/route";
 import { POST as rightsHandler } from "@/app/api/rights/navigate/route";
@@ -634,6 +637,39 @@ async function runRouteHandlerContractTests() {
     const mniStr = JSON.stringify(getUITranslations("mni-IN"));
     const bengaliScriptInMniRegex = /[\u0980-\u09FF]/;
     assert(!bengaliScriptInMniRegex.test(mniStr), "Manipuri locale uses pure Meitei Mayek with 0 Bengali script character contamination");
+
+    // 5. Source-level test for /ask/page.tsx wiring & accessibility/error literals
+    const askPageCode = fs.readFileSync(path.join(__dirname, "../src/app/ask/page.tsx"), "utf8");
+    const rawEnglishInAsk = [
+      ">State<",
+      ">District<",
+      ">Local Body Name<",
+      ">Applicant Name<",
+      ">Applicant Address<",
+      "Generate RTI Application",
+      "Generating Record Requests",
+      "Quick Prefilled Scenarios",
+      "RTI Suitability Guidance",
+      '"Voice recording is not supported in this browser environment."',
+      '"Microphone permission denied or unsupported browser."',
+      '"Voice transcription error. Please try again or type text."',
+      '"Please describe the civic problem and enter the locality."',
+      '"Unable to generate the RTI application. Please try again."',
+      '"Translation is currently unavailable. Your grievance has not been submitted for legal processing. Please retry or switch input language to English."',
+      'title="Record voice input in selected language"',
+      'aria-label="Voice input recording"',
+      '"30s max"'
+    ];
+    for (const literal of rawEnglishInAsk) {
+      assert(!askPageCode.includes(literal), `/ask/page.tsx contains zero raw user-facing literal '${literal}'`);
+    }
+
+    // 6. Verify inputLanguage & provenance safety in /ask/page.tsx
+    assert(askPageCode.includes('issueInputLanguage'), "/ask/page.tsx uses issueInputLanguage state for input-language safety");
+    assert(askPageCode.includes('issueInputSource'), "/ask/page.tsx tracks issueInputSource provenance");
+    assert(askPageCode.includes('setIssueInputSource("prefilled")'), "applyScenario explicitly sets issueInputSource to prefilled");
+    assert(askPageCode.includes('issueInputSource !== "prefilled"'), "Editing prefilled scenarios preserves canonical en-IN input language");
+    assert(askPageCode.includes('if (issueInputLanguage !== "en-IN")'), "handleGenerate only translates if issueInputLanguage is non-English");
   }
 
   // Test 48: Audio MIME extension mapping helper
