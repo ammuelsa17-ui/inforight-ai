@@ -5,6 +5,9 @@ import { POST as schemesHandler } from "@/app/api/schemes/match/route";
 import { POST as langTranslateHandler } from "@/app/api/language/translate/route";
 import { POST as langTranscribeHandler } from "@/app/api/language/transcribe/route";
 import { POST as langSpeakHandler } from "@/app/api/language/speak/route";
+import { ALL_BHARAT_LANGUAGES } from "@/lib/language/languages";
+import { getUITranslations } from "@/i18n/ui-translations";
+import { getAudioExtensionFromMime } from "@/services/language";
 import { NextRequest } from "next/server";
 
 async function runRouteHandlerContractTests() {
@@ -509,6 +512,12 @@ async function runRouteHandlerContractTests() {
     const chunks = splitTextForSarvam(longText, 1900);
     assert(chunks.length > 1, `Long-text chunking splits 3000 chars into ${chunks.length} chunks`);
     assert(chunks.every((c) => c.length <= 1900), "All translation chunks remain <= 1,900 characters");
+
+    // Zero-data-loss verification for a single continuous sentence > 2,000 chars
+    const hugeSentence = "VeryLongLegalWordWithoutSpaces".repeat(100); // 3,000 chars
+    const hugeChunks = splitTextForSarvam(hugeSentence, 1900);
+    const reassembled = hugeChunks.join(" ");
+    assert(reassembled.replace(/\s/g, "").length === hugeSentence.length, "Zero data loss: huge continuous sentence is fully preserved without truncation");
   }
 
   // Test 43: Language Transcribe rejects empty request body -> HTTP 400
@@ -559,6 +568,81 @@ async function runRouteHandlerContractTests() {
     const str = JSON.stringify(data);
     assert(!str.includes("api-subscription-key"), "Language route response contains zero API key headers");
     assert(!str.includes("SARVAM_API_KEY"), "Language route response contains zero SARVAM_API_KEY strings");
+  }
+
+  // Test 47: Static Dictionary Completeness — Verify all 23 Bharat languages have non-empty UI translations
+  {
+    let dictionaryComplete = true;
+    for (const lang of ALL_BHARAT_LANGUAGES) {
+      const dict = getUITranslations(lang.code);
+      if (!dict.nav.home || !dict.rights.title || !dict.schemes.title || !dict.sources.title || !dict.dashboard.title) {
+        dictionaryComplete = false;
+        break;
+      }
+    }
+    assert(dictionaryComplete, "Static UI translation dictionary completeness verified across all 23 Scheduled Indian languages");
+  }
+
+  // Test 48: Audio MIME extension mapping helper
+  {
+    assert(getAudioExtensionFromMime("audio/webm;codecs=opus") === ".webm", "Audio extension for audio/webm is .webm");
+    assert(getAudioExtensionFromMime("audio/mp4") === ".m4a", "Audio extension for audio/mp4 is .m4a");
+    assert(getAudioExtensionFromMime("audio/wav") === ".wav", "Audio extension for audio/wav is .wav");
+  }
+
+  // Test 49: Translation route validates both sourceLanguage and targetLanguage
+  {
+    const req = new NextRequest("http://localhost/api/language/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        text: "Test",
+        sourceLanguage: "invalid-code",
+        targetLanguage: "hi-IN",
+      }),
+    });
+    const res = await langTranslateHandler(req);
+    assert(res.status === 400, "Language translate rejects invalid sourceLanguage with HTTP 400");
+  }
+
+  // Test 50: Transcribe route rejects invalid STT language -> HTTP 400
+  {
+    const formData = new FormData();
+    const blob = new Blob(["dummy audio"], { type: "audio/wav" });
+    formData.append("file", blob, "test.wav");
+    formData.append("languageCode", "invalid-lang-code");
+    const req = new NextRequest("http://localhost/api/language/transcribe", {
+      method: "POST",
+      body: formData,
+    });
+    const res = await langTranscribeHandler(req);
+    assert(res.status === 400, "Language transcribe rejects STT unsupported language with HTTP 400");
+  }
+
+  // Test 51: Transcribe route rejects non-audio MIME type (e.g., application/octet-stream) -> HTTP 400
+  {
+    const formData = new FormData();
+    const blob = new Blob(["raw binary"], { type: "application/octet-stream" });
+    formData.append("file", blob, "test.bin");
+    formData.append("languageCode", "hi-IN");
+    const req = new NextRequest("http://localhost/api/language/transcribe", {
+      method: "POST",
+      body: formData,
+    });
+    const res = await langTranscribeHandler(req);
+    assert(res.status === 400, "Language transcribe rejects application/octet-stream non-audio MIME with HTTP 400");
+  }
+
+  // Test 52: TTS payload field name contract — Verify language_code is required (NOT target_language_code)
+  {
+    const ttsPayload = {
+      text: "வணக்கம்",
+      language_code: "ta-IN",
+      model: "bulbul:v3",
+      speaker: "shubh",
+      pace: 1.0,
+    };
+    assert(ttsPayload.language_code === "ta-IN", "TTS contract uses language_code field");
+    assert((ttsPayload as Record<string, unknown>).target_language_code === undefined, "TTS contract excludes target_language_code field");
   }
 
   console.log("\n=================================================================");

@@ -3,23 +3,26 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, FileText, Scale, Award, MessageSquareText, AlertTriangle } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function HomePage() {
+  const { t } = useLanguage();
+
   return (
     <div className="w-full space-y-16 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Hero Section */}
       <section className="text-center space-y-6 pt-6 pb-10 border-b border-[#BCD7EE]">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E0F2FE] border border-[#7DD3FC] text-[#0369A1] text-xs font-semibold uppercase tracking-wider">
           <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
-          AI for Civic and Legal Empowerment — Version 2.0
+          {t("home.badge")}
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-extrabold text-[#102A56] tracking-tight leading-tight max-w-4xl mx-auto">
-          Understand and Act on Your <span className="text-[#4F46E5]">Civic & Legal Rights</span>
+          {t("home.title")}
         </h1>
 
         <p className="text-base sm:text-lg text-[#526176] max-w-3xl mx-auto leading-relaxed font-normal">
-          InfoRight AI translates bureaucratic complexity into a clear, guided path. Describe your civic or legal problem in plain language to generate certified RTI record requests, navigate consumer, tenant, or workplace disputes, or match verified welfare schemes.
+          {t("home.subtitle")}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -27,7 +30,7 @@ export default function HomePage() {
             href="/ask"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl text-base font-bold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-md shadow-indigo-100"
           >
-            <span>Describe Your Problem (Unified Entry)</span>
+            <span>{t("home.cta")}</span>
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>

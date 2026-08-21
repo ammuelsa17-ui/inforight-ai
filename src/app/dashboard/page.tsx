@@ -4,6 +4,7 @@ import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRole, Case } from "@/context/RoleContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { RIGHTS_DATA } from "@/data/rights";
 import {
   MessageSquarePlus,
@@ -36,6 +37,7 @@ export default function CitizenDashboardPage() {
 function CitizenDashboardContent() {
   const searchParams = useSearchParams();
   const activeTab = searchParams.get("tab") || "overview";
+  const { t } = useLanguage();
   
   const {
     cases,
@@ -203,10 +205,10 @@ ${selectedCase.applicantAddress}
       <div className="bg-white border border-borders rounded-lg p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4.5 shadow-2xs">
         <div>
           <h2 className="text-xl font-bold tracking-tight text-dark-text sm:text-2xl">
-            Welcome back, Citizen
+            {t("dashboard.title")}
           </h2>
           <p className="text-xs sm:text-sm text-secondary-text mt-1">
-            Manage your legal consultations, review drafted RTIs, and track official municipal decisions here.
+            {t("dashboard.subtitle")}
           </p>
         </div>
         <Link href="/ask">

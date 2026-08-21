@@ -92,11 +92,27 @@ export default function GeneratedPreview({
         editedQuestions.map((q) => translateText(q, targetLanguage, "en-IN"))
       );
 
-      setTranslatedSubject(subjectRes.translatedText);
-      setTranslatedBody(bodyRes.translatedText);
-      setTranslatedQuestions(qResults.map((r) => r.translatedText));
-      setTranslationDisclaimer(subjectRes.disclaimer || "Translated from canonical English legal draft using Sarvam AI Formal Legal Translation.");
-      setActiveDisplayMode("translated");
+      const fallbackTriggered =
+        subjectRes.fallbackOccurred ||
+        bodyRes.fallbackOccurred ||
+        qResults.some((r) => r.fallbackOccurred);
+
+      if (fallbackTriggered) {
+        setTranslationDisclaimer(
+          subjectRes.disclaimer ||
+            "Multilingual translation service unavailable. Displaying official source-grounded English version."
+        );
+        setActiveDisplayMode("canonical");
+      } else {
+        setTranslatedSubject(subjectRes.translatedText);
+        setTranslatedBody(bodyRes.translatedText);
+        setTranslatedQuestions(qResults.map((r) => r.translatedText));
+        setTranslationDisclaimer(
+          subjectRes.disclaimer ||
+            "Translated from canonical English legal draft using Sarvam AI Formal Legal Translation."
+        );
+        setActiveDisplayMode("translated");
+      }
     } catch {
       setTranslationDisclaimer("Multilingual translation service unavailable. Displaying official source-grounded English version.");
       setActiveDisplayMode("canonical");
@@ -105,9 +121,14 @@ export default function GeneratedPreview({
     }
   };
 
+  const currentSegmentIndexRef = React.useRef<number>(0);
+  const audioSegmentsRef = React.useRef<string[]>([]);
+  const mimeTypeRef = React.useRef<string>("audio/wav");
+
   const handlePlaySarvamAudio = async () => {
     if (isPlayingAudio && audioRef.current) {
       audioRef.current.pause();
+      audioRef.current = null;
       setIsPlayingAudio(false);
       return;
     }
@@ -117,25 +138,51 @@ export default function GeneratedPreview({
       const textToSpeak = `${editedSubject}. ${editedQuestions.join(". ")}`;
       const res = await speakText(textToSpeak, targetLanguage);
 
-      if (!res.audioBase64) {
+      const segments = res.audioSegmentsBase64 && res.audioSegmentsBase64.length > 0
+        ? res.audioSegmentsBase64
+        : [res.audioBase64];
+
+      if (!segments[0]) {
         throw new Error("No audio returned from speech synthesizer.");
       }
 
-      const audioSrc = `data:${res.mimeType};base64,${res.audioBase64}`;
-      const audio = new Audio(audioSrc);
-      audioRef.current = audio;
+      audioSegmentsRef.current = segments;
+      mimeTypeRef.current = res.mimeType || "audio/wav";
+      currentSegmentIndexRef.current = 0;
 
-      audio.onended = () => setIsPlayingAudio(false);
-      audio.onerror = () => {
-        setIsPlayingAudio(false);
-        setAudioError("Audio playback error.");
+      const playNextSegment = (index: number) => {
+        if (index >= audioSegmentsRef.current.length) {
+          setIsPlayingAudio(false);
+          audioRef.current = null;
+          return;
+        }
+
+        const b64 = audioSegmentsRef.current[index];
+        const audioSrc = `data:${mimeTypeRef.current};base64,${b64}`;
+        const audio = new Audio(audioSrc);
+        audioRef.current = audio;
+
+        audio.onended = () => {
+          currentSegmentIndexRef.current = index + 1;
+          playNextSegment(index + 1);
+        };
+        audio.onerror = () => {
+          setIsPlayingAudio(false);
+          setAudioError("Audio playback error.");
+          audioRef.current = null;
+        };
+
+        setIsPlayingAudio(true);
+        audio.play().catch(() => {
+          setIsPlayingAudio(false);
+          setAudioError("Audio playback failed to start.");
+        });
       };
 
-      await audio.play();
-      setIsPlayingAudio(true);
-    } catch (err: unknown) {
+      playNextSegment(0);
+    } catch {
+      setAudioError("Speech synthesis unavailable for this language.");
       setIsPlayingAudio(false);
-      setAudioError(err instanceof Error ? err.message : "Speech synthesis unavailable");
     }
   };
 

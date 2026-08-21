@@ -20,9 +20,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Field 'targetLanguage' is required." }, { status: 400 });
     }
 
+    if (!supportsTranslation(sourceLanguage)) {
+      return NextResponse.json(
+        { error: `UNSUPPORTED_SOURCE_LANGUAGE: ${sourceLanguage}` },
+        { status: 400 }
+      );
+    }
+
     if (!supportsTranslation(targetLanguage)) {
       return NextResponse.json(
-        { error: `Unsupported target language: ${targetLanguage}` },
+        { error: `UNSUPPORTED_TARGET_LANGUAGE: ${targetLanguage}` },
         { status: 400 }
       );
     }
@@ -34,8 +41,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(result, { status: 200 });
-  } catch (err: unknown) {
-    const errMsg = err instanceof Error ? err.message : "Internal Server Error";
-    return NextResponse.json({ error: errMsg }, { status: 500 });
+  } catch {
+    console.error("Sarvam Translation failed", { status: 500, code: "TRANSLATION_FAILED" });
+    return NextResponse.json({ error: "TRANSLATION_FAILED" }, { status: 500 });
   }
 }

@@ -13,6 +13,7 @@ import { ArrowLeft, Sparkles, AlertCircle, Info, ShieldCheck, Mic, MicOff, Globe
 import { ALL_BHARAT_LANGUAGES } from "@/lib/language/languages";
 import { BharatLanguageCode } from "@/lib/language/types";
 import { translateText, transcribeAudio } from "@/services/language";
+import { useLanguage } from "@/context/LanguageContext";
 
 const PREFILLED_SCENARIOS = [
   {
@@ -48,8 +49,10 @@ const PREFILLED_SCENARIOS = [
 ];
 
 export default function AskPage() {
-  // Language & Voice State
-  const [selectedLanguage, setSelectedLanguage] = useState<BharatLanguageCode>("en-IN");
+  // Sync with Global Language Context
+  const { selectedLanguage, setSelectedLanguage } = useLanguage();
+
+  // Voice State
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const [isTranscribing, setIsTranscribing] = useState(false);
@@ -106,7 +109,8 @@ export default function AskPage() {
 
       mediaRecorder.onstop = async () => {
         if (timerRef.current) clearInterval(timerRef.current);
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+        const recordedMimeType = mediaRecorderRef.current?.mimeType || "audio/webm";
+        const audioBlob = new Blob(audioChunksRef.current, { type: recordedMimeType });
         setIsTranscribing(true);
         try {
           const res = await transcribeAudio(audioBlob, selectedLanguage);
@@ -167,6 +171,11 @@ export default function AskPage() {
       let canonicalEnglishIssue = issue;
       if (selectedLanguage !== "en-IN") {
         const transRes = await translateText(issue, "en-IN", selectedLanguage);
+        if (transRes.fallbackOccurred) {
+          throw new Error(
+            "Translation is currently unavailable. Your grievance has not been submitted for legal processing. Please retry or switch input language to English."
+          );
+        }
         canonicalEnglishIssue = transRes.translatedText;
       }
 
@@ -252,7 +261,7 @@ export default function AskPage() {
             <div className="flex items-center gap-2">
               <Globe className="w-5 h-5 text-sky-600 shrink-0" />
               <div>
-                <span className="text-xs font-bold text-sky-900 block">Select Input Language (22 Scheduled Languages)</span>
+                <span className="text-xs font-bold text-sky-900 block">Select Input Language (22 Scheduled Languages + English)</span>
                 <span className="text-[11px] text-sky-700 block">Sarvam AI formal translation normalizes your query to canonical English</span>
               </div>
             </div>

@@ -43,12 +43,39 @@ export async function translateText(
   }
 }
 
+export function getAudioExtensionFromMime(mime: string): string {
+  const cleanMime = (mime || "").split(";")[0].trim().toLowerCase();
+  switch (cleanMime) {
+    case "audio/webm":
+      return ".webm";
+    case "audio/mp4":
+    case "audio/m4a":
+    case "audio/x-m4a":
+      return ".m4a";
+    case "audio/mpeg":
+    case "audio/mp3":
+      return ".mp3";
+    case "audio/wav":
+    case "audio/x-wav":
+      return ".wav";
+    case "audio/ogg":
+      return ".ogg";
+    case "audio/aac":
+      return ".aac";
+    case "audio/flac":
+      return ".flac";
+    default:
+      return ".bin";
+  }
+}
+
 export async function transcribeAudio(
   audioBlob: Blob,
   languageCode: BharatLanguageCode = "hi-IN"
 ): Promise<TranscribeResult> {
   const formData = new FormData();
-  formData.append("file", audioBlob, "speech.wav");
+  const ext = getAudioExtensionFromMime(audioBlob.type);
+  formData.append("file", audioBlob, `recording${ext}`);
   formData.append("languageCode", languageCode);
 
   const res = await fetch("/api/language/transcribe", {

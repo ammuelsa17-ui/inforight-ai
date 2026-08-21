@@ -9,12 +9,14 @@ import {
   TTSResult,
 } from "./types";
 import { supportsTTS } from "./languages";
+import { getAudioExtensionFromMime } from "@/services/language";
 
 const SARVAM_BASE_URL = "https://api.sarvam.ai";
 
 /**
  * Deterministically splits text into chunks of <= maxChunkLen characters
  * prioritizing paragraph breaks, sentence breaks, and space boundaries.
+ * ZERO text data is discarded.
  * - Translation: <= 1,900 chars (Sarvam limit 2,000)
  * - TTS: <= 2,400 chars (Sarvam limit 2,500)
  */
@@ -22,6 +24,23 @@ export function splitTextForSarvam(text: string, maxChunkLen: number = 1900): st
   if (!text || text.length <= maxChunkLen) return [text || ""];
 
   const chunks: string[] = [];
+
+  function pushSubChunks(str: string) {
+    let remaining = str;
+    while (remaining.length > maxChunkLen) {
+      let splitIdx = remaining.lastIndexOf(" ", maxChunkLen);
+      if (splitIdx <= 0) {
+        splitIdx = maxChunkLen;
+      }
+      const segment = remaining.slice(0, splitIdx).trim();
+      if (segment) chunks.push(segment);
+      remaining = remaining.slice(splitIdx).trim();
+    }
+    if (remaining) {
+      chunks.push(remaining);
+    }
+  }
+
   const paragraphs = text.split("\n\n");
   let currentChunk = "";
 
@@ -37,14 +56,20 @@ export function splitTextForSarvam(text: string, maxChunkLen: number = 1900): st
       if (para.length <= maxChunkLen) {
         currentChunk = para;
       } else {
-        // Split huge paragraph into sentences
-        const sentences = para.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [para];
+        const sentences = para.match(/[^.!?;\n]+[.!?;\n]+|[^.!?;\n]+$/g) || [para];
         for (const sentence of sentences) {
           if ((currentChunk + (currentChunk ? " " : "") + sentence).length <= maxChunkLen) {
             currentChunk += (currentChunk ? " " : "") + sentence;
           } else {
-            if (currentChunk) chunks.push(currentChunk);
-            currentChunk = sentence.length > maxChunkLen ? sentence.slice(0, maxChunkLen) : sentence;
+            if (currentChunk) {
+              chunks.push(currentChunk);
+              currentChunk = "";
+            }
+            if (sentence.length <= maxChunkLen) {
+              currentChunk = sentence;
+            } else {
+              pushSubChunks(sentence);
+            }
           }
         }
       }
@@ -55,7 +80,7 @@ export function splitTextForSarvam(text: string, maxChunkLen: number = 1900): st
     chunks.push(currentChunk);
   }
 
-  return chunks;
+  return chunks.filter((c) => c.length > 0);
 }
 
 export class SarvamLanguageProvider implements BharatLanguageProvider {
@@ -143,15 +168,14 @@ export class SarvamLanguageProvider implements BharatLanguageProvider {
         fallbackOccurred: false,
         disclaimer: "Translated from canonical English legal draft using Sarvam AI Formal Legal Translation.",
       };
-    } catch (err: unknown) {
-      const errMsg = err instanceof Error ? err.message : "Translation provider error";
+    } catch {
       return {
         translatedText: request.text,
         sourceLanguage: request.sourceLanguage,
         targetLanguage: request.targetLanguage,
         provider: this.name,
         fallbackOccurred: true,
-        disclaimer: `Multilingual translation service unavailable (${errMsg}). Displaying official source-grounded English version.`,
+        disclaimer: "Multilingual translation service unavailable. Displaying official source-grounded English version.",
       };
     }
   }
@@ -167,8 +191,10 @@ export class SarvamLanguageProvider implements BharatLanguageProvider {
     }
 
     const formData = new FormData();
-    const blob = new Blob([new Uint8Array(request.audioBuffer)], { type: request.mimeType || "audio/wav" });
-    formData.append("file", blob, "input.wav");
+    const mime = request.mimeType || "audio/wav";
+    const ext = getAudioExtensionFromMime(mime);
+    const blob = new Blob([new Uint8Array(request.audioBuffer)], { type: mime });
+    formData.append("file", blob, `input${ext}`);
     formData.append("model", "saaras:v3");
     formData.append("mode", "transcribe");
     if (request.languageCode) {
@@ -208,32 +234,41 @@ export class SarvamLanguageProvider implements BharatLanguageProvider {
     }
 
     const textChunks = splitTextForSarvam(request.text, 2400);
+    const audioSegmentsBase64: string[] = [];
 
-    const res = await fetch(`${SARVAM_BASE_URL}/text-to-speech`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "api-subscription-key": apiKey,
-      },
-      body: JSON.stringify({
-        inputs: textChunks,
-        target_language_code: request.languageCode,
-        model: "bulbul:v3",
-        speaker: "meera",
-        pace: 1.0,
-      }),
-    });
+    for (const chunk of textChunks) {
+      if (!chunk.trim()) continue;
 
-    if (!res.ok) {
-      const errJson = await res.json().catch(() => ({}));
-      throw new Error(`Sarvam TTS API error (${res.status}): ${errJson.message || res.statusText}`);
+      const res = await fetch(`${SARVAM_BASE_URL}/text-to-speech`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "api-subscription-key": apiKey,
+        },
+        body: JSON.stringify({
+          text: chunk,
+          language_code: request.languageCode,
+          model: "bulbul:v3",
+          speaker: "shubh",
+          pace: 1.0,
+        }),
+      });
+
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(`Sarvam TTS API error (${res.status}): ${errJson.message || res.statusText}`);
+      }
+
+      const data = await res.json();
+      const segAudio = data.audios && data.audios.length > 0 ? data.audios[0] : "";
+      if (segAudio) {
+        audioSegmentsBase64.push(segAudio);
+      }
     }
 
-    const data = await res.json();
-    const audioBase64 = data.audios && data.audios.length > 0 ? data.audios[0] : "";
-
     return {
-      audioBase64,
+      audioBase64: audioSegmentsBase64[0] || "",
+      audioSegmentsBase64,
       languageCode: request.languageCode,
       mimeType: "audio/wav",
       provider: this.name,
