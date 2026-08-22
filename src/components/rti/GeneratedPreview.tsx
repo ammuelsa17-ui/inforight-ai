@@ -229,7 +229,7 @@ The Public Information Officer (PIO)
 ${data.authority.organization}
 ${data.authority.state}
 
-{t("preview.subjectLabel")}: ${editedSubject}
+${t("preview.subjectLabel")}: ${editedSubject}
 
 Respected Sir/Madam,
 
