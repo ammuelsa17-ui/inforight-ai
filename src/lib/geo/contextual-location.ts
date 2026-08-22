@@ -14,8 +14,9 @@ export interface ContextualLocationModel {
 }
 
 /**
- * Centroids for major verified PIN codes / administrative headquarters.
- * Used for approximate visual centering without fabricating street-level precision.
+ * OFFLINE / TEST FIXTURES ONLY:
+ * Centroids for verified test suite scenarios & offline unit tests.
+ * Production map rendering uses dynamic runtime resolution via /api/location/pin.
  */
 export const APPROXIMATE_PIN_CENTROIDS: Record<string, { lat: number; lng: number; locality: string }> = {
   // Tamil Nadu

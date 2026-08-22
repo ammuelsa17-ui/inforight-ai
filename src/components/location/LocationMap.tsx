@@ -3,8 +3,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { MapPin, Navigation, RotateCcw, AlertCircle, ShieldCheck } from "lucide-react";
 import { LocationSource } from "@/types/rectification";
-import { getApproximatePinCoordinates } from "@/lib/geo/contextual-location";
 import { useLanguage } from "@/context/LanguageContext";
+import { NormalizedLocationResolution } from "@/lib/location/all-india-location-resolver";
 
 export interface MarkerPoint {
   lat: number;
@@ -20,8 +20,11 @@ export interface LocationMapProps {
   zoom?: number;
   markers?: MarkerPoint[];
   onLocationSelect?: (lat: number, lng: number, source: LocationSource) => void;
+  onResolutionChange?: (resolution: NormalizedLocationResolution | null) => void;
   interactive?: boolean;
   pinCode?: string;
+  selectedLocality?: string;
+  resolvedLocation?: { latitude: number | null; longitude: number | null; source?: LocationSource } | null;
   className?: string;
   heightClass?: string;
   helperText?: string;
@@ -39,8 +42,11 @@ export function LocationMap({
   zoom = 14,
   markers = [],
   onLocationSelect,
+  onResolutionChange,
   interactive = true,
   pinCode,
+  selectedLocality,
+  resolvedLocation,
   className = "",
   heightClass = "h-[280px] sm:h-[340px]",
   helperText,
@@ -51,11 +57,10 @@ export function LocationMap({
   const mapInstanceRef = useRef<any>(null);
   const leafletMarkersRef = useRef<any[]>([]);
 
-  // Compute initial coordinates strictly if provided or if initial pinCode matches verified centroid
-  const pinCoords = pinCode ? getApproximatePinCoordinates(pinCode) : null;
+  // Compute initial coordinates strictly if provided via props
   const hasExplicitInitial = initialLat !== undefined && initialLng !== undefined;
-  const effectiveLat = hasExplicitInitial ? initialLat : pinCoords?.lat;
-  const effectiveLng = hasExplicitInitial ? initialLng : pinCoords?.lng;
+  const effectiveLat = hasExplicitInitial ? initialLat : resolvedLocation?.latitude ?? undefined;
+  const effectiveLng = hasExplicitInitial ? initialLng : resolvedLocation?.longitude ?? undefined;
 
   const [currentMarker, setCurrentMarker] = useState<{ lat: number; lng: number; source: LocationSource } | null>(() => {
     if (markers.length > 0) {
@@ -64,8 +69,8 @@ export function LocationMap({
     if (hasExplicitInitial && initialLat !== undefined && initialLng !== undefined) {
       return { lat: initialLat, lng: initialLng, source: "MANUAL" };
     }
-    if (pinCoords) {
-      return { lat: pinCoords.lat, lng: pinCoords.lng, source: "PIN_APPROXIMATE" };
+    if (resolvedLocation?.latitude && resolvedLocation?.longitude) {
+      return { lat: resolvedLocation.latitude, lng: resolvedLocation.longitude, source: resolvedLocation.source || "PIN_APPROXIMATE" };
     }
     return null;
   });
@@ -75,9 +80,11 @@ export function LocationMap({
   const [activeSource, setActiveSource] = useState<LocationSource | null>(() => {
     if (markers.length > 0) return markers[0].source || "MAP_SELECTED";
     if (hasExplicitInitial) return "MANUAL";
-    if (pinCoords) return "PIN_APPROXIMATE";
+    if (resolvedLocation?.latitude) return resolvedLocation.source || "PIN_APPROXIMATE";
     return null;
   });
+
+  const [runtimeResolution, setRuntimeResolution] = useState<NormalizedLocationResolution | null>(null);
 
   const [baseLayer, setBaseLayer] = useState<"street" | "satellite">("street");
   const tileLayerRef = useRef<any>(null);
@@ -172,27 +179,60 @@ export function LocationMap({
     switchLayer();
   }, [baseLayer]);
 
-  // Update center and marker when PIN changes
+  // Dynamic Runtime PIN Resolution & Map Centering
   useEffect(() => {
-    if (mapInstanceRef.current) {
-      if (pinCode && pinCode.trim().length === 6) {
-        const coords = getApproximatePinCoordinates(pinCode);
-        if (coords) {
-          mapInstanceRef.current.setView([coords.lat, coords.lng], 14);
-          setCurrentMarker({ lat: coords.lat, lng: coords.lng, source: "PIN_APPROXIMATE" });
-          setActiveSource("PIN_APPROXIMATE");
-          if (onLocationSelect) {
-            onLocationSelect(coords.lat, coords.lng, "PIN_APPROXIMATE");
+    let isCancelled = false;
+
+    async function handleRuntimePin() {
+      if (!mapInstanceRef.current) return;
+
+      const cleanPin = pinCode ? pinCode.trim() : "";
+      if (cleanPin.length === 6 && /^[1-9][0-9]{5}$/.test(cleanPin)) {
+        try {
+          const queryParam = selectedLocality ? `pin=${cleanPin}&locality=${encodeURIComponent(selectedLocality)}` : `pin=${cleanPin}`;
+          const res = await fetch(`/api/location/pin?${queryParam}`);
+
+          if (res.ok && !isCancelled) {
+            const data: NormalizedLocationResolution = await res.json();
+            setRuntimeResolution(data);
+            if (onResolutionChange) {
+              onResolutionChange(data);
+            }
+
+            if (data.map.latitude !== null && data.map.longitude !== null) {
+              const lat = data.map.latitude;
+              const lng = data.map.longitude;
+              mapInstanceRef.current.setView([lat, lng], 13);
+              setCurrentMarker({ lat, lng, source: "PIN_APPROXIMATE" });
+              setActiveSource("PIN_APPROXIMATE");
+              if (onLocationSelect) {
+                onLocationSelect(lat, lng, "PIN_APPROXIMATE");
+              }
+              return;
+            }
           }
-        } else {
-          // Uncatalogued PIN -> Reset to neutral India overview without any false marker
+        } catch {
+          // Fall through to neutral view
+        }
+      }
+
+      if (!isCancelled) {
+        if (!hasExplicitInitial && markers.length === 0) {
           mapInstanceRef.current.setView([NEUTRAL_INDIA_LAT, NEUTRAL_INDIA_LNG], NEUTRAL_INDIA_ZOOM);
           setCurrentMarker(null);
           setActiveSource(null);
+          setRuntimeResolution(null);
+          if (onResolutionChange) onResolutionChange(null);
         }
       }
     }
-  }, [pinCode]);
+
+    handleRuntimePin();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [pinCode, selectedLocality]);
 
   // Render Markers
   useEffect(() => {
@@ -288,7 +328,12 @@ export function LocationMap({
     }
   };
 
-  const isPinUnsupported = Boolean(pinCode && pinCode.trim().length === 6 && !getApproximatePinCoordinates(pinCode));
+  const isPinUnresolved = Boolean(
+    pinCode &&
+    pinCode.trim().length === 6 &&
+    runtimeResolution &&
+    !runtimeResolution.valid
+  );
 
   return (
     <div className={`space-y-2.5 ${className}`}>
@@ -357,9 +402,9 @@ export function LocationMap({
 
       {helperText ? (
         <p className="text-[11px] text-slate-500 leading-normal">{helperText}</p>
-      ) : isPinUnsupported ? (
+      ) : isPinUnresolved ? (
         <p className="text-[11px] text-amber-700 leading-normal">{t("ask.pinNotMappedHelp")}</p>
-      ) : pinCoords ? (
+      ) : runtimeResolution?.valid ? (
         <p className="text-[11px] text-slate-500 leading-normal">{t("ask.pinMappedHelp")}</p>
       ) : null}
     </div>
