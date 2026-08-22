@@ -56,7 +56,7 @@ export default function WorkplaceRightsPage() {
           <span>{t("common.backToHome")}</span>
         </Link>
         <span className="text-xs font-semibold text-[#0F9D76] uppercase tracking-wider px-3 py-1 bg-[#E6F4EA] rounded-full border border-[#A8DADC]">
-          Payment of Wages Act 1936
+          {t("rights.workplaceLegalBasis")}
         </span>
       </div>
 

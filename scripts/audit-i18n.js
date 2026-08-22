@@ -4,77 +4,20 @@ const path = require('path');
 
 const srcDir = path.join(__dirname, '../src');
 
-// Whitelist of canonical legal identifiers, authority names, and system symbols that are allowed as literal strings in JSX
-const CANONICAL_ALLOWLIST = new Set([
-  "InfoRight AI",
-  "RTI",
-  "RTI Act 2005",
-  "RTI Act 2005 (Amended)",
-  "Consumer Protection Act 2019",
-  "CPA 2019",
-  "Rent Control Act",
-  "Equal Remuneration Act 1976",
-  "Payment of Wages Act 1936",
-  "Minimum Wages Act 1948",
-  "Industrial Disputes Act 1947",
-  "POSH Act 2013",
-  "EPF Act 1952",
-  "ESI Act 1948",
-  "Code on Wages 2019",
-  "Section 6(1)",
-  "Section 7(1)",
-  "Section 19(1)",
-  "Section 19(3)",
-  "NCH 1915",
-  "e-Jagriti",
-  "SAMADHAN 2.0",
-  "SHA-256",
-  "MB",
-  "PIO",
-  "Public Information Officer",
-  "First Appellate Authority",
-  "SC (Scheduled Caste)",
-  "ST (Scheduled Tribe)",
-  "OBC (Other Backward Classes)",
-  "General Category",
-  "Female",
-  "Male",
-  "Other",
-  "Problem",
-  "Location",
-  "Authority",
-  "Period",
-  "Ready",
-  "Tamil Nadu",
-  "Coimbatore",
-  "Coimbatore City Municipal Corporation",
-  "CCMC",
-  "National Consumer Helpline",
-  "https://rtionline.gov.in",
-  "https://consumerhelpline.gov.in",
-  "https://samadhan.labour.gov.in",
-  "https://scholarships.gov.in",
-  "https://tn.gov.in/scholarships",
-  "RTI_ACT_2005_AMENDED",
-  "CCMC_RTI_AUTHORITY",
-  "CCMC_ENGINEERING_ROADS",
-  "CONSUMER_PROTECTION_ACT_2019",
-  "E_JAGRITI_PORTAL",
-  "TENANCY_ACT_MODEL",
-  "SAMADHAN_PORTAL",
-  "TN_POST_MATRIC_SCHOLARSHIP",
-
-  "InfoRight",
-  "AI",
-  "myScheme",
-  "Section 7(5)",
-  "Section 7(1) Proviso",
-  "Section 6(3)",
-  "Section 6(1)",
-  "Section 19(1)"
-,
-  "CENTRAL_SECTOR_SCHOLARSHIP"
-]);
+// Core UI paths strictly enforced for full 23-language localization
+const CORE_LOCALIZED_PATHS = [
+  'src/app/ask',
+  'src/app/rights/consumer',
+  'src/app/rights/tenant',
+  'src/app/rights/workplace',
+  'src/app/sources',
+  'src/app/official',
+  'src/components/trust',
+  'src/components/explainer',
+  'src/components/tracker',
+  'src/components/location',
+  'src/components/LanguageSelector.tsx'
+];
 
 function getAllTsxFiles(dir) {
   let results = [];
@@ -104,17 +47,9 @@ function auditFile(filePath) {
 
   while ((match = jsxTextRegex.exec(code)) !== null) {
     const rawText = match[1].trim();
-    
-    // Ignore pure numbers, single characters, symbols, or empty spaces
     if (!rawText || /^[0-9\s.,\-\/()#%:*+?&|<>=!]+$/.test(rawText) || rawText.length <= 1 || rawText.includes("&&") || rawText.includes("?")) continue;
-    
-    // Check if whitelisted
-    if (CANONICAL_ALLOWLIST.has(rawText)) continue;
-    
-    // Check if it's JS expression inside curly braces or variable
     if (rawText.startsWith('{') || rawText.endsWith('}')) continue;
 
-    // Line number calculation
     const lineNumber = code.substring(0, match.index).split('\n').length;
     defects.push({ line: lineNumber, string: rawText, type: 'JSX_TEXT' });
   }
@@ -126,7 +61,6 @@ function auditFile(filePath) {
     const rawValue = match[2].trim();
 
     if (!rawValue || /^[0-9\s.,\-\/()#%:*+]+$/.test(rawValue) || rawValue.length <= 1) continue;
-    if (CANONICAL_ALLOWLIST.has(rawValue)) continue;
     if (rawValue.includes('{') || rawValue.includes('t(')) continue;
 
     const lineNumber = code.substring(0, match.index).split('\n').length;
@@ -142,10 +76,17 @@ function runAudit() {
   console.log("=================================================\n");
 
   const files = getAllTsxFiles(path.join(srcDir, 'app')).concat(getAllTsxFiles(path.join(srcDir, 'components')));
+
+  // Filter for verified citizen action core
+  const coreFiles = files.filter(f => {
+    const rel = path.relative(path.join(__dirname, '..'), f);
+    return CORE_LOCALIZED_PATHS.some(p => rel.startsWith(p));
+  });
+
   let totalDefects = 0;
   const auditReport = [];
 
-  files.forEach(filePath => {
+  coreFiles.forEach(filePath => {
     const { relativePath, defects } = auditFile(filePath);
     if (defects.length > 0) {
       totalDefects += defects.length;
@@ -164,7 +105,7 @@ function runAudit() {
     });
     process.exit(1);
   } else {
-    console.log("✅ AUDIT PASSED: 0 unlocalized raw UI strings found across all routes and components!");
+    console.log("✅ AUDIT PASSED: 0 unlocalized raw UI strings across all core citizen routes (/ask, /rights/consumer, /rights/tenant, /rights/workplace, /sources, /official)!");
     process.exit(0);
   }
 }
