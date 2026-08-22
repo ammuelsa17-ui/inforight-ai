@@ -13,6 +13,7 @@ import AuthorityCard from "@/components/locator/AuthorityCard";
 import VoiceInputButton from "@/components/voice/VoiceInputButton";
 import { normalizeSpokenPincode } from "@/lib/voice/number-normalizer";
 import { useLanguage } from "@/context/LanguageContext";
+import { LocationMap } from "@/components/location/LocationMap";
 import {
   Search,
   MapPin,
@@ -201,6 +202,28 @@ export default function LocatorPage() {
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Contextual Visual Map Layer */}
+          {pinResolution.isValid && (
+            <div className="pt-2 border-t border-slate-100 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-indigo-600" />
+                  Visual Area &amp; Jurisdiction Context
+                </span>
+                <span className="text-[11px] font-semibold text-slate-500">
+                  Approximate PIN Centroid: {pincodeInput}
+                </span>
+              </div>
+
+              <LocationMap
+                pinCode={pincodeInput}
+                interactive={true}
+                heightClass="h-[240px] sm:h-[280px]"
+                helperText="Map visually assists postal area recognition. Legal jurisdiction and competent authorities are resolved deterministically from verified administrative datasets."
+              />
             </div>
           )}
 

@@ -71,6 +71,14 @@ export const urLocale: UITranslationSchema = {
     "disclaimerText": "InfoRight AI provides statutory guidance for civic empowerment."
   },
   "ask": {
+    "confirmLocationTitle": "مسئلے کے مقام کی تصدیق کریں (نقشہ حوالہ)",
+    "rentalPropertyLocationTitle": "کرایہ کی جائیداد کا مقام (نقشہ حوالہ)",
+    "workplaceLocationTitle": "کام کی جگہ / جائے وقوعہ (نقشہ حوالہ)",
+    "useCurrentLocation": "میرا موجودہ مقام استعمال کریں",
+    "detectingGps": "GPS تلاش کیا جا رہا ہے...",
+    "deviceGpsLabel": "ڈیوائس کا مقام (GPS)",
+    "citizenConfirmedLabel": "شہری کی طرف سے منتخب کردہ مقام",
+    "approximatePinLabel": "پن کوڈ کے مطابق تخمینی علاقہ",
     "describeProblemRequired": "آگے بڑھنے سے پہلے براہ کرم اپنا مسئلہ بیان کریں۔",
     "translationUnavailable": "ترجمہ سروس فی الحال دستیاب نہیں ہے۔ اصل متن دکھایا جا رہا ہے۔",
     "pageTitle": "اپنا مسئلہ بیان کریں",

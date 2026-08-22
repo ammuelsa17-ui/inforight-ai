@@ -71,6 +71,14 @@ export const doiLocale: UITranslationSchema = {
     "disclaimerText": "InfoRight AI provides statutory guidance for civic empowerment."
   },
   "ask": {
+    "confirmLocationTitle": "Confirm Issue Location (Optional Visual Context)",
+    "rentalPropertyLocationTitle": "Rental Property Location (Map Context)",
+    "workplaceLocationTitle": "Workplace / Incident Location (Optional Map Context)",
+    "useCurrentLocation": "Use My Current Location",
+    "detectingGps": "Detecting GPS...",
+    "deviceGpsLabel": "Device-Reported Location (GPS)",
+    "citizenConfirmedLabel": "Citizen-Confirmed Map Point",
+    "approximatePinLabel": "Approximate Area from Postal PIN",
     "describeProblemRequired": "Please describe your problem before continuing.",
     "translationUnavailable": "Translation service currently unavailable. Showing canonical text.",
     "pageTitle": "Describe Your Problem",

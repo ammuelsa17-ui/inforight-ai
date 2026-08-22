@@ -40,6 +40,8 @@ import { PlainLanguageExplainer } from "@/components/explainer/PlainLanguageExpl
 import { SubmissionTracker } from "@/components/tracker/SubmissionTracker";
 import { ALL_STATES_AND_UTS } from "@/lib/location/location-context";
 import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
+import { LocationMap } from "@/components/location/LocationMap";
+import { LocationSource } from "@/types/rectification";
 
 const PREFILLED_SCENARIOS = [
   {
@@ -122,6 +124,7 @@ export default function AskPage() {
   const [locality, setLocality] = useState("");
   const [ward, setWard] = useState("");
   const [dateRange, setDateRange] = useState("");
+  const [mapCoords, setMapCoords] = useState<{ lat: number; lng: number; source: LocationSource } | null>(null);
 
   // Applicant details (Stored purely in browser local state — NEVER sent to external LLMs)
   const [applicantName, setApplicantName] = useState("");
@@ -488,6 +491,31 @@ export default function AskPage() {
                   className="w-full p-2 bg-[#F4F9FF] border border-[#BCD7EE] font-mono font-bold text-xs text-center rounded-lg text-slate-900"
                 />
               </div>
+            </div>
+
+            {/* Contextual Issue Location Map */}
+            <div className="pt-2 border-t border-slate-100 space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-slate-800 flex items-center gap-1.5">
+                  <Building className="w-3.5 h-3.5 text-indigo-600" />
+                  {t("ask.confirmLocationTitle")}
+                </span>
+                <span className="text-[11px] font-semibold text-slate-500">
+                  {pinCode ? `PIN: ${pinCode}` : "Select area on map"}
+                </span>
+              </div>
+
+              <LocationMap
+                pinCode={pinCode}
+                initialLat={mapCoords?.lat || 11.0084}
+                initialLng={mapCoords?.lng || 76.9515}
+                interactive={true}
+                onLocationSelect={(lat, lng, source) => {
+                  setMapCoords({ lat, lng, source });
+                }}
+                heightClass="h-[200px] sm:h-[240px]"
+                helperText="Entering a 6-digit PIN centers the map near that postal area. Use 'Use My Current Location' or click to refine the point."
+              />
             </div>
 
             {/* Voice Control Buttons */}

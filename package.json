@@ -11,6 +11,8 @@
     "test:api": "tsx scripts/test-v2-api-contracts.ts"
   },
   "dependencies": {
+    "@types/leaflet": "^1.9.22",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.475.0",
     "next": "16.3.1",
     "react": "19.2.8",

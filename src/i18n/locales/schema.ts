@@ -69,6 +69,14 @@ export interface UITranslationSchema {
     disclaimerText: string;
   };
   ask: {
+    confirmLocationTitle: string;
+    rentalPropertyLocationTitle: string;
+    workplaceLocationTitle: string;
+    useCurrentLocation: string;
+    detectingGps: string;
+    deviceGpsLabel: string;
+    citizenConfirmedLabel: string;
+    approximatePinLabel: string;
     describeProblemRequired: string;
     translationUnavailable: string;
     pageTitle: string;

@@ -7,6 +7,7 @@ import { RightsNavigateResponse } from "@/types/api";
 import { ArrowLeft, Sparkles, AlertCircle, ExternalLink, Copy, Printer, Check } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
+import { LocationMap } from "@/components/location/LocationMap";
 
 export default function WorkplaceRightsPage() {
   const { t } = useLanguage();
@@ -92,6 +93,18 @@ export default function WorkplaceRightsPage() {
             onChange={(e) => setState(e.target.value)}
             className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
             required
+          />
+        </div>
+
+        {/* Workplace Location Map */}
+        <div className="pt-2 border-t border-slate-100 space-y-1.5">
+          <label className="block text-xs font-bold text-[#102A56]">
+            {t("ask.workplaceLocationTitle")}
+          </label>
+          <LocationMap
+            interactive={true}
+            heightClass="h-[180px] sm:h-[220px]"
+            helperText="Pinpoint your workplace location to assist in identifying competent State Labour Commissioner or Central CLC jurisdiction."
           />
         </div>
 

@@ -10,18 +10,8 @@ import {
   exportRtiApplicationHtml,
   exportEvidenceIndexHtml,
 } from "@/lib/pdf/print-export";
-import {
-  CheckCircle2,
-  AlertCircle,
-  ArrowRight,
-  ArrowLeft,
-  RotateCcw,
-  Printer,
-  FileText,
-  ShieldCheck,
-  Clock,
-  Sparkles,
-} from "lucide-react";
+import { CheckCircle2, ShieldCheck, AlertCircle, ArrowLeft, ArrowRight, Printer, FileText, Send, Calendar, Clock, MapPin, Building2, HelpCircle, Sparkles, RotateCcw } from "lucide-react";
+import { LocationMap } from "@/components/location/LocationMap";
 
 export interface CivicFormState {
   problemDescription: string;
@@ -293,6 +283,16 @@ export const CivicFormFiller: React.FC<CivicFormFillerProps> = ({
                 </div>
               )}
             </div>
+          )}
+
+          {/* Contextual Visual Map Preview */}
+          {form.pinCode.length === 6 && (
+            <LocationMap
+              pinCode={form.pinCode}
+              interactive={true}
+              heightClass="h-[180px] sm:h-[220px]"
+              helperText="Visual confirmation of the issue area. Final administrative jurisdiction remains grounded in statutory rules."
+            />
           )}
         </div>
       )}

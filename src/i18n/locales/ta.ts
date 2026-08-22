@@ -71,6 +71,14 @@ export const taLocale: UITranslationSchema = {
     "disclaimerText": "இன்ஃபோரைட் AI குடிமக்கள் அதிகாரமளிப்பிற்கான சட்டப்பூர்வ வழிகாட்டலை வழங்குகிறது. இது உத்தியோகபூர்வ சட்ட ஆலோசனையை மாற்றாது."
   },
   "ask": {
+    "confirmLocationTitle": "பிரச்சினை இருப்பிடத்தை உறுதிப்படுத்தவும் (வரைபட வழிகாட்டல்)",
+    "rentalPropertyLocationTitle": "வாடகை சொத்து இருப்பிடம் (வரைபட வழிகாட்டல்)",
+    "workplaceLocationTitle": "பணியிடம் / சம்பவ இடம் (வரைபட வழிகாட்டல்)",
+    "useCurrentLocation": "எனது தற்போதைய இருப்பிடத்தைப் பயன்படுத்து",
+    "detectingGps": "GPS கண்டறியப்படுகிறது...",
+    "deviceGpsLabel": "சாதன இருப்பிடம் (GPS)",
+    "citizenConfirmedLabel": "குடிமகன் உறுதிசெய்த வரைபட புள்ளி",
+    "approximatePinLabel": "அஞ்சல் குறியீட்டின் தோராயமான பகுதி",
     "describeProblemRequired": "தொடர்வதற்கு முன் உங்கள் பிரச்சனையை விவரிக்கவும்.",
     "translationUnavailable": "மொழிபெயர்ப்பு சேவை தற்காலிகமாக கிடைக்கவில்லை. அசல் உரை காட்டப்படுகிறது.",
     "pageTitle": "உங்கள் பிரச்சினையை விவரிக்கவும்",

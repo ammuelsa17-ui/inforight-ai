@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { CivicEvidenceItem, LocationConsistencyStatus } from "@/types/rectification";
 import { CheckCircle2, AlertTriangle, MapPin, Calendar, ShieldCheck, FileCheck } from "lucide-react";
+import { LocationMap, MarkerPoint } from "@/components/location/LocationMap";
 
 interface BeforeAfterComparisonPanelProps {
   beforeEvidence?: CivicEvidenceItem;
@@ -29,6 +30,31 @@ export function BeforeAfterComparisonPanel({
   className = "",
 }: BeforeAfterComparisonPanelProps) {
   const { t } = useLanguage();
+
+  const mapMarkers = useMemo<MarkerPoint[]>(() => {
+    const pts: MarkerPoint[] = [];
+    if (beforeEvidence?.location) {
+      pts.push({
+        lat: beforeEvidence.location.latitude,
+        lng: beforeEvidence.location.longitude,
+        label: "Marker A: Reported Issue Location (Citizen)",
+        color: "indigo",
+        source: beforeEvidence.location.source,
+      });
+    }
+    if (afterEvidence?.location) {
+      pts.push({
+        lat: afterEvidence.location.latitude,
+        lng: afterEvidence.location.longitude,
+        label: "Marker B: Rectification Location (Officer)",
+        color: "emerald",
+        source: afterEvidence.location.source,
+      });
+    }
+    return pts;
+  }, [beforeEvidence, afterEvidence]);
+
+  const hasCoordinates = mapMarkers.length > 0;
 
   const getConsistencyBadge = () => {
     switch (locationConsistency) {
@@ -222,6 +248,28 @@ export function BeforeAfterComparisonPanel({
             </div>
           </div>
         </div>
+
+        {/* Map Visualization for Location Comparison */}
+        {hasCoordinates && (
+          <div className="pt-2 border-t border-slate-200 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-indigo-600" />
+                Visual Location Comparison (Citizen vs Officer)
+              </span>
+              <span className="text-[11px] font-semibold text-slate-500">
+                Separation: ~{distanceMeters ?? "?"}m
+              </span>
+            </div>
+
+            <LocationMap
+              markers={mapMarkers}
+              interactive={false}
+              heightClass="h-[220px] sm:h-[260px]"
+              helperText="Marker A: Reported issue location (Citizen). Marker B: Rectification evidence location (Officer). Location consistency evaluates spatial proximity independently of administrative jurisdiction."
+            />
+          </div>
+        )}
       </div>
     </div>
   );

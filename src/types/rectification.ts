@@ -1,9 +1,11 @@
-// src/types/rectification.ts — Closed-Loop Geo-Tagged Civic Rectification Types
-
 export type LocationSource =
   | "DEVICE_GEOLOCATION"
+  | "DEVICE_GPS"
   | "PHOTO_METADATA"
+  | "MAP_SELECTED"
+  | "PIN_APPROXIMATE"
   | "USER_ENTERED"
+  | "MANUAL"
   | "NONE";
 
 export type LocationConsistencyStatus =

@@ -71,6 +71,14 @@ export const knLocale: UITranslationSchema = {
     "disclaimerText": "ಇನ್ಫೋರೈಟ್ AI ನಾಗರಿಕ ಸಬಲೀಕರಣಕ್ಕಾಗಿ ಶಾಸನಬದ್ಧ ಮಾರ್ಗದರ್ಶನವನ್ನು ನೀಡುತ್ತದೆ. ಇದು ಔಪಚಾರಿಕ ಕಾನೂನು ಸಲಹೆಯನ್ನು ಬದಲಾಯಿಸುವುದಿಲ್ಲ."
   },
   "ask": {
+    "confirmLocationTitle": "ಸಮಸ್ಯೆಯ ಸ್ಥಳವನ್ನು ದೃಢೀಕರಿಸಿ (ನಕ್ಷೆ ಮಾಹಿತಿ)",
+    "rentalPropertyLocationTitle": "ಬಾಡಿಗೆ ಆಸ್ತಿಯ ಸ್ಥಳ (ನಕ್ಷೆ ಮಾಹಿತಿ)",
+    "workplaceLocationTitle": "ಕೆಲಸದ ಸ್ಥಳ / ಘಟನೆಯ ಸ್ಥಳ (ನಕ್ಷೆ ಮಾಹಿತಿ)",
+    "useCurrentLocation": "ನನ್ನ ಪ್ರಸ್ತುತ ಸ್ಥಳವನ್ನು ಬಳಸಿ",
+    "detectingGps": "GPS ಪತ್ತೆಹಚ್ಚಲಾಗುತ್ತಿದೆ...",
+    "deviceGpsLabel": "ಸಾಧನ ವರದಿ ಮಾಡಿದ ಸ್ಥಳ (GPS)",
+    "citizenConfirmedLabel": "ನಾಗರಿಕ ದೃಢಪಡಿಸಿದ ನಕ್ಷೆ ಬಿಂದು",
+    "approximatePinLabel": "ಪಿನ್ ಕೋಡ್‌ನಿಂದ ಅಂದಾಜು ಪ್ರದೇಶ",
     "describeProblemRequired": "ಮುಂದುವರಿಯುವ ಮೊದಲು ದಯವಿಟ್ಟು ನಿಮ್ಮ ಸಮಸ್ಯೆಯನ್ನು ವಿವರಿಸಿ.",
     "translationUnavailable": "ಅನುವಾದ ಸೇವೆ ಪ್ರಸ್ತುತ ಲಭ್ಯವಿಲ್ಲ. ಮೂಲ ಪಠ್ಯವನ್ನು ಪ್ರದರ್ಶಿಸಲಾಗುತ್ತಿದೆ.",
     "pageTitle": "ನಿಮ್ಮ ಸಮಸ್ಯೆಯನ್ನು ವಿವರಿಸಿ",
