@@ -61,9 +61,9 @@ export default function ConsumerRightsPage() {
       </div>
 
       <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56]">Consumer Dispute Navigator</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56]">{t("rights.consumerTitle")}</h1>
         <p className="text-sm text-[#526176]">
-          Resolve defective product claims, refund denials, and e-commerce grievances with statutory escalations.
+          {t("rights.consumerDesc")}
         </p>
       </div>
 
@@ -71,7 +71,7 @@ export default function ConsumerRightsPage() {
       <form onSubmit={handleNavigate} className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-6">
         <div className="space-y-2">
           <label className="block text-sm font-bold text-[#102A56]">
-            Describe Consumer Grievance <span className="text-red-500">*</span>
+            {t("ask.problemLabel")} <span className="text-red-500">*</span>
           </label>
           <textarea
             rows={3}
@@ -83,7 +83,7 @@ export default function ConsumerRightsPage() {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-xs font-bold text-[#102A56]">State Jurisdiction</label>
+          <label className="block text-xs font-bold text-[#102A56]">{t("ask.stateLabel")}</label>
           <input
             type="text"
             value={state}
@@ -133,10 +133,10 @@ export default function ConsumerRightsPage() {
           {/* Bureaucracy Translation Block */}
           {result.bureaucracyTranslation && (
             <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] space-y-4">
-              <h4 className="text-base font-bold text-[#102A56]">Bureaucracy Translation — What This Means</h4>
+              <h4 className="text-base font-bold text-[#102A56]">{t("common.statutoryDisputeNav")}</h4>
               <p className="text-sm text-[#526176]">{result.bureaucracyTranslation.whatThisMeans}</p>
               <div className="space-y-2 text-xs">
-                <strong className="text-[#102A56] block">Next Action:</strong>
+                <strong className="text-[#102A56] block">{t("common.action")}</strong>
                 <p className="text-[#526176]">{result.bureaucracyTranslation.whatYouShouldDoNow}</p>
               </div>
             </div>
@@ -146,7 +146,7 @@ export default function ConsumerRightsPage() {
           {result.representationLetter && (
             <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] space-y-4 no-print">
               <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-3">
-                <h4 className="text-base font-bold text-[#102A56]">Generated Draft Representation Letter</h4>
+                <h4 className="text-base font-bold text-[#102A56]">{t("preview.generatedTitle")}</h4>
                 <div className="flex gap-2">
                   <button onClick={handleCopy} className="px-3 py-1.5 rounded-lg bg-white border border-[#BCD7EE] text-xs font-semibold text-[#102A56] inline-flex items-center gap-1">
                     {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
@@ -154,12 +154,12 @@ export default function ConsumerRightsPage() {
                   </button>
                   <button onClick={() => window.print()} className="px-3 py-1.5 rounded-lg bg-[#4F46E5] text-xs font-semibold text-white inline-flex items-center gap-1">
                     <Printer className="w-3.5 h-3.5" />
-                    <span>Print / Save as PDF</span>
+                    <span>{t("common.downloadPdf")}</span>
                   </button>
                 </div>
               </div>
               <div className="p-4 rounded-xl bg-[#F4F9FF] border border-[#BCD7EE] text-xs space-y-2 font-mono text-[#172033]">
-                <p>To,</p>
+                <p>{t("preview.targetAuth")}</p>
                 <p className="font-bold">{result.representationLetter.recipientTitle}</p>
                 <p className="font-bold text-[#4F46E5]">Subject: {result.representationLetter.subject}</p>
                 <p className="whitespace-pre-line leading-relaxed pt-2">{result.representationLetter.body}</p>

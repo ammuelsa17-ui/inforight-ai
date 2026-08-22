@@ -126,6 +126,7 @@ export interface SchemeMatch {
 
 export interface SchemeMatchResponse {
   totalMatched: number;
+  totalNeedsInfo?: number;
   matchedSchemes: SchemeMatch[];
   disclaimer: "Final eligibility is determined strictly by the respective government department.";
 }

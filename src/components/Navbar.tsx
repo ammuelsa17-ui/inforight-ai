@@ -25,7 +25,7 @@ export default function Navbar() {
                 InfoRight <span className="text-[#4F46E5]">AI</span>
               </span>
               <span className="block text-[10px] text-[#526176] font-medium leading-none">
-                Civic & Legal Empowerment Platform
+                {t("home.badge")}
               </span>
             </div>
           </Link>

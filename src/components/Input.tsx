@@ -1,6 +1,7 @@
 "use client";
 
 import React, { InputHTMLAttributes, TextareaHTMLAttributes, SelectHTMLAttributes, useState, useRef } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { Search, UploadCloud, Mic, MicOff, AlertCircle } from "lucide-react";
 
 // Generic Input component
@@ -16,118 +17,146 @@ export const Input: React.FC<InputProps> = ({
   helperText,
   className = "",
   id,
+  type = "text",
   ...props
 }) => {
+  const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
+
   return (
-    <div className="w-full">
+    <div className="w-full space-y-1.5">
       {label && (
-        <label htmlFor={id} className="block text-xs font-bold text-dark-text uppercase tracking-wide mb-1.5">
+        <label htmlFor={inputId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider">
           {label}
         </label>
       )}
       <input
-        id={id}
-        className={`w-full px-3.5 py-2.5 rounded-lg border text-sm text-dark-text placeholder:text-secondary-text bg-white shadow-2xs transition-colors focus:border-indigo-primary focus:outline-none ${
-          error ? "border-danger-red focus:border-danger-red" : "border-borders"
+        id={inputId}
+        type={type}
+        className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-[#172033] text-sm placeholder-[#94A3B8] transition-all focus:outline-none ${
+          error
+            ? "border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]"
+            : "border-[#BCD7EE] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
         } ${className}`}
         {...props}
       />
-      {error && (
-        <span className="flex items-center gap-1 text-xs text-danger-red font-medium mt-1">
-          <AlertCircle className="h-3 w-3 shrink-0" />
-          <span>{error}</span>
-        </span>
-      )}
-      {!error && helperText && <span className="text-[11px] text-secondary-text mt-1 block">{helperText}</span>}
+      {error ? (
+        <p className="text-xs text-[#EF4444] flex items-center gap-1 font-medium mt-1">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+          {error}
+        </p>
+      ) : helperText ? (
+        <p className="text-xs text-[#526176] mt-1">{helperText}</p>
+      ) : null}
     </div>
   );
 };
 
-// Generic TextArea component
-interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+// Textarea Component
+interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
   helperText?: string;
 }
 
-export const TextArea: React.FC<TextAreaProps> = ({
+export const Textarea: React.FC<TextareaProps> = ({
   label,
   error,
   helperText,
   className = "",
   id,
+  rows = 4,
   ...props
 }) => {
+  const textareaId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
+
   return (
-    <div className="w-full">
+    <div className="w-full space-y-1.5">
       {label && (
-        <label htmlFor={id} className="block text-xs font-bold text-dark-text uppercase tracking-wide mb-1.5">
+        <label htmlFor={textareaId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider">
           {label}
         </label>
       )}
       <textarea
-        id={id}
-        className={`w-full px-3.5 py-2.5 rounded-lg border text-sm text-dark-text placeholder:text-secondary-text bg-white shadow-2xs transition-colors focus:border-indigo-primary focus:outline-none min-h-[100px] resize-y ${
-          error ? "border-danger-red focus:border-danger-red" : "border-borders"
+        id={textareaId}
+        rows={rows}
+        className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-[#172033] text-sm placeholder-[#94A3B8] transition-all focus:outline-none ${
+          error
+            ? "border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]"
+            : "border-[#BCD7EE] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
         } ${className}`}
         {...props}
       />
-      {error && (
-        <span className="flex items-center gap-1 text-xs text-danger-red font-medium mt-1">
-          <AlertCircle className="h-3 w-3 shrink-0" />
-          <span>{error}</span>
-        </span>
-      )}
-      {!error && helperText && <span className="text-[11px] text-secondary-text mt-1 block">{helperText}</span>}
+      {error ? (
+        <p className="text-xs text-[#EF4444] flex items-center gap-1 font-medium mt-1">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+          {error}
+        </p>
+      ) : helperText ? (
+        <p className="text-xs text-[#526176] mt-1">{helperText}</p>
+      ) : null}
     </div>
   );
 };
 
-// Search Input
-export const SearchInput: React.FC<InputProps> = ({
+// SearchInput Component
+interface SearchInputProps extends InputHTMLAttributes<HTMLInputElement> {
+  onSearch?: (query: string) => void;
+}
+
+export const SearchInput: React.FC<SearchInputProps> = ({
   className = "",
+  placeholder = "Search resources...",
+  onChange,
+  onSearch,
   ...props
 }) => {
   return (
     <div className="relative w-full">
-      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-secondary-text" />
+      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
       <input
         type="search"
-        className={`w-full pl-10 pr-4 py-2 rounded-lg border border-borders text-sm text-dark-text bg-white transition-colors focus:border-indigo-primary focus:outline-none ${className}`}
+        placeholder={placeholder}
+        onChange={(e) => {
+          onChange?.(e);
+          onSearch?.(e.target.value);
+        }}
+        className={`w-full pl-10 pr-4 py-2.5 bg-white border border-[#BCD7EE] rounded-lg text-[#172033] text-sm placeholder-[#94A3B8] focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5] ${className}`}
         {...props}
       />
     </div>
   );
 };
 
-// Select Dropdown
+// Select Component
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
-  options: { value: string; label: string }[];
   error?: string;
-  helperText?: string;
+  options: Array<{ value: string; label: string }>;
 }
 
 export const Select: React.FC<SelectProps> = ({
   label,
-  options,
   error,
-  helperText,
+  options,
   className = "",
   id,
   ...props
 }) => {
+  const selectId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
+
   return (
-    <div className="w-full">
+    <div className="w-full space-y-1.5">
       {label && (
-        <label htmlFor={id} className="block text-xs font-bold text-dark-text uppercase tracking-wide mb-1.5">
+        <label htmlFor={selectId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider">
           {label}
         </label>
       )}
       <select
-        id={id}
-        className={`w-full px-3.5 py-2.5 rounded-lg border border-borders text-sm text-dark-text bg-white shadow-2xs transition-colors focus:border-indigo-primary focus:outline-none appearance-none ${
-          error ? "border-danger-red focus:border-danger-red" : "border-borders"
+        id={selectId}
+        className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-[#172033] text-sm transition-all focus:outline-none cursor-pointer ${
+          error
+            ? "border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]"
+            : "border-[#BCD7EE] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
         } ${className}`}
         {...props}
       >
@@ -137,8 +166,12 @@ export const Select: React.FC<SelectProps> = ({
           </option>
         ))}
       </select>
-      {error && <span className="text-xs text-danger-red font-medium mt-1 block">{error}</span>}
-      {!error && helperText && <span className="text-[11px] text-secondary-text mt-1 block">{helperText}</span>}
+      {error && (
+        <p className="text-xs text-[#EF4444] flex items-center gap-1 font-medium mt-1">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+          {error}
+        </p>
+      )}
     </div>
   );
 };
@@ -157,6 +190,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   accept = ".pdf,.jpg,.jpeg,.png,.doc,.docx",
   error
 }) => {
+  const { t } = useLanguage();
   const [isDragActive, setIsDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -213,9 +247,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           className="hidden"
         />
         <UploadCloud className="h-8 w-8 text-secondary-text mb-2.5" />
-        <span className="text-sm font-semibold text-dark-text block">Upload supporting documents</span>
+        <span className="text-sm font-semibold text-dark-text block">{t("evidence.selectFileLabel")}</span>
         <span className="text-xs text-secondary-text mt-1 block">
-          Drag & drop files, or click to browse (PDF, JPEG, PNG up to 10MB)
+          {t("evidence.privacyNotice")}
         </span>
         <span className="text-[10px] text-secondary-text/80 mt-1 block">Max {maxFiles} files</span>
       </div>
@@ -251,3 +285,5 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
     </button>
   );
 };
+
+export { Textarea as TextArea };

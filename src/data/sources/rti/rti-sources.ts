@@ -393,5 +393,165 @@ export const RTI_CORE_SOURCES: VerifiedSourceRecord[] = [
       "section 18 complaint",
       "first appellate authority faa 45 days"
     ]
+  },
+
+  // =========================================================================
+  // 3F — PIN CODE & JURISDICTION GROUNDING SOURCES
+  // =========================================================================
+  {
+    id: "SRC-POST-IN-PIN",
+    title: "India Post National PIN Code Directory & Postal Circle Registry",
+    domain: "RTI_ACCESS",
+    subdomain: "3A_BASIC_RTI_RIGHTS",
+    summary: "Official postal circle mapping establishing geographic PIN code bounds, post office designations, and state/district associations across India.",
+    jurisdiction: {
+      country: "IN",
+      state_ut: "National",
+      government_level: "CENTRAL",
+      jurisdiction_type: "EXCLUSIVE"
+    },
+    provenance: {
+      official_source_name: "Department of Posts, Ministry of Communications",
+      official_source_url: "https://www.indiapost.gov.in",
+      source_type: "OFFICIAL_GOVT_PORTAL",
+      administering_authority: "India Post",
+      effective_from: "1972-08-15",
+      source_updated_date: "2026-01-01",
+      last_verified: "2026-08-22",
+      verification_status: "CURRENT",
+      source_priority: 1,
+      legal_basis: "Indian Post Office Act, 1898 & Postal Circle Directory"
+    },
+    supported_use_cases: ["jurisdiction_routing", "authority_identification"],
+    authority_details: {
+      designation: "Director General of Postal Services",
+      organization: "Department of Posts, Dak Bhawan, New Delhi",
+      portal_url: "https://www.indiapost.gov.in",
+      filing_modes: ["ONLINE", "PHYSICAL_COUNTER"]
+    },
+    rules_or_criteria: {
+      time_limits_days: 0,
+      statutory_fees: "N/A",
+      required_documents: [],
+      escalation_route: []
+    },
+    keywords: ["india post pin code", "postal circle directory", "pincode mapping"]
+  },
+  {
+    id: "SRC-TN-CCMC-JURISDICTION",
+    title: "Coimbatore City Municipal Corporation (CCMC) Know Your Zone Directory",
+    domain: "RTI_ACCESS",
+    subdomain: "3A_BASIC_RTI_RIGHTS",
+    summary: "Official CCMC zonal boundary allocations establishing West, Central, East, South, and North administrative zones and ward boundaries for Coimbatore municipality.",
+    jurisdiction: {
+      country: "IN",
+      state_ut: "Tamil Nadu",
+      government_level: "LOCAL",
+      jurisdiction_type: "MUNICIPAL"
+    },
+    provenance: {
+      official_source_name: "Coimbatore City Municipal Corporation",
+      official_source_url: "https://www.ccmc.gov.in/index.php/mainadministration/zonal-assistant-commissioners",
+      source_type: "OFFICIAL_GOVT_PORTAL",
+      administering_authority: "CCMC Zonal Assistant Commissioners",
+      effective_from: "1981-05-01",
+      source_updated_date: "2026-01-01",
+      last_verified: "2026-08-22",
+      verification_status: "CURRENT",
+      source_priority: 1,
+      legal_basis: "Coimbatore City Municipal Corporation Act, 1981 (TN Act 25 of 1981)"
+    },
+    supported_use_cases: ["jurisdiction_routing", "authority_identification"],
+    authority_details: {
+      designation: "Zonal Assistant Commissioner",
+      organization: "Coimbatore City Municipal Corporation",
+      portal_url: "https://www.ccmc.gov.in",
+      filing_modes: ["ONLINE", "PHYSICAL_COUNTER"]
+    },
+    rules_or_criteria: {
+      time_limits_days: 0,
+      statutory_fees: "N/A",
+      required_documents: [],
+      escalation_route: []
+    },
+    keywords: ["ccmc zonal assistant commissioner", "coimbatore municipal corporation zones", "ccmc wards"]
+  },
+  {
+    id: "SRC-TN-CCMC-DEPARTMENTS",
+    title: "CCMC Zonal Engineering, Health & Water Supply Department Allocation Charter",
+    domain: "RTI_ACCESS",
+    subdomain: "3A_BASIC_RTI_RIGHTS",
+    summary: "Official CCMC civic departmental allocations establishing engineering (roads/drains), public health (sanitation/SWM), electrical (lighting), and water supply operational jurisdictions.",
+    jurisdiction: {
+      country: "IN",
+      state_ut: "Tamil Nadu",
+      government_level: "LOCAL",
+      jurisdiction_type: "MUNICIPAL"
+    },
+    provenance: {
+      official_source_name: "CCMC Municipal Engineering & Health Inspectorate",
+      official_source_url: "https://www.ccmc.gov.in",
+      source_type: "OFFICIAL_GOVT_PORTAL",
+      administering_authority: "CCMC City Engineer & City Health Officer",
+      effective_from: "1981-05-01",
+      source_updated_date: "2026-01-01",
+      last_verified: "2026-08-22",
+      verification_status: "CURRENT",
+      source_priority: 1,
+      legal_basis: "CCMC Municipal Engineering & Public Health By-Laws"
+    },
+    supported_use_cases: ["authority_identification", "rights_navigation"],
+    authority_details: {
+      designation: "City Engineer / City Health Officer",
+      organization: "Coimbatore City Municipal Corporation",
+      portal_url: "https://www.ccmc.gov.in",
+      filing_modes: ["ONLINE", "PHYSICAL_COUNTER"]
+    },
+    rules_or_criteria: {
+      time_limits_days: 0,
+      statutory_fees: "N/A",
+      required_documents: [],
+      escalation_route: []
+    },
+    keywords: ["ccmc engineering cell", "ccmc health inspectorate", "ccmc water supply division"]
+  },
+  {
+    id: "SRC-TN-CCMC-RTI-PIO",
+    title: "CCMC Zonal Public Information Officer (PIO) Statutory Roster",
+    domain: "RTI_ACCESS",
+    subdomain: "3A_BASIC_RTI_RIGHTS",
+    summary: "Official designation roster of Public Information Officers (PIOs) across CCMC Zonal offices under Section 5(1) of the RTI Act 2005.",
+    jurisdiction: {
+      country: "IN",
+      state_ut: "Tamil Nadu",
+      government_level: "LOCAL",
+      jurisdiction_type: "MUNICIPAL"
+    },
+    provenance: {
+      official_source_name: "Coimbatore City Municipal Corporation RTI Cell",
+      official_source_url: "https://www.ccmc.gov.in",
+      source_type: "OFFICIAL_GOVT_PORTAL",
+      administering_authority: "Public Information Officers, CCMC",
+      effective_from: "2005-10-12",
+      source_updated_date: "2026-01-01",
+      last_verified: "2026-08-22",
+      verification_status: "CURRENT",
+      source_priority: 1,
+      legal_basis: "RTI Act 2005 Section 5(1) PIO Notifications"
+    },
+    supported_use_cases: ["authority_identification", "citation_provenance"],
+    authority_details: {
+      designation: "Public Information Officer",
+      organization: "Coimbatore City Municipal Corporation Zonal Offices",
+      portal_url: "https://www.ccmc.gov.in",
+      filing_modes: ["ONLINE", "POSTAL", "PHYSICAL_COUNTER"]
+    },
+    rules_or_criteria: {
+      time_limits_days: 30,
+      statutory_fees: "₹10 RTI Application Fee",
+      required_documents: ["RTI Application Form"],
+      escalation_route: ["First Appeal to Appellate Authority within 30 days"]
+    },
+    keywords: ["ccmc rti pio", "coimbatore pio designation", "ccmc rti roster"]
   }
 ];

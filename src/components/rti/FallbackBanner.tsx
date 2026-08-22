@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { AlertTriangle, Info } from "lucide-react";
 
 interface FallbackBannerProps {
@@ -14,6 +15,7 @@ export default function FallbackBanner({
   warning,
   verifiedAuthority = true,
 }: FallbackBannerProps) {
+  const { t } = useLanguage();
   if (mode === "ai" && verifiedAuthority) {
     return null;
   }
@@ -25,7 +27,7 @@ export default function FallbackBanner({
           <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div className="space-y-1 text-sm">
             <h4 className="font-bold text-amber-950">
-              Fallback Template Activated
+              {t("fallbackBanner.title")}
             </h4>
             <p className="text-amber-900/90 leading-relaxed">
               {warning ||
@@ -40,10 +42,10 @@ export default function FallbackBanner({
           <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
           <div className="space-y-1 text-sm">
             <h4 className="font-bold text-blue-950">
-              Authority Verification Notice
+              {t("fallbackBanner.noticeTitle")}
             </h4>
             <p className="text-blue-900/90 leading-relaxed">
-              The entered public authority has not been independently verified in our Coimbatore registry. Please confirm authority details before submitting.
+              {t("fallbackBanner.noticeBody")}
             </p>
           </div>
         </div>

@@ -2,6 +2,7 @@
 "use client";
 
 import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useRole } from "@/context/RoleContext";
@@ -14,6 +15,7 @@ import FirstAppealGenerator from "@/components/FirstAppealGenerator";
 import { calculateStatutoryTimeline } from "@/lib/statutory/timeline-engine";
 
 export default function CitizenCasePage() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const { cases } = useRole();
 
@@ -22,9 +24,9 @@ export default function CitizenCasePage() {
   if (!selectedCase) {
     return (
       <div className="p-8">
-        <h2 className="text-xl font-bold text-red-600">Case not found</h2>
+        <h2 className="text-xl font-bold text-red-600">{t("dashboard.emptyState")}</h2>
         <Link href="/dashboard">
-          <PrimaryButton className="mt-4" icon={ArrowLeft}>Back to Dashboard</PrimaryButton>
+          <PrimaryButton className="mt-4" icon={ArrowLeft}>{t("common.backToHome")}</PrimaryButton>
         </Link>
       </div>
     );
@@ -57,7 +59,7 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
       <div className="flex items-center gap-4 mb-6">
         <Link href="/dashboard" className="flex items-center">
           <ArrowLeft className="h-5 w-5 text-indigo-primary" />
-          <span className="ml-1 text-sm font-medium text-indigo-primary">Dashboard</span>
+          <span className="ml-1 text-sm font-medium text-indigo-primary">{t("dashboard.badge")}</span>
         </Link>
         <h1 className="text-2xl font-bold text-dark-text">Consultation Details — {selectedCase.id}</h1>
       </div>
@@ -66,16 +68,16 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
       <div className="bg-white border border-borders rounded-lg p-4 shadow-2xs">
         <div className="flex justify-between items-center bg-slate-50 p-3 rounded-t-lg border-b border-borders">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold text-secondary-text">Status:</span>
+            <span className="text-xs font-semibold text-secondary-text">{t("common.status")}</span>
             <StatusBadge status={selectedCase.status} />
-            <span className="text-xs font-semibold text-secondary-text">Priority:</span>
+            <span className="text-xs font-semibold text-secondary-text">{t("common.filter")}</span>
             <StatusBadge status={selectedCase.priority} />
           </div>
           <span className="text-xs text-secondary-text">Created: {new Date(selectedCase.createdAt).toLocaleDateString()}</span>
         </div>
         <div className="p-4 space-y-4">
           <div>
-            <span className="text-[10px] font-bold text-secondary-text uppercase tracking-wider block mb-1">Issue Described</span>
+            <span className="text-[10px] font-bold text-secondary-text uppercase tracking-wider block mb-1">{t("ask.problemLabel")}</span>
             <p className="text-xs text-dark-text bg-slate-50 p-3 rounded border border-borders font-sans leading-relaxed">
               {selectedCase.issue}
             </p>
@@ -83,21 +85,21 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
           {selectedCase.aiResponse && (
             <div className="border border-indigo-primary/20 rounded-lg overflow-hidden">
               <div className="px-4 py-2.5 bg-indigo-primary/5 border-b border-indigo-primary/10 flex justify-between items-center">
-                <span className="text-[10px] font-bold text-indigo-primary uppercase tracking-wider">Generated RTI Draft Document</span>
-                <span className="text-[9px] bg-success-bg border border-success-green/20 text-success-green px-1.5 py-0.5 rounded font-bold uppercase">Verification Complete</span>
+                <span className="text-[10px] font-bold text-indigo-primary uppercase tracking-wider">{t("preview.generatedTitle")}</span>
+                <span className="text-[9px] bg-success-bg border border-success-green/20 text-success-green px-1.5 py-0.5 rounded font-bold uppercase">{t("sources.verifiedBadge")}</span>
               </div>
               <div className="p-4 font-serif text-xs space-y-4 max-h-[250px] overflow-y-auto">
                 <div>
-                  <span className="font-bold block">To, The Public Information Officer,</span>
+                  <span className="font-bold block">{t("preview.targetAuth")}</span>
                   <span className="block font-bold">{selectedCase.aiResponse.authority.organization}</span>
                   <span className="block">{selectedCase.aiResponse.authority.state}</span>
                 </div>
                 <div>
-                  <span className="font-bold">Subject: </span>
+                  <span className="font-bold">{t("preview.subjectLabel")} </span>
                   <span>{selectedCase.aiResponse.subject}</span>
                 </div>
                 <div>
-                  <span className="font-bold block mb-1">Particulars requested:</span>
+                  <span className="font-bold block mb-1">{t("preview.bgContextLabel")}</span>
                   <ol className="list-decimal pl-4 space-y-1">
                     {selectedCase.aiResponse.questions.map((q, idx) => (
                       <li key={idx}>{q}</li>
@@ -112,8 +114,8 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
         </div>
         {/* Action Buttons */}
         <div className="flex gap-2 mt-4 pb-4 border-b border-borders">
-          <SecondaryButton icon={Copy} onClick={handleCopyCaseRti}>Copy Draft</SecondaryButton>
-          <SecondaryButton icon={Printer} onClick={() => window.print()}>Print</SecondaryButton>
+          <SecondaryButton icon={Copy} onClick={handleCopyCaseRti}>{t("common.copy")}</SecondaryButton>
+          <SecondaryButton icon={Printer} onClick={() => window.print()}>{t("common.print")}</SecondaryButton>
         </div>
 
         {/* Section: Document Integrity Checksum */}
@@ -143,7 +145,7 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
             return (
               <div className="mt-6 border-t border-borders pt-6">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
-                  Statutory First Appeal Assistant (Section 19(1))
+                  {t("appeal.title")}
                 </h3>
                 <FirstAppealGenerator
                   initialData={{
@@ -163,7 +165,7 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
             <div className="mt-6 border-t border-borders pt-6">
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1">
                 <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
-                  Section 19(1) First Appeal Status: Pending Response Period
+                  Section 19(1) First Appeal {t("common.status")} Pending Response Period
                 </span>
                 <p className="text-xs text-slate-500 leading-relaxed">
                   First Appeal becomes available once the statutory 30-day PIO response deadline ({timeline.standardResponseDeadline}) passes or a qualifying PIO decision/refusal is recorded.

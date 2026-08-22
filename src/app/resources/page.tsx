@@ -131,28 +131,28 @@ export default function ResourcesPage() {
         <div className="flex items-start gap-3.5">
           <ShieldAlert className="h-6 w-6 text-warning-amber shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <span className="text-xs font-bold text-dark-text uppercase tracking-wide">Emergency Legal & Crime Response</span>
+            <span className="text-xs font-bold text-dark-text uppercase tracking-wide">{t("resources.title")}</span>
             <p className="text-xs text-secondary-text leading-relaxed">
-              If you have experienced financial cyber theft, online harassment, or require immediate rescue services, contact these national centers immediately.
+              {t("resources.subtitle")}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-3.5">
               <div className="bg-white border border-borders rounded p-3 flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <span className="text-[9px] font-bold text-secondary-text uppercase block">Cyber Crime</span>
+                  <span className="text-[9px] font-bold text-secondary-text uppercase block">{t("resources.badge")}</span>
                   <span className="text-sm font-bold text-dark-text block">1930</span>
                 </div>
                 <Phone className="h-4.5 w-4.5 text-indigo-primary" />
               </div>
               <div className="bg-white border border-borders rounded p-3 flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <span className="text-[9px] font-bold text-secondary-text uppercase block">Women Helpline</span>
+                  <span className="text-[9px] font-bold text-secondary-text uppercase block">{t("resources.badge")}</span>
                   <span className="text-sm font-bold text-dark-text block">1091 / 112</span>
                 </div>
                 <Phone className="h-4.5 w-4.5 text-indigo-primary" />
               </div>
               <div className="bg-white border border-borders rounded p-3 flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <span className="text-[9px] font-bold text-secondary-text uppercase block">Senior Citizens</span>
+                  <span className="text-[9px] font-bold text-secondary-text uppercase block">{t("resources.badge")}</span>
                   <span className="text-sm font-bold text-dark-text block">14567</span>
                 </div>
                 <Phone className="h-4.5 w-4.5 text-indigo-primary" />
@@ -166,7 +166,7 @@ export default function ResourcesPage() {
         {/* LEFT COLUMN: Resource list with search & filter */}
         <div className="lg:col-span-8 space-y-6">
           <div className="border-b border-borders pb-2 flex justify-between items-center">
-            <h2 className="text-sm font-bold text-dark-text uppercase tracking-wider">Resources Directory</h2>
+            <h2 className="text-sm font-bold text-dark-text uppercase tracking-wider">{t("resources.title")}</h2>
             <span className="text-xs font-semibold text-secondary-text">{filteredResources.length} Verified Links</span>
           </div>
 
@@ -178,7 +178,7 @@ export default function ResourcesPage() {
                 type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search resources by organization or type..."
+                placeholder={t("common.search")}
                 className="w-full pl-11 pr-4 py-2.5 rounded-lg border border-borders text-xs text-dark-text bg-white transition-colors focus:border-indigo-primary focus:outline-none"
               />
             </div>
@@ -222,7 +222,7 @@ export default function ResourcesPage() {
                       rel="noopener noreferrer"
                       className="text-indigo-primary font-bold hover:underline flex items-center gap-0.5"
                     >
-                      <span>Visit Portal</span>
+                      <span>{t("sources.visitPortal")}</span>
                       <ExternalLink className="h-3.5 w-3.5" />
                     </a>
                   )}
@@ -235,7 +235,7 @@ export default function ResourcesPage() {
         {/* RIGHT COLUMN: FAQs */}
         <div className="lg:col-span-4 space-y-6">
           <div className="border-b border-borders pb-2">
-            <h2 className="text-sm font-bold text-dark-text uppercase tracking-wider">Frequently Asked Questions</h2>
+            <h2 className="text-sm font-bold text-dark-text uppercase tracking-wider">{t("resources.title")}</h2>
           </div>
 
           <div className="space-y-3">

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import FallbackBanner from "./FallbackBanner";
 import TrustPanel, { SourceCardInfo } from "./TrustPanel";
 import DocumentActions from "./DocumentActions";
@@ -9,6 +10,7 @@ import { useRole } from "@/context/RoleContext";
 import { BharatLanguageCode } from "@/lib/language/types";
 import { supportsTTS, getLanguage } from "@/lib/language/languages";
 import { translateText, speakText } from "@/services/language";
+import { exportRtiApplicationHtml, triggerPrintDocument } from "@/lib/pdf/print-export";
 
 export interface GeneratedRtiData {
   mode: "ai" | "fallback";
@@ -61,6 +63,7 @@ export default function GeneratedPreview({
   civicContext,
   targetLanguage = "en-IN",
 }: GeneratedPreviewProps) {
+  const { t } = useLanguage();
   const { addCase } = useRole();
   const [isEditing, setIsEditing] = useState(false);
   const [editedSubject, setEditedSubject] = useState(data.subject);
@@ -225,7 +228,7 @@ The Public Information Officer (PIO)
 ${data.authority.organization}
 ${data.authority.state}
 
-Subject: ${editedSubject}
+{t("preview.subjectLabel")}: ${editedSubject}
 
 Respected Sir/Madam,
 
@@ -238,6 +241,25 @@ ${editedQuestions.map((q, i) => `${i + 1}. ${q}`).join("\n")}
 Applicant Details (Local):
 Name: ${applicantDetails?.name || "[Applicant Name]"}
 Address: ${applicantDetails?.address || "[Applicant Address]"}`;
+
+  const handleDownloadPdf = () => {
+    const html = exportRtiApplicationHtml({
+      applicationDate: new Date().toLocaleDateString("en-IN"),
+      publicAuthority: data.authority.organization,
+      pioTitle: "The Public Information Officer (PIO)",
+      applicantName: applicantDetails?.name || "Citizen Applicant",
+      applicantAddress: applicantDetails?.address || "Address provided with original submission",
+      subject: editedSubject,
+      problemDescription: editedBody,
+      requestedQuestions: editedQuestions,
+      periodConcerned: civicContext?.dateRange || "Relevant Statutory Period",
+      feeAmount: 10,
+      paymentMode: "Court Fee Stamp / Indian Postal Order",
+      bplStatus: false,
+      sourceReferences: data.citationIds || ["SRC-RTI-CENTRAL-2005"],
+    });
+    triggerPrintDocument(html);
+  };
 
   return (
     <div className="w-full space-y-8">
@@ -259,7 +281,7 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
                   Bharat Language Presentation ({getLanguage(targetLanguage)?.nativeName || targetLanguage})
                 </span>
                 <span className="text-[11px] text-sky-700 block">
-                  Canonical RTI draft remains preserved in English. Click below to view translated guidance.
+                  {t("preview.canonicalNotice")}
                 </span>
               </div>
             </div>
@@ -279,7 +301,7 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
                   onClick={handlePlaySarvamAudio}
                   disabled={isPlayingAudio}
                   className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold hover:bg-indigo-700 transition-colors flex items-center gap-1.5 disabled:opacity-50"
-                  aria-label="Listen to Sarvam Voice output"
+                  aria-label={t("preview.speakBtn")}
                 >
                   <Volume2 className="w-3.5 h-3.5" />
                   <span>{isPlayingAudio ? "Playing Voice..." : "Listen Voice"}</span>
@@ -295,7 +317,7 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
                 onClick={() => setActiveDisplayMode("canonical")}
                 className="text-sky-900 underline font-bold"
               >
-                View Canonical English Original
+                {t("preview.viewCanonicalOriginal")}
               </button>
             </div>
           )}
@@ -307,9 +329,9 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
       {/* Action Controls Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-[#BCD7EE] shadow-xs">
         <div>
-          <h3 className="text-lg font-bold text-[#102A56]">Generated RTI Application</h3>
+          <h3 className="text-lg font-bold text-[#102A56]">{t("preview.generatedTitle")}</h3>
           <p className="text-xs text-[#526176]">
-            Review, edit, and export your record-based RTI request
+            {t("preview.generatedSubtitle")}
           </p>
         </div>
         <DocumentActions
@@ -317,6 +339,7 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
           onToggleEdit={() => setIsEditing(!isEditing)}
           onCopy={() => navigator.clipboard.writeText(fullTextToCopy)}
           onSaveToDashboard={handleSaveToDashboard}
+          onDownloadPdf={handleDownloadPdf}
           isSaved={isSaved}
         />
       </div>
@@ -327,7 +350,7 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
         <div className="border-b border-[#BCD7EE] pb-6 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-[#4F46E5]">
-              Target Public Authority
+              {t("preview.targetAuth")}
             </span>
             <span
               className={`px-3 py-1 rounded-full text-xs font-semibold border flex items-center gap-1.5 ${
@@ -339,12 +362,12 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
               {data.authority.verified ? (
                 <>
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#0F9D76]" />
-                  Verified Coimbatore Authority
+                  {t("preview.verifiedAuthBadge")}
                 </>
               ) : (
                 <>
                   <AlertCircle className="w-3.5 h-3.5 text-[#D97706]" />
-                  Unverified Authority Notice
+                  {t("preview.unverifiedNotice")}
                 </>
               )}
             </span>
@@ -359,10 +382,10 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
           </p>
         </div>
 
-        {/* Subject Line */}
+        {/* {t("preview.subjectLabel")} Line */}
         <div className="space-y-2">
           <label className="text-xs font-bold uppercase tracking-wider text-[#526176]">
-            Subject
+            {t("preview.subjectLabel")}
           </label>
           {isEditing ? (
             <input
@@ -381,7 +404,7 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
         {/* Application Body */}
         <div className="space-y-2">
           <label className="text-xs font-bold uppercase tracking-wider text-[#526176]">
-            Background / Context
+            {t("preview.bgContextLabel")}
           </label>
           {isEditing ? (
             <textarea
@@ -436,14 +459,14 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
         {applicantDetails && (
           <div className="border-t border-[#BCD7EE] pt-6 space-y-2">
             <span className="text-xs font-bold uppercase tracking-wider text-[#526176]">
-              Applicant Details — kept in this browser session
+              {t("preview.applicantDetailsSession")}
             </span>
             <div className="p-4 rounded-lg bg-[#F4F9FF] border border-[#BCD7EE] text-sm space-y-1">
               <p>
-                <strong className="text-[#102A56]">Name:</strong> {applicantDetails.name}
+                <strong className="text-[#102A56]">{t("preview.nameLabel")}</strong> {applicantDetails.name}
               </p>
               <p>
-                <strong className="text-[#102A56]">Address:</strong> {applicantDetails.address}
+                <strong className="text-[#102A56]">{t("preview.addressLabel")}</strong> {applicantDetails.address}
               </p>
             </div>
           </div>
@@ -454,12 +477,12 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
       <div className="p-6 rounded-xl bg-white border border-[#BCD7EE] shadow-xs space-y-4">
         <h4 className="text-base font-bold text-[#102A56] flex items-center gap-2">
           <CheckCircle2 className="w-5 h-5 text-[#0F9D76]" />
-          Filing Action Guidance
+          {t("preview.actionGuidanceTitle")}
         </h4>
         <ol className="list-decimal list-inside space-y-2 text-sm text-[#526176] leading-relaxed">
-          <li>Print or export this application as PDF using the controls above.</li>
+          <li>{t("preview.guidanceStep1")}</li>
           <li>Attach the prescribed RTI Application Fee (e.g., ₹10 Court Fee Stamp or Indian Postal Order payable to PIO).</li>
-          <li>Sign the application at the bottom of the printed copy.</li>
+          <li>{t("preview.guidanceStep2")}</li>
           <li>Submit by registered post or in-person at the PIO office of {data.authority.organization}.</li>
         </ol>
       </div>
