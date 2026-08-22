@@ -520,9 +520,10 @@ export default function AskPage() {
                   onTranscriptConfirmed={(transcript) => {
                     setIssue(transcript);
                     setIssueInputSource("voice");
+                    setIssueInputLanguage(selectedLanguage);
                   }}
                   fieldLabel="Civic Problem Description"
-                  defaultLanguageId="ta"
+                  defaultLanguageCode={selectedLanguage}
                 />
 
                 {isTranscribing && (

@@ -1550,6 +1550,63 @@ async function runRouteHandlerContractTests() {
     assert(tnDepositRule?.value === 3, "Tamil Nadu tenant deposit cap is 3 months");
   }
 
+  // =========================================================================
+  // SECTION 19: Multilingual Voice Recognition Language Binding Tests
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 19: Multilingual Voice Recognition Language Binding Tests ---");
+
+    const { resolveSpeechLanguageConfig, getAllSpeechLanguages, SPEECH_LANGUAGE_REGISTRY } = await import("@/lib/voice/speech-language-registry");
+
+    // 1. Language Resolution Assertions
+    const tamilConfig = resolveSpeechLanguageConfig("ta-IN");
+    assert(tamilConfig.code === "ta-IN", "Tamil code resolves to ta-IN");
+    assert(tamilConfig.bcp47SpeechLocale === "ta-IN", "Tamil speech locale is ta-IN");
+    assert(tamilConfig.sarvamLanguageCode === "ta-IN", "Tamil Sarvam code is ta-IN");
+
+    const hindiConfig = resolveSpeechLanguageConfig("hi-IN");
+    assert(hindiConfig.code === "hi-IN", "Hindi code resolves to hi-IN");
+    assert(hindiConfig.bcp47SpeechLocale === "hi-IN", "Hindi speech locale is hi-IN");
+
+    const kannadaConfig = resolveSpeechLanguageConfig("kn-IN");
+    assert(kannadaConfig.code === "kn-IN", "Kannada code resolves to kn-IN");
+    assert(kannadaConfig.bcp47SpeechLocale === "kn-IN", "Kannada speech locale is kn-IN");
+
+    const teluguConfig = resolveSpeechLanguageConfig("te-IN");
+    assert(teluguConfig.code === "te-IN", "Telugu code resolves to te-IN");
+
+    const malayalamConfig = resolveSpeechLanguageConfig("ml-IN");
+    assert(malayalamConfig.code === "ml-IN", "Malayalam code resolves to ml-IN");
+
+    const marathiConfig = resolveSpeechLanguageConfig("mr-IN");
+    assert(marathiConfig.code === "mr-IN", "Marathi code resolves to mr-IN");
+
+    const bengaliConfig = resolveSpeechLanguageConfig("bn-IN");
+    assert(bengaliConfig.code === "bn-IN", "Bengali code resolves to bn-IN");
+
+    const urduConfig = resolveSpeechLanguageConfig("ur-IN");
+    assert(urduConfig.code === "ur-IN", "Urdu code resolves to ur-IN");
+
+    const englishConfig = resolveSpeechLanguageConfig("en-IN");
+    assert(englishConfig.code === "en-IN", "English code resolves to en-IN");
+
+    // 2. Short Prefix Matching Tests
+    const shortTamil = resolveSpeechLanguageConfig("ta");
+    assert(shortTamil.code === "ta-IN", "Short prefix 'ta' resolves to ta-IN");
+    assert(shortTamil.bcp47SpeechLocale === "ta-IN", "Short prefix 'ta' sets speech locale to ta-IN");
+
+    const shortHindi = resolveSpeechLanguageConfig("hi");
+    assert(shortHindi.code === "hi-IN", "Short prefix 'hi' resolves to hi-IN");
+
+    // 3. Dynamic Switch & Non-English Invariance
+    assert(tamilConfig.bcp47SpeechLocale !== "en-IN", "Selected Tamil strictly DOES NOT resolve to en-IN");
+    assert(hindiConfig.bcp47SpeechLocale !== "en-IN", "Selected Hindi strictly DOES NOT resolve to en-IN");
+
+    // 4. Registry Completeness
+    const allVoiceLangs = getAllSpeechLanguages();
+    assert(allVoiceLangs.length === 23, "All 23 Bharat voice languages registered");
+  }
+
   console.log("\n=================================================================");
   console.log(`   Route-Handler Contract Tests Completed: ${passed} Passed, ${failed} Failed`);
   console.log("=================================================================\n");

@@ -13,6 +13,7 @@ import {
 } from "@/lib/forms/document-generator";
 import DocumentPreviewModal from "./DocumentPreviewModal";
 import VoiceInputButton from "@/components/voice/VoiceInputButton";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   CheckCircle2,
   ChevronLeft,
@@ -41,6 +42,7 @@ export default function FormWizard({
   initialAnswers = {},
   onComplete
 }: FormWizardProps) {
+  const { selectedLanguage } = useLanguage();
   const storageKey = `inforight_draft_${form.form_id}`;
 
   // Form State
@@ -316,6 +318,7 @@ export default function FormWizard({
                   <VoiceInputButton
                     onTranscriptConfirmed={(val) => handleInputChange(currentField.field_id, val)}
                     fieldLabel={currentField.plain_language_question}
+                    defaultLanguageCode={selectedLanguage}
                   />
                 </div>
               )}

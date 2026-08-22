@@ -12,6 +12,7 @@ import { resolveCompetentAuthority } from "@/lib/authorities/authority-router";
 import AuthorityCard from "@/components/locator/AuthorityCard";
 import VoiceInputButton from "@/components/voice/VoiceInputButton";
 import { normalizeSpokenPincode } from "@/lib/voice/number-normalizer";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   Search,
   MapPin,
@@ -29,6 +30,7 @@ import {
 } from "lucide-react";
 
 export default function LocatorPage() {
+  const { selectedLanguage } = useLanguage();
   const [pincodeInput, setPincodeInput] = useState("600042");
   const [selectedLocality, setSelectedLocality] = useState("");
   const [domain, setDomain] = useState<MasterDomain>("RTI_ACCESS");
@@ -120,7 +122,7 @@ export default function LocatorPage() {
                   }
                 }}
                 fieldLabel="Spoken PIN Code"
-                defaultLanguageId="ta"
+                defaultLanguageCode={selectedLanguage}
               />
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
