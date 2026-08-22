@@ -30,28 +30,26 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-3 lg:gap-6 text-sm font-semibold text-[#102A56] shrink-0">
-            <Link href="/" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
-              {t("nav.home")}
-            </Link>
-            <Link href="/ask" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
-              {t("nav.rtiDrafting")}
-            </Link>
-            <Link href="/rights" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
-              {t("nav.rightsNavigator")}
-            </Link>
-            <Link href="/schemes" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
-              {t("nav.welfareSchemes")}
-            </Link>
-            <Link href="/locator" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
-              Locator
+          {/* Desktop Navigation Links (Simplified 4 Core Flow) */}
+          <nav className="hidden md:flex items-center gap-4 lg:gap-6 text-sm font-semibold text-[#102A56] shrink-0">
+            <Link href="/ask" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap text-indigo-700 font-bold">
+              Get Help
             </Link>
             <Link href="/dashboard" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
-              Tracker
+              My Cases &amp; Tracker
             </Link>
-            <Link href="/sources" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
-              {t("nav.officialSources")}
+            <Link href="/rights" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
+              Rights &amp; Schemes
+            </Link>
+            <Link href="/resources" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
+              Resources
+            </Link>
+            <Link
+              href="/official"
+              className="text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 px-2.5 py-1 rounded-md border border-slate-300 transition-colors whitespace-nowrap font-medium"
+              title="Demonstrate government officer review workflow"
+            >
+              Official Workspace
             </Link>
           </nav>
 
@@ -89,60 +87,39 @@ export default function Navbar() {
             <AccessibilityToolbar textToRead="Welcome to InfoRight AI. Convert municipal road complaints into clear record-based RTI applications with verified official sources." />
           </div>
           <Link
-            href="/"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
-          >
-            {t("nav.home")}
-          </Link>
-          <Link
             href="/ask"
             onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
+            className="block text-sm font-bold text-indigo-600 hover:text-indigo-800 py-1.5"
           >
-            {t("nav.rtiDrafting")}
-          </Link>
-          <Link
-            href="/rights"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
-          >
-            {t("nav.rightsNavigator")}
-          </Link>
-          <Link
-            href="/forms"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
-          >
-            Forms
-          </Link>
-          <Link
-            href="/schemes"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
-          >
-            {t("nav.welfareSchemes")}
-          </Link>
-          <Link
-            href="/locator"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
-          >
-            Authority Locator
+            Get Help (Describe Problem)
           </Link>
           <Link
             href="/dashboard"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
-            Statutory Tracker
+            My Cases &amp; Tracker
           </Link>
           <Link
-            href="/sources"
+            href="/rights"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
-            {t("nav.officialSources")}
+            Rights &amp; Schemes
+          </Link>
+          <Link
+            href="/resources"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
+          >
+            Resources
+          </Link>
+          <Link
+            href="/official"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-sm font-semibold text-slate-600 hover:text-slate-900 py-1.5 border-t border-slate-100 pt-2"
+          >
+            Official Workspace (Role Demo)
           </Link>
           <div className="pt-2 border-t border-[#BCD7EE]">
             <Link
