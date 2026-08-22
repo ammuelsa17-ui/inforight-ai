@@ -1659,6 +1659,44 @@ async function runRouteHandlerContractTests() {
     assert(pinRes.localBodyName?.includes("Coimbatore City Municipal Corporation") === true, "CCMC resolved without requiring map GPS");
   }
 
+  // --- SECTION 21: Runtime All-India Location Resolution Tests ---
+  {
+    console.log("\n--- SECTION 21: Runtime All-India Location Resolution Tests ---");
+    const {
+      resolveAllIndiaPin,
+      getSubDistrictLabelForState,
+      verifyStateAndDistrict
+    } = await import("@/lib/location/all-india-location-resolver");
+
+    // 1. State-Specific Sub-District Label Normalization
+    assert(getSubDistrictLabelForState("Tamil Nadu") === "Taluk", "TN resolves sub-district label 'Taluk'");
+    assert(getSubDistrictLabelForState("Kerala") === "Taluk", "Kerala resolves sub-district label 'Taluk'");
+    assert(getSubDistrictLabelForState("Karnataka") === "Taluk", "Karnataka resolves sub-district label 'Taluk'");
+    assert(getSubDistrictLabelForState("Telangana") === "Mandal", "Telangana resolves sub-district label 'Mandal'");
+    assert(getSubDistrictLabelForState("Andhra Pradesh") === "Mandal", "AP resolves sub-district label 'Mandal'");
+    assert(getSubDistrictLabelForState("Uttar Pradesh") === "Tehsil", "UP resolves sub-district label 'Tehsil'");
+    assert(getSubDistrictLabelForState("Maharashtra") === "Tehsil", "Maharashtra resolves sub-district label 'Tehsil'");
+
+    // 2. Official Directory State & District Verification
+    const tnCheck = verifyStateAndDistrict("Tamil Nadu", "Theni");
+    assert(tnCheck.stateValid === true, "Tamil Nadu state verified in official directory");
+    assert(tnCheck.districtValid === true, "Theni district verified in official directory");
+
+    const dlCheck = verifyStateAndDistrict("Delhi", "New Delhi");
+    assert(dlCheck.stateValid === true, "Delhi state verified in official directory");
+    assert(dlCheck.districtValid === true, "New Delhi district verified in official directory");
+
+    const fakeCheck = verifyStateAndDistrict("Atlantis", "Atlantis City");
+    assert(fakeCheck.stateValid === false, "Invented state strictly fails validation");
+    assert(fakeCheck.districtValid === false, "Invented district strictly fails validation");
+
+    // 3. Fallback / Offline Safety on Invalid PIN
+    const invalidPinRes = await resolveAllIndiaPin("000000");
+    assert(invalidPinRes.valid === false, "Malformed PIN 000000 returns valid: false");
+    assert(invalidPinRes.confidence === "VERIFICATION_REQUIRED", "Invalid PIN yields VERIFICATION_REQUIRED");
+    assert(invalidPinRes.administrative.state.name === null, "Invalid PIN never fabricates state name");
+  }
+
   console.log("\n=================================================================");
   console.log(`   Route-Handler Contract Tests Completed: ${passed} Passed, ${failed} Failed`);
   console.log("=================================================================\n");

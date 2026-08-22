@@ -41,6 +41,8 @@ import { SubmissionTracker } from "@/components/tracker/SubmissionTracker";
 import { ALL_STATES_AND_UTS } from "@/lib/location/location-context";
 import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
 import { LocationMap } from "@/components/location/LocationMap";
+import { AdministrativeDetailsPanel } from "@/components/location/AdministrativeDetailsPanel";
+import { NormalizedLocationResolution } from "@/lib/location/all-india-location-resolver";
 import { LocationSource } from "@/types/rectification";
 
 const PREFILLED_SCENARIOS = [
@@ -142,18 +144,39 @@ export default function AskPage() {
     return planCitizenAction(issue || "Describe a civic or legal dispute", pinCode, state, district);
   }, [issue, pinCode, state, district]);
 
-  const handlePinChange = (val: string) => {
+  const [adminResolution, setAdminResolution] = useState<NormalizedLocationResolution | null>(null);
+
+  const handlePinChange = async (val: string) => {
     setPinCode(val);
-    if (val.trim().length === 6) {
-      const res = resolvePinAuthority(val, issue);
+    const cleanPin = val.trim();
+    if (cleanPin.length === 6) {
+      const res = resolvePinAuthority(cleanPin, issue);
       setPinResolution(res);
       if (res.resolved) {
         if (res.state) setState(res.state);
         if (res.district) setDistrict(res.district);
         if (res.localBodyName) setLocalBodyName(res.localBodyName);
       }
+
+      // Fetch full all-India administrative hierarchy from server API
+      try {
+        const fetchRes = await fetch(`/api/location/pin?pin=${cleanPin}`);
+        if (fetchRes.ok) {
+          const normData: NormalizedLocationResolution = await fetchRes.json();
+          setAdminResolution(normData);
+          if (normData.postal.state && !res.state) {
+            setState(normData.postal.state);
+          }
+          if (normData.postal.district && !res.district) {
+            setDistrict(normData.postal.district);
+          }
+        }
+      } catch {
+        // Fallback gracefully
+      }
     } else {
       setPinResolution(null);
+      setAdminResolution(null);
     }
   };
 
@@ -516,6 +539,9 @@ export default function AskPage() {
                 heightClass="h-[200px] sm:h-[240px]"
                 helperText="Entering a verified PIN centers the map near that postal area. Use 'Use My Current Location' or click on the map to refine the spot."
               />
+
+              {/* Administrative Hierarchy & Provenance Details */}
+              <AdministrativeDetailsPanel resolution={adminResolution} />
             </div>
 
             {/* Voice Control Buttons */}
