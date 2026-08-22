@@ -22,6 +22,11 @@ import {
   generateRepresentationDocument,
   exportRepresentationHtml,
 } from "@/lib/templates/representation-generator";
+import { ALL_STATES_AND_UTS, resolveLocationContext } from "@/lib/location/location-context";
+import { STATE_TENANCY_REGISTRY, getStateTenancyRecord } from "@/data/tenancy/state-tenancy-registry";
+import { planConsumerAction, calculateConsumerJurisdiction } from "@/lib/consumer/consumer-engine";
+import { planTenantAction } from "@/lib/tenancy/tenancy-engine";
+import { checkSourceFreshness } from "@/lib/sources/freshness-checker";
 import { ALL_SOURCES } from "@/data/sources";
 import { NextRequest } from "next/server";
 
@@ -1090,6 +1095,164 @@ async function runRouteHandlerContractTests() {
 
     const unverifiedPlan = planCitizenAction("Potholes on road", "999999");
     assert(unverifiedPlan.confidence === "VERIFICATION_REQUIRED", "Unsupported PIN 999999 strictly returns VERIFICATION_REQUIRED, never HIGH");
+  }
+
+  // =========================================================================
+  // SECTION 12: Pan-India Location Context Tests (All 36 States & UTs)
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 12: Pan-India Location Context Tests ---");
+
+    assert(ALL_STATES_AND_UTS.length === 36, "All 36 Indian States and Union Territories registered");
+    const statesCount = ALL_STATES_AND_UTS.filter((s) => !s.unionTerritory).length;
+    const utCount = ALL_STATES_AND_UTS.filter((s) => s.unionTerritory).length;
+    assert(statesCount === 28, "Exactly 28 States present in registry");
+    assert(utCount === 8, "Exactly 8 Union Territories present in registry");
+
+    const locKA = resolveLocationContext({ state: "Karnataka", district: "Bengaluru Urban" });
+    assert(locKA.stateCode === "KA", "Karnataka resolved to KA");
+    assert(locKA.district === "Bengaluru Urban", "Bengaluru Urban district preserved");
+
+    const locMH = resolveLocationContext({ stateCode: "MH", district: "Pune" });
+    assert(locMH.stateName === "Maharashtra", "MH resolved to Maharashtra");
+  }
+
+  // =========================================================================
+  // SECTION 13: Pan-India Consumer Protection Engine Tests
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 13: Pan-India Consumer Protection Engine Tests ---");
+
+    // 1. National core consistency across diverse states
+    const statesToTest = ["Tamil Nadu", "Karnataka", "Maharashtra", "Delhi", "Kerala", "Uttar Pradesh", "West Bengal", "Gujarat", "Assam", "Jammu and Kashmir"];
+    for (const st of statesToTest) {
+      const cPlan = planConsumerAction({
+        state: st,
+        district: "Capital District",
+        productOrService: "Mobile Phone",
+        sellerOrProvider: "Online Retailer",
+        amountPaid: 25000,
+        issueType: "DEFECTIVE_GOODS",
+        issueDescription: "Battery defective",
+        invoiceAvailable: true,
+        warrantyAvailable: true,
+        communicationsAvailable: true,
+        priorComplaintMade: true,
+        reliefRequested: "REFUND",
+      });
+
+      assert(cPlan.domain === "CONSUMER", `Consumer dispute for ${st} correctly classified as CONSUMER domain`);
+      assert(cPlan.statutoryBasis[0].includes("Consumer Protection Act, 2019"), `National CPA 2019 applies uniformly in ${st}`);
+      assert(cPlan.nchDetails.helplineNumber.includes("1915"), `NCH 1915 integration verified for ${st}`);
+    }
+
+    // 2. Pecuniary Jurisdiction Rule calculation (2021 CPA Rules)
+    const locDistrict = resolveLocationContext({ state: "Tamil Nadu", district: "Coimbatore" });
+    const distJurisdiction = calculateConsumerJurisdiction(300000, locDistrict);
+    assert(distJurisdiction.tier === "DISTRICT_COMMISSION", "Amount ₹3,00,000 routes to District Commission");
+
+    const stateJurisdiction = calculateConsumerJurisdiction(7500000, locDistrict);
+    assert(stateJurisdiction.tier === "STATE_COMMISSION", "Amount ₹75,00,000 routes to State Commission");
+
+    const natJurisdiction = calculateConsumerJurisdiction(25000000, locDistrict);
+    assert(natJurisdiction.tier === "NATIONAL_COMMISSION", "Amount ₹2,50,00,000 routes to National Commission (NCDRC)");
+
+    // Missing amount fails safe to VERIFICATION_REQUIRED / MEDIUM
+    const unknownJurisdiction = calculateConsumerJurisdiction(undefined, locDistrict);
+    assert(unknownJurisdiction.tier === "VERIFICATION_REQUIRED", "Undefined claim amount strictly requires fact verification");
+  }
+
+  // =========================================================================
+  // SECTION 14: Pan-India State-Aware Tenancy Registry & Adapters Tests
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 14: Pan-India State-Aware Tenancy Tests ---");
+
+    // All 36 States/UTs must be in tenancy registry
+    assert(Object.keys(STATE_TENANCY_REGISTRY).length >= 36, "36 States & UTs registered in State Tenancy Registry");
+
+    // 1. Tamil Nadu — FULLY VERIFIED (TNRRRLT Act 2017)
+    const tnRecord = getStateTenancyRecord("TN");
+    assert(tnRecord.legalStatus === "VERIFIED_STATE_ACT", "Tamil Nadu verified as VERIFIED_STATE_ACT");
+    assert(tnRecord.primaryActTitle.includes("TNRRRLT Act, 2017"), "TN cites TNRRRLT Act 2017");
+    assert(tnRecord.statutoryDepositCapMonths === 3, "TN residential deposit capped at 3 months");
+
+    const tnPlan = planTenantAction({
+      state: "Tamil Nadu",
+      district: "Coimbatore",
+      propertyType: "RESIDENTIAL",
+      agreementAvailable: true,
+      agreementRegistered: true,
+      issueType: "SECURITY_DEPOSIT",
+      issueDescription: "Deposit withheld",
+      noticeReceived: false,
+      handoverProofAvailable: true,
+      communicationsAvailable: true,
+    });
+    assert(tnPlan.applicableLaw.isStateSpecific === true, "TN tenancy law is verified state-specific");
+    assert(tnPlan.statutoryRule.statutorySection === "Section 11, TNRRRLT Act 2017", "TN security deposit cites Section 11");
+
+    // 2. Karnataka — VERIFIED RENT ACT (Karnataka Rent Act, 1999)
+    const kaRecord = getStateTenancyRecord("KA");
+    assert(kaRecord.primaryActTitle.includes("Karnataka Rent Act, 1999"), "KA cites Karnataka Rent Act, 1999");
+    assert(kaRecord.rentAuthorityTitle.includes("Court of Small Causes"), "KA specifies Small Causes Court");
+
+    // 3. Maharashtra — VERIFIED (Maharashtra Rent Control Act, 1999)
+    const mhRecord = getStateTenancyRecord("MH");
+    assert(mhRecord.primaryActTitle.includes("Maharashtra Rent Control Act, 1999"), "MH cites Maharashtra Rent Control Act, 1999");
+
+    // 4. Uttar Pradesh — VERIFIED (UP Tenancy Act 2021)
+    const upRecord = getStateTenancyRecord("UP");
+    assert(upRecord.primaryActTitle.includes("Uttar Pradesh Regulation of Urban Premises Tenancy Act, 2021"), "UP cites 2021 Tenancy Act");
+    assert(upRecord.statutoryDepositCapMonths === 2, "UP residential deposit capped at 2 months");
+
+    // 5. Delhi — VERIFIED (Delhi Rent Control Act, 1958)
+    const dlRecord = getStateTenancyRecord("DL");
+    assert(dlRecord.primaryActTitle.includes("Delhi Rent Control Act, 1958"), "Delhi cites 1958 DRC Act");
+
+    // 6. Kerala — VERIFIED (Kerala Buildings Act 1965)
+    const klRecord = getStateTenancyRecord("KL");
+    assert(klRecord.primaryActTitle.includes("Kerala Buildings (Lease and Rent Control) Act, 1965"), "Kerala cites 1965 Act");
+
+    // 7. Unverified State (e.g. Sikkim) — Strictly VERIFICATION_REQUIRED, zero fake authority
+    const skRecord = getStateTenancyRecord("SK");
+    assert(skRecord.verificationTier === "VERIFICATION_REQUIRED", "Sikkim tenancy strictly flagged VERIFICATION_REQUIRED");
+
+    const skPlan = planTenantAction({
+      state: "Sikkim",
+      propertyType: "RESIDENTIAL",
+      agreementAvailable: true,
+      agreementRegistered: false,
+      issueType: "SECURITY_DEPOSIT",
+      issueDescription: "Deposit dispute in Gangtok",
+      noticeReceived: false,
+      handoverProofAvailable: true,
+      communicationsAvailable: true,
+    });
+    assert(skPlan.confidence === "VERIFICATION_REQUIRED", "Unverified state tenancy strictly yields VERIFICATION_REQUIRED confidence");
+    assert(skPlan.authorityResolution.confidence === "VERIFICATION_REQUIRED", "Zero fabricated rent authority for unverified state");
+
+    // 8. Model Tenancy Act is NEVER presented as automatically applicable law
+    assert(tnPlan.applicableLaw.isModelActDisclaimer === false, "Model Tenancy Act not conflated with enacted TN law");
+    assert(!tnPlan.applicableLaw.actTitle.startsWith("Model Tenancy Act"), "Model Tenancy Act never masquerades as state act");
+  }
+
+  // =========================================================================
+  // SECTION 15: Source Freshness & Trust Model Tests
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 15: Source Freshness & Trust Model Tests ---");
+
+    const freshCpa = checkSourceFreshness("SRC-CONS-2A-CENTRAL", "2026-08-22");
+    assert(freshCpa.isFresh === true, "Central CPA 2019 is fresh");
+    assert(freshCpa.status === "CURRENT", "CPA 2019 status is CURRENT");
+
+    const freshTn = checkSourceFreshness("SRC-TEN-2F-TN", "2026-08-22");
+    assert(freshTn.isFresh === true, "Tamil Nadu Tenancy Act source is fresh");
+
+    const missingSource = checkSourceFreshness("SRC-UNKNOWN-999", "2026-08-22");
+    assert(missingSource.isFresh === false, "Unregistered source ID fails freshness check");
+    assert(missingSource.status === "REVIEW_DUE", "Unregistered source status is REVIEW_DUE");
   }
 
   console.log("\n=================================================================");

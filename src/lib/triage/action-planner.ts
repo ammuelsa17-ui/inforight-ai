@@ -1,5 +1,9 @@
-// src/lib/triage/action-planner.ts — Unified Civic & Legal Action Planner
+// src/lib/triage/action-planner.ts — Unified Pan-India Civic & Legal Action Planner
 import { resolvePinAuthority, PinRoutingResolution } from "@/lib/routing/pin-router";
+import { resolveLocationContext, IndiaLocationContext } from "@/lib/location/location-context";
+import { planConsumerAction } from "@/lib/consumer/consumer-engine";
+import { planTenantAction } from "@/lib/tenancy/tenancy-engine";
+import { getStateTenancyRecord } from "@/data/tenancy/state-tenancy-registry";
 
 export type CivicLegalDomain =
   | "CIVIC_RTI"
@@ -53,6 +57,7 @@ export interface ActionPlan {
   confidence: "HIGH" | "MEDIUM" | "VERIFICATION_REQUIRED";
   sourceReferences: string[];
   pinResolution?: PinRoutingResolution;
+  location?: IndiaLocationContext;
 }
 
 /**
@@ -100,119 +105,134 @@ export function classifyCivicLegalDomain(text: string): CivicLegalDomain {
 }
 
 /**
- * Plans a unified, actionable legal roadmap based on the problem and location
+ * Plans a unified, actionable legal roadmap based on the problem and pan-India location context
  */
 export function planCitizenAction(
   problemDescription: string,
   pinCode?: string,
-  _state: string = "Tamil Nadu"
+  state: string = "Tamil Nadu",
+  district?: string
 ): ActionPlan {
   const domain = classifyCivicLegalDomain(problemDescription);
+  const location = resolveLocationContext({ state, district, pinCode });
   const pinResolution = pinCode && pinCode.length === 6 ? resolvePinAuthority(pinCode, problemDescription) : undefined;
 
   switch (domain) {
     case "TENANT": {
+      const tenantPlan = planTenantAction({
+        state: location.stateName,
+        district: location.district,
+        pinCode: location.pinCode,
+        propertyType: "RESIDENTIAL",
+        agreementAvailable: true,
+        agreementRegistered: false,
+        issueType: "SECURITY_DEPOSIT",
+        issueDescription: problemDescription,
+        noticeReceived: false,
+        handoverProofAvailable: true,
+        communicationsAvailable: true,
+      });
+
       return {
         domain: "TENANT",
-        problemUnderstood: "Dispute regarding residential tenancy, security deposit refund, or maintenance withholding.",
-        recommendedAction: "Issue Formal Legal Representation & Demand Notice under TNRRRLT Act 2017.",
+        problemUnderstood: tenantPlan.problemUnderstood,
+        recommendedAction: `Issue Formal Legal Representation & Demand Notice under ${tenantPlan.applicableLaw.actTitle}.`,
         whyThisAction: [
-          "Security deposit refund is governed strictly under Section 11 of the TNRRRLT Act 2017.",
-          "Landlord is statutorily required to refund deposit within 1 month after deduction of legitimate dues.",
+          tenantPlan.statutoryRule.summary,
+          `Statutory deposit refund window is ${tenantPlan.statutoryRule.depositRefundWindowDays || 30} days upon vacant handover.`,
           "Formal representation is the mandatory prerequisite before petitioning the Rent Authority.",
         ],
         whyNotOtherRoutes: "RTI Act applies exclusively to Public Authorities and cannot compel private landlords to return funds.",
         authority: {
-          name: "Office of the Rent Authority / Revenue Divisional Officer (RDO)",
-          designation: "Rent Authority & Tahsildar",
-          department: "Revenue and Disaster Management Department, Government of Tamil Nadu",
-          sourceId: "SRC-TEN-2F-TN",
-          portalUrl: "https://www.tenancy.tn.gov.in",
-          verified: true,
-          confidence: "HIGH",
+          name: tenantPlan.authorityResolution.rentAuthorityName,
+          designation: "Rent Authority & Designated Executive Officer",
+          department: `${location.stateName} State Revenue / Housing Department`,
+          sourceId: tenantPlan.applicableLaw.sourceId,
+          portalUrl: tenantPlan.applicableLaw.sourceUrl || "https://www.indiacode.nic.in",
+          verified: tenantPlan.confidence === "HIGH",
+          confidence: tenantPlan.confidence,
         },
-        evidenceRequired: [
-          "Tenancy Agreement (registered on tenancy.tn.gov.in or executed copy)",
-          "Rent payment receipts / Bank account statement showing regular payments",
-          "Written communication / WhatsApp / Email demanding deposit return",
-          "Handover acknowledgement / Key return proof",
-        ],
+        evidenceRequired: tenantPlan.evidenceChecklist,
         statutoryDeadline: {
-          days: 30,
-          basis: "Section 11, Tamil Nadu Regulation of Rights and Responsibilities of Landlords and Tenants Act, 2017",
-          plainLanguageMeaning: "The landlord has a statutory period of 1 month (30 days) to refund the security deposit after you vacate.",
-          nextAction: "File an application before the Rent Authority (RDO) under Section 11/30 if no refund is made.",
+          days: tenantPlan.statutoryRule.depositRefundWindowDays || 30,
+          basis: tenantPlan.statutoryRule.statutorySection || tenantPlan.applicableLaw.actTitle,
+          plainLanguageMeaning: `Under ${location.stateName} tenancy law, the landlord has a statutory period of ${tenantPlan.statutoryRule.depositRefundWindowDays || 30} days to refund the security deposit after you vacate.`,
+          nextAction: `File an application before the ${tenantPlan.authorityResolution.rentAuthorityName} if no refund is made.`,
         },
-        nextSteps: [
-          "Generate and deliver the formal Security Deposit Representation Notice.",
-          "Send via Registered Post with Acknowledgement Due (RPAD) or Speed Post.",
-          "Record the dispatch date in InfoRight Tracker to monitor the 30-day window.",
-        ],
+        nextSteps: tenantPlan.actionSteps.map((s) => s.title),
         escalation: {
-          route: "Rent Court Petition under Section 32",
-          triggerCondition: "Non-compliance by landlord after 30-day notice expiry",
-          targetAuthority: "Competent Rent Court (District / Taluk Court)",
+          route: `Petition ${tenantPlan.authorityResolution.rentCourtName}`,
+          triggerCondition: "Non-compliance by landlord after statutory notice expiry",
+          targetAuthority: tenantPlan.authorityResolution.rentCourtName,
         },
         availableDocumentType: "TENANT_REPRESENTATION",
-        confidence: "HIGH",
-        sourceReferences: ["SRC-TEN-2F-TN"],
+        confidence: tenantPlan.confidence,
+        sourceReferences: tenantPlan.sourceReferences,
         pinResolution,
+        location,
       };
     }
 
     case "CONSUMER": {
+      const consumerPlan = planConsumerAction({
+        state: location.stateName,
+        district: location.district,
+        pinCode: location.pinCode,
+        productOrService: "Consumer Goods / Service",
+        sellerOrProvider: "Commercial Seller / Provider",
+        issueType: "DEFECTIVE_GOODS",
+        issueDescription: problemDescription,
+        invoiceAvailable: true,
+        warrantyAvailable: true,
+        communicationsAvailable: true,
+        priorComplaintMade: false,
+        reliefRequested: "REFUND",
+      });
+
       return {
         domain: "CONSUMER",
-        problemUnderstood: "Consumer dispute regarding defective product, deficient service, or refusal of legitimate refund.",
-        recommendedAction: "Serve Pre-Litigation Consumer Notice & Lodge National Consumer Helpline (NCH) Grievance.",
+        problemUnderstood: consumerPlan.problemUnderstood,
+        recommendedAction: "Serve Pre-Litigation Consumer Notice & Lodge National Consumer Helpline (NCH 1915) Grievance.",
         whyThisAction: [
-          "Consumer Protection Act 2019 protects against unfair trade practices and product deficiency.",
-          "NCH 1915 provides expedited alternate dispute resolution (ADR) before formal District Commission filing.",
-          "Formal notice gives the seller 15-30 days to resolve before punitive damages are claimed.",
+          "Consumer Protection Act 2019 protects against unfair trade practices and product deficiency nationwide.",
+          "NCH 1915 provides Government of India integrated dispute resolution before formal District Commission filing.",
+          "Formal notice gives the seller 15 days to resolve before punitive damages and litigation costs are claimed.",
         ],
         whyNotOtherRoutes: "RTI is not applicable against private commercial corporations or online sellers.",
         authority: {
-          name: "National Consumer Dispute Redressal Portal (e-Jagriti) / National Consumer Helpline",
-          designation: "Consumer Grievance Redressal Officer",
+          name: consumerPlan.commissionJurisdiction.tierName,
+          designation: "Consumer Disputes Redressal Commission",
           department: "Department of Consumer Affairs, Government of India",
           sourceId: "SRC-CONS-2A-CENTRAL",
-          portalUrl: "https://consumerhelpline.gov.in",
+          portalUrl: consumerPlan.nchDetails.portalUrl,
           verified: true,
-          confidence: "HIGH",
+          confidence: consumerPlan.confidence,
         },
-        evidenceRequired: [
-          "Tax Invoice / Purchase receipt / Order confirmation number",
-          "Photographs / Video evidence of defect or broken item",
-          "Customer service chat logs / Email correspondence with company",
-          "Courier delivery / Return attempt acknowledgement",
-        ],
+        evidenceRequired: consumerPlan.evidenceChecklist,
         statutoryDeadline: {
           days: 45,
           basis: "Consumer Protection Act, 2019 (Dispute Mediation Window)",
           plainLanguageMeaning: "Companies are normally given 15 to 45 days to resolve complaints through NCH mediation.",
-          nextAction: "File formal e-Daakhil / e-Jagriti consumer complaint before District Consumer Disputes Redressal Commission.",
+          nextAction: `File formal e-Daakhil consumer complaint before ${consumerPlan.commissionJurisdiction.tierName}.`,
         },
-        nextSteps: [
-          "Generate Consumer Grievance Representation Notice.",
-          "Email notice to seller grievance officer and register complaint at NCH 1915.",
-          "Track 45-day statutory resolution timeline in InfoRight.",
-        ],
+        nextSteps: consumerPlan.actionLadder.map((s) => s.title),
         escalation: {
-          route: "e-Daakhil Consumer Commission Filing",
+          route: "e-Daakhil Online Consumer Commission Petition",
           triggerCondition: "Rejection or non-resolution via NCH within 45 days",
-          targetAuthority: "District Consumer Disputes Redressal Commission (DCDRC)",
+          targetAuthority: consumerPlan.commissionJurisdiction.tierName,
         },
         availableDocumentType: "CONSUMER_REPRESENTATION",
-        confidence: "HIGH",
+        confidence: consumerPlan.confidence,
         sourceReferences: ["SRC-CONS-2A-CENTRAL"],
         pinResolution,
+        location,
       };
     }
 
     case "WORKPLACE": {
       return {
         domain: "WORKPLACE",
-        problemUnderstood: "Employment dispute regarding unpaid wages, gratuity withholding, or wrongful severance.",
+        problemUnderstood: `Employment dispute regarding unpaid wages or relieving records in ${location.stateName}.`,
         recommendedAction: "Submit Formal Wage Demand Notice & Labour Conciliation Grievance.",
         whyThisAction: [
           "Payment of Wages Act and Industrial Relations Code mandate timely payment of earned remuneration.",
@@ -220,9 +240,9 @@ export function planCitizenAction(
         ],
         whyNotOtherRoutes: "RTI cannot be used against private commercial employers for internal payroll records.",
         authority: {
-          name: "Office of the Deputy Commissioner of Labour / SAMADHAN Portal",
+          name: `Office of the Deputy Commissioner of Labour (${location.district || location.stateName}) / SAMADHAN Portal`,
           designation: "Labour Conciliation Officer",
-          department: "Ministry of Labour & Employment / State Labour Department",
+          department: `Ministry of Labour & Employment / ${location.stateName} State Labour Department`,
           sourceId: "SRC-LAB-2A-CENTRAL",
           portalUrl: "https://samadhan.labour.gov.in",
           verified: true,
@@ -254,13 +274,14 @@ export function planCitizenAction(
         confidence: "HIGH",
         sourceReferences: ["SRC-LAB-2A-CENTRAL"],
         pinResolution,
+        location,
       };
     }
 
     case "WELFARE": {
       return {
         domain: "WELFARE",
-        problemUnderstood: "Inquiry into government welfare scheme eligibility and statutory benefit entitlement.",
+        problemUnderstood: `Inquiry into government welfare scheme eligibility and statutory benefit entitlement in ${location.stateName}.`,
         recommendedAction: "Run Deterministic Eligibility Check & Assemble Mandatory Enclosure Checklist.",
         whyThisAction: [
           "Scheme eligibility is governed strictly by notified income, age, category, and domicile criteria.",
@@ -300,6 +321,7 @@ export function planCitizenAction(
         confidence: "HIGH",
         sourceReferences: ["SRC-SCHEME-PMS-SC", "SRC-SCHEME-PMAY-U"],
         pinResolution,
+        location,
       };
     }
 
@@ -311,7 +333,7 @@ export function planCitizenAction(
 
       return {
         domain: "CIVIC_RTI",
-        problemUnderstood: "Civic infrastructure failure, road damage, water supply, or municipal governance records.",
+        problemUnderstood: `Civic infrastructure failure, road damage, water supply, or municipal governance records in ${location.stateName}.`,
         recommendedAction: isRoadOrPothole
           ? "Step 1: Lodge Municipal Grievance Representation; Step 2: File Section 6(1) RTI for Inspection & Measurement Records."
           : "File Section 6(1) Right to Information (RTI) Application for certified public records.",
@@ -359,6 +381,7 @@ export function planCitizenAction(
           "SRC-RTI-CENTRAL-2005",
         ],
         pinResolution,
+        location,
       };
     }
   }

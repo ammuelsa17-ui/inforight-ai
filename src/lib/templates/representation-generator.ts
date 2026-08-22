@@ -1,5 +1,6 @@
-// src/lib/templates/representation-generator.ts — Deterministic Legal Representation & Complaint Generator
+// src/lib/templates/representation-generator.ts — Deterministic Legal Representation & Demand Document Generator
 import { DocumentType } from "@/lib/triage/action-planner";
+import { getStateTenancyRecord } from "@/data/tenancy/state-tenancy-registry";
 
 export interface RepresentationData {
   documentType: DocumentType;
@@ -22,8 +23,8 @@ export interface RepresentationData {
 export function generateRepresentationDocument(params: {
   documentType: DocumentType;
   problemDescription: string;
-  state?: string;
   locality?: string;
+  state?: string;
   applicantName?: string;
   applicantAddress?: string;
   amountClaimed?: string;
@@ -38,16 +39,37 @@ export function generateRepresentationDocument(params: {
   switch (params.documentType) {
     case "TENANT_REPRESENTATION": {
       const amount = params.amountClaimed || "₹40,000";
+      const stateRecord = getStateTenancyRecord(state);
+      const isTN = stateRecord.stateCode === "TN";
+      const isUP = stateRecord.stateCode === "UP";
+
+      const statutoryBases = isTN
+        ? [
+            "Section 11, Tamil Nadu Regulation of Rights and Responsibilities of Landlords and Tenants Act, 2017 (TNRRRLT Act 2017)",
+            "Section 18, TNRRRLT Act 2017 (Protection against arbitrary withholding)",
+          ]
+        : isUP
+        ? [
+            "Section 11, Uttar Pradesh Regulation of Urban Premises Tenancy Act, 2021",
+            "Section 19, UP Tenancy Act 2021 (Essential Services Protection)",
+          ]
+        : [
+            stateRecord.primaryActTitle,
+            "Transfer of Property Act, 1882 (Section 108 — Rights and Liabilities of Lessor/Lessee)",
+          ];
+
       return {
         documentType: "TENANT_REPRESENTATION",
         title: "LEGAL NOTICE & FORMAL DEMAND FOR RETURN OF TENANCY SECURITY DEPOSIT",
         date: dateStr,
         recipientTitle: "The Landlord / Property Owner",
-        recipientOrg: "Residential Tenancy Property",
+        recipientOrg: "Residential Tenancy Premises",
         recipientAddress: `${loc}, ${state}`,
         applicantName: name,
         applicantAddress: address,
-        subject: `Demand for Immediate Refund of Security Deposit of ${amount} under Section 11 of TNRRRLT Act, 2017`,
+        subject: isTN
+          ? `Demand for Immediate Refund of Security Deposit of ${amount} under Section 11 of TNRRRLT Act, 2017`
+          : `Demand for Immediate Refund of Tenancy Security Deposit of ${amount} (${stateRecord.primaryActTitle})`,
         factsAndGrievance: [
           `The undersigned was a lawful tenant residing at the scheduled rental premises located at ${loc}, ${state}.`,
           `Vacation and peaceful handover of vacant possession was completed along with full settlement of electricity and utility dues.`,
@@ -58,18 +80,15 @@ export function generateRepresentationDocument(params: {
           `Immediate refund of the full security deposit sum of ${amount} via direct bank transfer / cheque within 15 days of this notice.`,
           `Supplying written receipt and acknowledgement of full tenancy closure.`,
         ],
-        legalStatutoryBasis: [
-          "Section 11, Tamil Nadu Regulation of Rights and Responsibilities of Landlords and Tenants Act, 2017 (TNRRRLT Act 2017)",
-          "Section 18, TNRRRLT Act 2017 (Protection against arbitrary withholding)",
-        ],
+        legalStatutoryBasis: statutoryBases,
         evidenceEnclosures: [
           "E1 — Copy of Written Tenancy Agreement",
-          "E2 — Bank Statement / Payment Receipt proving Security Deposit Deposit",
+          "E2 — Bank Statement / Payment Receipt proving Security Deposit Payment",
           "E3 — Proof of Key Handover and Vacation Acknowledgement",
-          "E4 — Settled Utility (TANGEDCO / Water) Receipts",
+          "E4 — Settled Electricity and Utility Receipts",
         ],
         responseTimelineDays: 15,
-        sourceReferences: ["SRC-TEN-2F-TN"],
+        sourceReferences: [stateRecord.primaryActSourceId],
       };
     }
 
@@ -146,34 +165,34 @@ export function generateRepresentationDocument(params: {
     default: {
       return {
         documentType: "CIVIC_GRIEVANCE",
-        title: "MUNICIPAL GRIEVANCE & STATUTORY SERVICE DEMAND",
+        title: "FORMAL CIVIC GRIEVANCE & STATUTORY SERVICE DEMAND REPRESENTATION",
         date: dateStr,
-        recipientTitle: "The Executive Engineer / Zonal Officer",
-        recipientOrg: "City Municipal Corporation / Local Body",
+        recipientTitle: "The Commissioner / Executive Officer",
+        recipientOrg: "Local Municipal Corporation / Civic Body",
         recipientAddress: `${loc}, ${state}`,
         applicantName: name,
         applicantAddress: address,
-        subject: `Urgent Civic Grievance regarding Hazardous Infrastructure Damage at ${loc}`,
+        subject: "Representation Regarding Urgent Civic Infrastructure Repair & Public Service Failure",
         factsAndGrievance: [
-          `Severe public hazard, road potholes, or drainage blockage exists at ${loc}.`,
-          `The condition poses immediate danger to pedestrians, vehicular traffic, and public health.`,
-          `Despite local reports, statutory rectification has not been completed by the municipal engineering wing.`,
+          `The scheduled locality (${loc}) has been suffering from persistent civic infrastructure deficiency (road potholes / uncleaned drainage / water disruption).`,
+          `The civic defect presents an immediate safety risk to residents, pedestrians, and vehicular traffic.`,
+          `Public authorities have a mandatory duty under Municipal Corporation Acts to maintain public streets and public health infrastructure.`,
         ],
         demandedRelief: [
-          "Immediate inspection and commencement of repair work by the competent municipal cell.",
-          "Furnishing public inspection report and contractor defect liability details.",
+          "Immediate on-site inspection and emergency repair within 7 days of this notice.",
+          "Disclosure of sanctioned work orders and contractor defect liability period.",
         ],
         legalStatutoryBasis: [
-          "State Municipal Corporations Act / Civic Service Charter",
-          "Section 6(1) Right to Information Act 2005 (for work order transparency)",
+          "Statutory Municipal Corporation Act (Obligatory Duties of Local Authorities)",
+          "Section 6(1), Right to Information Act, 2005 (Right to inspect works and certified records)",
         ],
         evidenceEnclosures: [
-          "E1 — Dated Photographs of Road / Drain Hazard",
-          "E2 — Location GPS / Landmark Map",
-          "E3 — Previous Namma Kovai / Municipal Grievance Reference",
+          "E1 — Date-stamped Photographs showing infrastructure damage",
+          "E2 — Street Landmark and Ward Location Map",
+          "E3 — Prior Grievance Reference Acknowledgements (if any)",
         ],
         responseTimelineDays: 15,
-        sourceReferences: ["SRC-TN-CCMC-JURISDICTION", "SRC-POST-IN-PIN"],
+        sourceReferences: ["SRC-TN-CCMC-JURISDICTION"],
       };
     }
   }
@@ -205,62 +224,56 @@ export function exportRepresentationHtml(data: RepresentationData): string {
     }
     .doc-title {
       font-size: 13pt;
-      font-weight: 800;
+      font-weight: bold;
+      text-transform: uppercase;
       color: #102A56;
       text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin: 0 0 6px 0;
+      margin-bottom: 8px;
     }
-    .meta-table {
-      width: 100%;
-      margin-bottom: 16px;
-      font-size: 10.5pt;
-    }
-    .meta-table td {
-      vertical-align: top;
-      padding: 3px 0;
-    }
-    .subject-line {
-      font-weight: 700;
-      color: #102A56;
-      background-color: #F4F9FF;
-      border-left: 4px solid #4F46E5;
-      padding: 8px 12px;
-      margin: 16px 0;
-      font-size: 11pt;
-    }
-    .section-title {
-      font-size: 11pt;
-      font-weight: 700;
-      color: #102A56;
-      text-transform: uppercase;
-      margin-top: 16px;
-      margin-bottom: 6px;
-      border-bottom: 1px solid #BCD7EE;
-      padding-bottom: 2px;
-    }
-    ol, ul {
-      margin-top: 4px;
-      margin-bottom: 12px;
-      padding-left: 20px;
-    }
-    li {
-      margin-bottom: 6px;
-      text-align: justify;
-    }
-    .signature-area {
-      margin-top: 36px;
+    .doc-meta {
       display: flex;
       justify-content: space-between;
-      page-break-inside: avoid;
+      font-size: 9pt;
+      color: #4A5568;
     }
-    .footer {
-      margin-top: 30px;
-      border-top: 1px solid #CBD5E1;
-      padding-top: 8px;
-      font-size: 8.5pt;
-      color: #64748B;
+    .section {
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 10pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #102A56;
+      border-bottom: 1px solid #CBD5E1;
+      padding-bottom: 3px;
+      margin-bottom: 6px;
+    }
+    .parties-table {
+      width: 100%;
+      margin-bottom: 15px;
+      border-collapse: collapse;
+    }
+    .parties-table td {
+      width: 50%;
+      vertical-align: top;
+      padding: 4px;
+    }
+    .bullet-list {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .bullet-list li {
+      margin-bottom: 4px;
+    }
+    .schedule-box {
+      background-color: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    .footer-sign {
+      margin-top: 40px;
       display: flex;
       justify-content: space-between;
     }
@@ -268,78 +281,73 @@ export function exportRepresentationHtml(data: RepresentationData): string {
 </head>
 <body>
   <div class="header-box">
-    <h1 class="doc-title">${data.title}</h1>
-    <div style="text-align: center; font-size: 9.5pt; color: #475569;">
-      Delivered via Registered Post with Acknowledgement Due (RPAD) / Official Email
+    <div class="doc-title">${data.title}</div>
+    <div class="doc-meta">
+      <span>Date of Notice: <strong>${data.date}</strong></span>
+      <span>Statutory Resolution Window: <strong>${data.responseTimelineDays} Days</strong></span>
     </div>
   </div>
 
-  <table class="meta-table">
+  <table class="parties-table">
     <tr>
-      <td style="width: 50%;">
-        <strong>To:</strong><br>
-        ${data.recipientTitle}<br>
-        ${data.recipientOrg}<br>
-        ${data.recipientAddress}
+      <td>
+        <div class="section-title">TO (OPPOSITE PARTY):</div>
+        <div><strong>${data.recipientTitle}</strong></div>
+        <div>${data.recipientOrg}</div>
+        <div>${data.recipientAddress}</div>
       </td>
-      <td style="width: 50%; text-align: right;">
-        <strong>Date:</strong> ${data.date}<br>
-        <strong>Notice Period:</strong> ${data.responseTimelineDays} Days
-      </td>
-    </tr>
-    <tr>
-      <td colspan="2" style="padding-top: 12px;">
-        <strong>From (Applicant):</strong><br>
-        ${data.applicantName}<br>
-        ${data.applicantAddress}
+      <td>
+        <div class="section-title">FROM (CITIZEN APPLICANT):</div>
+        <div><strong>${data.applicantName}</strong></div>
+        <div>${data.applicantAddress}</div>
       </td>
     </tr>
   </table>
 
-  <div class="subject-line">
-    SUBJECT: ${data.subject}
+  <div class="section">
+    <div class="section-title">SUBJECT:</div>
+    <p><strong>${data.subject}</strong></p>
   </div>
 
-  <div class="section-title">1. Statement of Facts & Grievance</div>
-  <ol>
-    ${data.factsAndGrievance.map((f) => `<li>${f}</li>`).join("\n    ")}
-  </ol>
+  <div class="section">
+    <div class="section-title">STATEMENT OF FACTS & GRIEVANCE:</div>
+    <ol class="bullet-list">
+      ${data.factsAndGrievance.map((fact) => `<li>${fact}</li>`).join("")}
+    </ol>
+  </div>
 
-  <div class="section-title">2. Statutory & Legal Basis</div>
-  <ul>
-    ${data.legalStatutoryBasis.map((b) => `<li><strong>${b}</strong></li>`).join("\n    ")}
-  </ul>
+  <div class="section">
+    <div class="section-title">STATUTORY & LEGAL BASIS:</div>
+    <ul class="bullet-list">
+      ${data.legalStatutoryBasis.map((basis) => `<li>${basis}</li>`).join("")}
+    </ul>
+  </div>
 
-  <div class="section-title">3. Relief Demanded & Next Steps</div>
-  <ol>
-    ${data.demandedRelief.map((r) => `<li>${r}</li>`).join("\n    ")}
-  </ol>
+  <div class="section">
+    <div class="section-title">DEMANDED RELIEF & RECTIFICATION:</div>
+    <ol class="bullet-list">
+      ${data.demandedRelief.map((relief) => `<li><strong>${relief}</strong></li>`).join("")}
+    </ol>
+  </div>
 
-  <p style="font-size: 10pt; color: #334155; margin-top: 12px;">
-    Please take notice that if the demanded relief is not resolved within <strong>${data.responseTimelineDays} calendar days</strong> of receipt of this representation, the undersigned shall be constrained to initiate formal proceedings before the competent statutory authority / tribunal at your sole risk and cost.
-  </p>
+  <div class="section">
+    <div class="section-title">SCHEDULE OF EVIDENCE ENCLOSURES:</div>
+    <div class="schedule-box">
+      <ul class="bullet-list">
+        ${data.evidenceEnclosures.map((enc) => `<li>${enc}</li>`).join("")}
+      </ul>
+    </div>
+  </div>
 
-  <div class="section-title">4. List of Enclosures / Evidence Schedule</div>
-  <ul>
-    ${data.evidenceEnclosures.map((e) => `<li>${e}</li>`).join("\n    ")}
-  </ul>
-
-  <div class="signature-area">
+  <div class="footer-sign">
     <div>
-      Place: ${data.recipientAddress.split(",")[0] || "Tamil Nadu"}<br>
-      Date: ${data.date}
+      <p style="font-size: 9pt; color: #64748B;">Dispatched via Speed Post / Registered Email</p>
     </div>
     <div style="text-align: right;">
-      <br><br>
-      ____________________________________<br>
-      <strong>${data.applicantName}</strong><br>
-      (Citizen Applicant)
+      <p style="margin-bottom: 40px;">Respectfully submitted,</p>
+      <p><strong>(${data.applicantName})</strong></p>
+      <p style="font-size: 9pt; color: #64748B;">Citizen / Complainant</p>
     </div>
-  </div>
-
-  <div class="footer">
-    <span>Verified Sources: ${data.sourceReferences.join(", ")}</span>
-    <span>InfoRight AI — Verified Citizen Legal Filing Pack</span>
   </div>
 </body>
 </html>`;
