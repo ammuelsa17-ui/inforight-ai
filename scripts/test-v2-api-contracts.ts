@@ -1715,6 +1715,18 @@ async function runRouteHandlerContractTests() {
       locationMapContent.includes("/api/location/pin"),
       "LocationMap calls runtime /api/location/pin route"
     );
+
+    // 6. Forensic Wiring Verification: /ask must not perform duplicate PIN fetch
+    const askPagePath = path.join(process.cwd(), "src/app/ask/page.tsx");
+    const askPageContent = fs.readFileSync(askPagePath, "utf8");
+    assert(
+      !askPageContent.includes("fetch(`/api/location/pin"),
+      "/ask handlePinChange does not perform duplicate /api/location/pin fetch"
+    );
+    assert(
+      askPageContent.includes("selectedLocality={locality || undefined}"),
+      "/ask passes selectedLocality to LocationMap"
+    );
   }
 
   console.log("\n=================================================================");
