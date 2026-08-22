@@ -284,6 +284,14 @@ export const taLocale: UITranslationSchema = {
     "capRefundEntitlements": "Refund Entitlements"
   },
   "resources": {
+    "allResourcesFilter": "அனைத்து வளங்கள்",
+    "verifiedLinksCount": "சரிபார்க்கப்பட்ட அரசு போர்ட்டல்கள் மற்றும் உதவி எண்கள்",
+    "faqsTitle": "பொதுவான கேள்விகள் & பதில்கள்",
+    "cyberCrimeHelpline": "சைபர் குற்ற உதவி எண்",
+    "womenHelpline": "பெண்கள் அவசர உதவி எண்",
+    "seniorCitizenHelpline": "முதியோர் உதவி எண்",
+    "verifiedDirectoryBadge": "சரிபார்க்கப்பட்ட அடைவு",
+    "officialPortalBadge": "அதிகாரப்பூர்வ தளம்",
     "badge": "பொது ஆவணங்கள் மற்றும் வார்ப்புருக்கள்",
     "title": "குடிமக்கள் வளங்கள் மற்றும் படிவ வார்ப்புருக்கள்",
     "subtitle": "சரிபார்க்கப்பட்ட சட்டப்பூர்வ படிவங்கள் மற்றும் மனு ஆவணங்களை அணுகவும்.",

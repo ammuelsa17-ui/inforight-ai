@@ -284,6 +284,14 @@ export const mniLocale: UITranslationSchema = {
     "capRefundEntitlements": "Refund Entitlements"
   },
   "resources": {
+    "allResourcesFilter": "All Resources",
+    "verifiedLinksCount": "Verified Public Portals & Helplines",
+    "faqsTitle": "Common Questions & FAQ",
+    "cyberCrimeHelpline": "Cyber Crime Helpline",
+    "womenHelpline": "Women Emergency Helpline",
+    "seniorCitizenHelpline": "Senior Citizen Elderline",
+    "verifiedDirectoryBadge": "VERIFIED DIRECTORY",
+    "officialPortalBadge": "OFFICIAL PORTAL",
     "badge": "Resources",
     "title": "Form Templates",
     "subtitle": "Verified templates",

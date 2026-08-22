@@ -284,6 +284,14 @@ export const hiLocale: UITranslationSchema = {
     "capRefundEntitlements": "Refund Entitlements"
   },
   "resources": {
+    "allResourcesFilter": "सभी संसाधन",
+    "verifiedLinksCount": "सत्यापित सार्वजनिक पोर्टल और हेल्पलाइन",
+    "faqsTitle": "सामान्य प्रश्न और उत्तर",
+    "cyberCrimeHelpline": "साइबर अपराध हेल्पलाइन",
+    "womenHelpline": "महिला आपातकालीन हेल्पलाइन",
+    "seniorCitizenHelpline": "वरिष्ठ नागरिक एल्डरलाइन",
+    "verifiedDirectoryBadge": "सत्यापित निर्देशिका",
+    "officialPortalBadge": "आधिकारिक पोर्टल",
     "badge": "सार्वजनिक दस्तावेज और टेम्पलेट",
     "title": "नागरिक संसाधन और फॉर्म टेम्पलेट",
     "subtitle": "सत्यापित वैधानिक फॉर्मों और आरटीआई टेम्पलेट्स तक पहुंचें।",

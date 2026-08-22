@@ -284,6 +284,14 @@ export const neLocale: UITranslationSchema = {
     "capRefundEntitlements": "Refund Entitlements"
   },
   "resources": {
+    "allResourcesFilter": "All Resources",
+    "verifiedLinksCount": "Verified Public Portals & Helplines",
+    "faqsTitle": "Common Questions & FAQ",
+    "cyberCrimeHelpline": "Cyber Crime Helpline",
+    "womenHelpline": "Women Emergency Helpline",
+    "seniorCitizenHelpline": "Senior Citizen Elderline",
+    "verifiedDirectoryBadge": "VERIFIED DIRECTORY",
+    "officialPortalBadge": "OFFICIAL PORTAL",
     "badge": "सार्वजनिक कागजात र ढाँचाहरू",
     "title": "नागरिक स्रोतहरू र फारम ढाँचाहरू",
     "subtitle": "सत्यापित फारमहरू र आरटीआई ढाँचाहरू हेर्नुहोस्।",

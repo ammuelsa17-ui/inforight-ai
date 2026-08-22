@@ -284,6 +284,14 @@ export const urLocale: UITranslationSchema = {
     "capRefundEntitlements": "Refund Entitlements"
   },
   "resources": {
+    "allResourcesFilter": "تمام وسائل",
+    "verifiedLinksCount": "تصدیق شدہ سرکاری پورٹلز اور ہیلپ لائنز",
+    "faqsTitle": "عام سوالات اور جوابات",
+    "cyberCrimeHelpline": "سائبر کرائم ہیلپ لائن",
+    "womenHelpline": "خواتین ایمرجنسی ہیلپ لائن",
+    "seniorCitizenHelpline": "سینئر سٹیزن ایلڈر لائن",
+    "verifiedDirectoryBadge": "تصدیق شدہ ڈائریکٹری",
+    "officialPortalBadge": "سرکاری پورٹل",
     "badge": "Public Documentation & Templates",
     "title": "اُردُو - Civic Resources & Form Templates",
     "subtitle": "اُردُو - Access verified statutory forms and RTI templates.",
