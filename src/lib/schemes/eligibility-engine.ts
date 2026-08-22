@@ -7,7 +7,7 @@ import {
   WelfareBenefitType,
   MANDATORY_SCHEME_DISCLAIMER
 } from "@/types/scheme-navigator";
-import { VERIFIED_SCHEME_REGISTRY, VerifiedSchemeRule } from "@/data/schemes/schemes-registry";
+import { VERIFIED_SCHEME_REGISTRY, VerifiedSchemeRule } from "@/data/scheme-registry";
 
 export interface EvaluatedSchemeOutput {
   id: string;
