@@ -282,6 +282,14 @@ export interface UITranslationSchema {
     capRefundEntitlements: string;
   };
   resources: {
+    allResourcesFilter: string;
+    verifiedLinksCount: string;
+    faqsTitle: string;
+    cyberCrimeHelpline: string;
+    womenHelpline: string;
+    seniorCitizenHelpline: string;
+    verifiedDirectoryBadge: string;
+    officialPortalBadge: string;
     badge: string;
     title: string;
     subtitle: string;

@@ -25,8 +25,8 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Navigation Links (Simplified 4 Core Flow) */}
-          <nav className="hidden md:flex items-center ml-6 lg:ml-10 gap-5 lg:gap-7 text-sm font-semibold text-[#102A56] shrink-0">
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center ml-6 gap-6 text-sm font-semibold text-[#102A56] shrink-0">
             <Link href="/ask" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap text-indigo-700 font-bold">
               Get Help
             </Link>
@@ -48,21 +48,21 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          {/* Action CTA & Language Selector */}
-          <div className="hidden md:flex items-center gap-2 lg:gap-3 shrink-0">
+          {/* Action CTA & Tools */}
+          <div className="hidden lg:flex items-center gap-3 shrink-0">
             <AccessibilityToolbar textToRead="Welcome to InfoRight AI. Convert municipal road complaints into clear record-based RTI applications with verified official sources." />
             <LanguageSelector />
             <Link
               href="/ask"
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-sm whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-xs whitespace-nowrap"
             >
               <span>{t("nav.describeProblem")}</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          {/* Mobile Menu Toggle Button */}
-          <div className="flex md:hidden items-center gap-2">
+          {/* Tablet & Mobile Menu Toggle Button */}
+          <div className="flex lg:hidden items-center gap-2">
             <LanguageSelector />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -77,7 +77,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-[#BCD7EE] bg-white px-4 py-4 space-y-3">
+        <div className="lg:hidden border-b border-[#BCD7EE] bg-white px-4 py-4 space-y-3">
           <div className="pb-2 border-b border-[#BCD7EE]">
             <AccessibilityToolbar textToRead="Welcome to InfoRight AI. Convert municipal road complaints into clear record-based RTI applications with verified official sources." />
           </div>

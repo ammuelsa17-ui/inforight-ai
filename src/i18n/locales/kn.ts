@@ -284,6 +284,14 @@ export const knLocale: UITranslationSchema = {
     "capRefundEntitlements": "Refund Entitlements"
   },
   "resources": {
+    "allResourcesFilter": "ಎಲ್ಲಾ ಸಂಪನ್ಮೂಲಗಳು",
+    "verifiedLinksCount": "ಪರಿಶೀಲಿಸಿದ ಸಾರ್ವಜನಿಕ ಪೋರ್ಟಲ್‌ಗಳು ಮತ್ತು ಸಹಾಯವಾಣಿಗಳು",
+    "faqsTitle": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು ಮತ್ತು ಉತ್ತರಗಳು",
+    "cyberCrimeHelpline": "ಸೈಬರ್ ಅಪರಾಧ ಸಹಾಯವಾಣಿ",
+    "womenHelpline": "ಮಹಿಳಾ ತುರ್ತು ಸಹಾಯವಾಣಿ",
+    "seniorCitizenHelpline": "ಹಿರಿಯ ನಾಗರಿಕರ ಎಲ್ಡರ್‌ಲೈನ್",
+    "verifiedDirectoryBadge": "ಪರಿಶೀಲಿಸಿದ ಕೋಶ",
+    "officialPortalBadge": "ಅಧಿಕೃತ ಪೋರ್ಟಲ್",
     "badge": "ಸಾರ್ವಜನಿಕ ದಾಖಲೆಗಳು ಮತ್ತು ಮಾದರಿಗಳು",
     "title": "ನಾಗರಿಕ ಸಂಪನ್ಮೂಲಗಳು ಮತ್ತು ಅರ್ಜಿ ನಮೂನೆಗಳು",
     "subtitle": "ಪರಿಶೀಲಿಸಿದ ಶಾಸನಬದ್ಧ ನಮೂನೆಗಳು ಮತ್ತು ಆರ್‌ಟಿಐ ಮಾದರಿಗಳನ್ನು ಪ್ರವೇಶಿಸಿ.",

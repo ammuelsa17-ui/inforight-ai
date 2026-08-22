@@ -284,6 +284,14 @@ export const maiLocale: UITranslationSchema = {
     "capRefundEntitlements": "Refund Entitlements"
   },
   "resources": {
+    "allResourcesFilter": "All Resources",
+    "verifiedLinksCount": "Verified Public Portals & Helplines",
+    "faqsTitle": "Common Questions & FAQ",
+    "cyberCrimeHelpline": "Cyber Crime Helpline",
+    "womenHelpline": "Women Emergency Helpline",
+    "seniorCitizenHelpline": "Senior Citizen Elderline",
+    "verifiedDirectoryBadge": "VERIFIED DIRECTORY",
+    "officialPortalBadge": "OFFICIAL PORTAL",
     "badge": "Public Documentation & Templates",
     "title": "मैथिली - Civic Resources & Form Templates",
     "subtitle": "मैथिली - Access verified statutory forms and RTI templates.",
