@@ -1,23 +1,19 @@
-# Real-Time Government Data & Authority Resolution Architecture
-
-InfoRight AI provides a pan-India, source-driven data layer that connects citizen requests to official government portals and directories with zero legal hallucination.
-
 ## Data Layer Architecture Overview
 
-| Capability | Live Provider | Verified Cache | Static Fallback | Deterministic Engine | Status |
+| Capability | Live Provider | Verified Cache | Static Fallback | Provenance Trust Level | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **State / UT Registry** | Constitution of India | Permanent | All 36 States/UTs | `location-context.ts` | **VERIFIED_STATIC** |
-| **District Directory** | LGD (lgdirectory.gov.in) | 30 Days TTL | 700+ District Gazetteer | `districts.ts` | **HYBRID** |
-| **PIN Code & Locality** | India Post API (`api.postalpincode.in`) | 14 Days TTL | `pin-authority-registry.ts` | `postal-location.ts` | **HYBRID** |
-| **Local Body / Municipality**| Municipal Portals (CCMC, BBMP, BMC) | 14 Days TTL | Tier-1 City Municipalities | `local-bodies.ts` | **HYBRID** |
-| **RTI Authority Directory** | RTI Online (`rtionline.gov.in`) | 7 Days TTL | State RTI Directory | `rti-authority.ts` | **HYBRID** |
-| **Civic Authority Resolver** | Municipal Department Directory | 7 Days TTL | Category Routing Registry | `authorities.ts` | **HYBRID** |
-| **Consumer Directory** | e-Daakhil (`edaakhil.nic.in`) / NCH | 7 Days TTL | DCDRC / SCDRC / NCDRC Directory | `consumer-directory.ts` | **HYBRID** |
-| **Tenant Authority Directory**| State Tenancy Portals | 14 Days TTL | Rent Authority Registry | `state-directory.ts` | **HYBRID** |
-| **Workplace / Labour Offices**| Shram Suvidha / CLC (`clc.gov.in`) | 14 Days TTL | Central/State Sphere Directory| `labour-directory.ts` | **HYBRID** |
-| **Welfare Scheme Discovery** | myScheme (`myscheme.gov.in`) | 3 Days TTL | `scheme-registry.ts` | `schemes.ts` | **HYBRID** |
-| **Statutory Legal Rules** | Gazetted Acts & Rules | Permanent | `versioned-rules.ts` | Deterministic Calculators | **VERSIONED_STATIC** |
-| **Portal Health & Status** | Live Server HEAD / GET Ping | 1 Hour TTL | Approved Host Allowlist | `source-health.ts` | **LIVE** |
+| **State / UT Registry** | Constitution of India | Permanent | All 36 States/UTs | `VERIFIED_STATIC_GOVERNMENT_SOURCE` | **VERIFIED_STATIC** |
+| **District Directory** | LGD (lgdirectory.gov.in / data.gov.in) | 30 Days TTL | 700+ District Gazetteer | `OFFICIAL_GOVERNMENT_DATASET` | **HYBRID** |
+| **PIN Code & Locality (3rd-Party)** | api.postalpincode.in | 14 Days TTL | `pin-authority-registry.ts` | `THIRD_PARTY_REFERENCE` | **THIRD_PARTY_LIVE** |
+| **Local Body / Municipality**| Municipal Portals (CCMC, BBMP, BMC) | 14 Days TTL | Tier-1 City Municipalities | `OFFICIAL_GOVERNMENT_DATASET` | **HYBRID** |
+| **RTI Authority Directory** | RTI Online (`rtionline.gov.in`) | 7 Days TTL | State RTI Directory | `OFFICIAL_GOVERNMENT` | **HYBRID** |
+| **Civic Authority Resolver** | Municipal Department Directory | 7 Days TTL | Category Routing Registry | `VERIFIED_STATIC_GOVERNMENT_SOURCE` | **HYBRID** |
+| **Consumer Directory** | e-Daakhil (`edaakhil.nic.in`) / NCH | 7 Days TTL | DCDRC / SCDRC / NCDRC Directory | `OFFICIAL_GOVERNMENT` | **HYBRID** |
+| **Tenant Authority Directory**| State Tenancy Portals | 14 Days TTL | Rent Authority Registry | `OFFICIAL_GOVERNMENT` | **HYBRID** |
+| **Workplace / Labour Offices**| Shram Suvidha / CLC (`clc.gov.in`) | 14 Days TTL | Central/State Sphere Directory| `OFFICIAL_GOVERNMENT` | **HYBRID** |
+| **Welfare Scheme Discovery** | myScheme (`myscheme.gov.in`) | 3 Days TTL | `scheme-registry.ts` | `OFFICIAL_GOVERNMENT_DATASET` | **HYBRID** |
+| **Statutory Legal Rules** | Gazetted Acts & Rules | Permanent | `versioned-rules.ts` | `VERIFIED_STATIC_GOVERNMENT_SOURCE` | **VERSIONED_STATIC** |
+| **Portal Health & Status** | Live Server HEAD / GET Ping | 1 Hour TTL | Approved Host Allowlist | `OFFICIAL_GOVERNMENT` | **LIVE** |
 
 ---
 

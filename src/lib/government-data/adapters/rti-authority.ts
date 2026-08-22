@@ -39,7 +39,9 @@ export async function resolveRtiAuthority(query: RtiAuthorityQuery): Promise<Res
         retrievedAt: new Date().toISOString(),
         lastVerified: "2026-08-22",
         freshness: "CURRENT",
-        resolutionMode: "STATIC_VERIFIED_REGISTRY"
+        resolutionMode: "STATIC_VERIFIED_REGISTRY",
+        trustLevel: "OFFICIAL_GOVERNMENT",
+        isOfficialGovernmentSource: true
       }
     };
   }
@@ -65,7 +67,9 @@ export async function resolveRtiAuthority(query: RtiAuthorityQuery): Promise<Res
         retrievedAt: new Date().toISOString(),
         lastVerified: "2026-08-15",
         freshness: "CURRENT",
-        resolutionMode: "STATIC_VERIFIED_REGISTRY"
+        resolutionMode: "STATIC_VERIFIED_REGISTRY",
+        trustLevel: "VERIFIED_STATIC_GOVERNMENT_SOURCE",
+        isOfficialGovernmentSource: true
       }
     };
   }
@@ -94,7 +98,9 @@ export async function resolveRtiAuthority(query: RtiAuthorityQuery): Promise<Res
       retrievedAt: new Date().toISOString(),
       lastVerified: stateSource?.provenance.last_verified || "2026-08-22",
       freshness: "CURRENT",
-      resolutionMode: "VERIFIED_CACHE"
+      resolutionMode: "VERIFIED_CACHE",
+      trustLevel: "OFFICIAL_GOVERNMENT",
+      isOfficialGovernmentSource: true
     }
   };
 }

@@ -1436,7 +1436,7 @@ async function runRouteHandlerContractTests() {
     const { getVersionedRule } = await import("@/lib/government-data/versioned-rules");
 
     // 1. Security & Official Host Allowlist
-    assert(isApprovedOfficialHost("https://api.postalpincode.in/pincode/641002") === true, "India Post API is approved");
+    assert(isApprovedOfficialHost("https://api.postalpincode.in/pincode/641002") === true, "Third-party postal PIN API host is in approved allowlist");
     assert(isApprovedOfficialHost("https://edaakhil.nic.in") === true, "eDaakhil portal is approved");
     assert(isApprovedOfficialHost("https://rtionline.gov.in") === true, "RTI Online portal is approved");
     assert(isApprovedOfficialHost("https://evil-site.com") === false, "Arbitrary non-gov host is strictly blocked");
@@ -1467,10 +1467,14 @@ async function runRouteHandlerContractTests() {
     assert(normalizedLocation.state === "Tamil Nadu", "Derived State is Tamil Nadu");
     assert(normalizedLocation.district === "Coimbatore", "Derived District is Coimbatore");
     assert(normalizedLocation.localityCandidates.includes("R.S.Puram Head Post Office"), "Localities include RS Puram HPO");
-    assert(normalizedLocation.provenance.resolutionMode === "LIVE", "Provenance records resolutionMode LIVE");
+    assert(normalizedLocation.provenance.resolutionMode === "THIRD_PARTY_LIVE", "Provenance records resolutionMode THIRD_PARTY_LIVE");
+    assert(normalizedLocation.provenance.trustLevel === "THIRD_PARTY_REFERENCE", "Trust level marked THIRD_PARTY_REFERENCE");
+    assert(normalizedLocation.provenance.isOfficialGovernmentSource === false, "Not marked as official government source");
+    assert(normalizedLocation.confidence === "MEDIUM", "Third-party PIN service yields MEDIUM confidence alone");
 
     const fallbackLoc = await postalProvider.getFallback("641002");
     assert(fallbackLoc?.confidence === "HIGH", "Fallback yields HIGH confidence for verified static PIN");
+    assert(fallbackLoc?.provenance.trustLevel === "VERIFIED_STATIC_GOVERNMENT_SOURCE", "Fallback is VERIFIED_STATIC_GOVERNMENT_SOURCE");
 
     // 3. District Data Provider
     const districtsTN = await getDistrictsForStateRealtime("Tamil Nadu");

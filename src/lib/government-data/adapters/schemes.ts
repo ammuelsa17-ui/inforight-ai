@@ -48,7 +48,9 @@ export async function discoverGovernmentSchemes(
       retrievedAt: new Date().toISOString(),
       lastVerified: s.lastVerified || "2026-08-22",
       freshness: "CURRENT",
-      resolutionMode: "STATIC_VERIFIED_REGISTRY"
+      resolutionMode: "STATIC_VERIFIED_REGISTRY",
+      trustLevel: "OFFICIAL_GOVERNMENT_DATASET",
+      isOfficialGovernmentSource: true
     }
   }));
 }

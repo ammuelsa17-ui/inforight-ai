@@ -47,7 +47,9 @@ export async function resolveCurrentAuthority(query: CivicAuthorityQuery): Promi
         retrievedAt: new Date().toISOString(),
         lastVerified: "2026-08-15",
         freshness: "CURRENT",
-        resolutionMode: "STATIC_VERIFIED_REGISTRY"
+        resolutionMode: "STATIC_VERIFIED_REGISTRY",
+        trustLevel: "VERIFIED_STATIC_GOVERNMENT_SOURCE",
+        isOfficialGovernmentSource: true
       }
     };
   }
@@ -78,7 +80,9 @@ export async function resolveCurrentAuthority(query: CivicAuthorityQuery): Promi
       retrievedAt: new Date().toISOString(),
       lastVerified: "2026-08-22",
       freshness: "CURRENT",
-      resolutionMode: pinCode ? "VERIFIED_CACHE" : "VERIFICATION_REQUIRED"
+      resolutionMode: pinCode ? "VERIFIED_CACHE" : "VERIFICATION_REQUIRED",
+      trustLevel: "OFFICIAL_GOVERNMENT_DATASET",
+      isOfficialGovernmentSource: true
     }
   };
 }

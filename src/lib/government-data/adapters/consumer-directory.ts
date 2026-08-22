@@ -38,7 +38,9 @@ export function getConsumerDirectoryRecord(
           retrievedAt: new Date().toISOString(),
           lastVerified: "2026-08-22",
           freshness: "CURRENT",
-          resolutionMode: "STATIC_VERIFIED_REGISTRY"
+          resolutionMode: "STATIC_VERIFIED_REGISTRY",
+          trustLevel: "OFFICIAL_GOVERNMENT",
+          isOfficialGovernmentSource: true
         }
       };
 
@@ -57,7 +59,9 @@ export function getConsumerDirectoryRecord(
           retrievedAt: new Date().toISOString(),
           lastVerified: "2026-08-22",
           freshness: "CURRENT",
-          resolutionMode: "STATIC_VERIFIED_REGISTRY"
+          resolutionMode: "STATIC_VERIFIED_REGISTRY",
+          trustLevel: "OFFICIAL_GOVERNMENT",
+          isOfficialGovernmentSource: true
         }
       };
 
@@ -77,7 +81,9 @@ export function getConsumerDirectoryRecord(
           retrievedAt: new Date().toISOString(),
           lastVerified: "2026-08-22",
           freshness: "CURRENT",
-          resolutionMode: "STATIC_VERIFIED_REGISTRY"
+          resolutionMode: "STATIC_VERIFIED_REGISTRY",
+          trustLevel: "OFFICIAL_GOVERNMENT",
+          isOfficialGovernmentSource: true
         }
       };
 
@@ -96,7 +102,9 @@ export function getConsumerDirectoryRecord(
           retrievedAt: new Date().toISOString(),
           lastVerified: "2026-08-22",
           freshness: "CURRENT",
-          resolutionMode: "VERIFICATION_REQUIRED"
+          resolutionMode: "VERIFICATION_REQUIRED",
+          trustLevel: "VERIFICATION_REQUIRED",
+          isOfficialGovernmentSource: false
         }
       };
   }

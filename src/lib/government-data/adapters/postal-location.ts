@@ -12,9 +12,9 @@ import { PIN_AUTHORITY_REGISTRY } from "@/data/pin-authority-registry";
 
 export class PostalLocationProvider implements GovernmentDataProvider<string, ResolvedLocation> {
   id = "PROV-IN-POSTAL-PIN";
-  name = "India Post / Postal PIN Directory Provider";
+  name = "Third-Party Postal PIN Reference Provider (api.postalpincode.in)";
   category = "POSTAL_DATA" as const;
-  issuingAuthority = "Department of Posts, Ministry of Communications, Government of India";
+  issuingAuthority = "Third-Party Postal API (Data sourced from India Post)";
   officialUrl = "https://api.postalpincode.in";
 
   async fetchLive(pinCode: string): Promise<ResolvedLocation> {
@@ -106,15 +106,18 @@ export class PostalLocationProvider implements GovernmentDataProvider<string, Re
       district: primaryDistrict,
       localityCandidates: localities,
       postOffices,
-      confidence: "HIGH",
+      // Third-party postal convenience provider cannot produce HIGH confidence alone without citizen confirmation / official LGD match
+      confidence: "MEDIUM",
       provenance: {
-        sourceId: "SRC-IN-POSTAL-PIN",
+        sourceId: "SRC-IN-POSTAL-PIN-COMMUNITY",
         issuingAuthority: this.issuingAuthority,
         officialUrl: this.officialUrl,
         retrievedAt: new Date().toISOString(),
         lastVerified: "2026-08-22",
         freshness: "CURRENT",
-        resolutionMode: "LIVE"
+        resolutionMode: "THIRD_PARTY_LIVE",
+        trustLevel: "THIRD_PARTY_REFERENCE",
+        isOfficialGovernmentSource: false
       }
     };
   }
@@ -170,7 +173,9 @@ export class PostalLocationProvider implements GovernmentDataProvider<string, Re
           retrievedAt: new Date().toISOString(),
           lastVerified: "2026-08-15",
           freshness: "CURRENT",
-          resolutionMode: "STATIC_VERIFIED_REGISTRY"
+          resolutionMode: "STATIC_VERIFIED_REGISTRY",
+          trustLevel: "VERIFIED_STATIC_GOVERNMENT_SOURCE",
+          isOfficialGovernmentSource: true
         }
       };
     }
@@ -198,7 +203,9 @@ export class PostalLocationProvider implements GovernmentDataProvider<string, Re
         retrievedAt: new Date().toISOString(),
         lastVerified: "2026-08-22",
         freshness: "CHECK_DUE",
-        resolutionMode: "VERIFICATION_REQUIRED"
+        resolutionMode: "VERIFICATION_REQUIRED",
+        trustLevel: "VERIFICATION_REQUIRED",
+        isOfficialGovernmentSource: false
       }
     };
   }
