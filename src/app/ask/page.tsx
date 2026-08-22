@@ -132,7 +132,7 @@ export default function AskPage() {
   const startVoiceRecording = async () => {
     try {
       if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
-        alert(t("ask.voiceUnsupported"));
+        setVoiceError(t("ask.voiceUnsupported"));
         return;
       }
       setVoiceError(null);
@@ -180,7 +180,7 @@ export default function AskPage() {
         }
       }, 1000);
     } catch {
-      alert(t("ask.microphoneDenied"));
+      setVoiceError(t("ask.microphoneDenied"));
     }
   };
 
