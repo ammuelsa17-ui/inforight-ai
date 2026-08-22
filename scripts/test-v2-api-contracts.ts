@@ -1727,6 +1727,30 @@ async function runRouteHandlerContractTests() {
       askPageContent.includes("selectedLocality={locality || undefined}"),
       "/ask passes selectedLocality to LocationMap"
     );
+
+    // 7. Forensic Factual & Statutory Accuracy in Public Resources
+    const resourcesPath = path.join(process.cwd(), "src/app/resources/page.tsx");
+    const resourcesContent = fs.readFileSync(resourcesPath, "utf8");
+    assert(
+      !resourcesContent.includes("constitutional body"),
+      "NALSA is strictly NOT described as a constitutional body"
+    );
+    assert(
+      !resourcesContent.includes("within 45 days"),
+      "First Appeal filing deadline is strictly NOT described as 45 days"
+    );
+    assert(
+      !resourcesContent.includes("PRATHAM - Citizen Action Network"),
+      "Pratham mischaracterization is strictly removed"
+    );
+    assert(
+      !resourcesContent.includes("1091 / 112"),
+      "1091 is strictly NOT advertised as nationwide women helpline"
+    );
+    assert(
+      resourcesContent.includes("181 / 112"),
+      "Women Helpline is correctly identified as 181 / 112"
+    );
   }
 
   console.log("\n=================================================================");
