@@ -291,6 +291,123 @@ export function exportFirstAppealHtml(payload: FirstAppealPayload): string {
 </html>`;
 }
 
+export interface RectificationEvidencePackPayload {
+  caseId: string;
+  issueDescription: string;
+  locationDetails: string;
+  submissionDate: string;
+  department: string;
+  officerDesignation?: string;
+  rectifiedDate: string;
+  officerActionNote: string;
+  locationConsistency: string;
+  distanceMeters?: number;
+  citizenStatus: string;
+  citizenComments?: string;
+  beforeEvidence?: {
+    id: string;
+    description: string;
+    date: string;
+    locationText?: string;
+    checksum: string;
+  };
+  afterEvidence?: {
+    id: string;
+    description: string;
+    date: string;
+    locationText?: string;
+    checksum: string;
+  };
+}
+
+export function exportRectificationEvidencePackHtml(payload: RectificationEvidencePackPayload): string {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rectification Evidence Record - ${payload.caseId}</title>
+  <style>
+    @page { size: A4; margin: 20mm 15mm 20mm 15mm; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #111827; font-size: 11pt; line-height: 1.5; margin: 0; padding: 20px; }
+    .header { border-bottom: 2px solid #1E3A8A; padding-bottom: 10px; margin-bottom: 16px; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 8.5pt; font-weight: bold; background: #EEF2F6; border: 1px solid #CBD5E1; }
+    .title { font-size: 14pt; font-weight: 800; color: #1E3A8A; margin: 6px 0 2px 0; }
+    .subtitle { font-size: 9pt; color: #4B5563; }
+    .info-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 10pt; }
+    .info-table td { padding: 6px 8px; border: 1px solid #E5E7EB; vertical-align: top; }
+    .info-table td.label { font-weight: bold; background: #F8FAFC; width: 30%; }
+    .evidence-box { border: 1px solid #CBD5E1; border-radius: 6px; padding: 10px; margin-bottom: 12px; }
+    .evidence-title { font-weight: bold; font-size: 10.5pt; margin-bottom: 4px; color: #1E3A8A; }
+    .disclaimer { font-size: 8.5pt; color: #64748B; border-top: 1px solid #E2E8F0; padding-top: 8px; margin-top: 20px; font-style: italic; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="badge">CIVIC RECTIFICATION AUDIT TRAIL</div>
+    <div class="title">RECTIFICATION EVIDENCE RECORD</div>
+    <div class="subtitle">Case ID: ${payload.caseId} • Generated via InfoRight AI Closed-Loop Governance</div>
+  </div>
+
+  <table class="info-table">
+    <tr>
+      <td class="label">Reported Grievance:</td>
+      <td>${payload.issueDescription}</td>
+    </tr>
+    <tr>
+      <td class="label">Location & Jurisdiction:</td>
+      <td>${payload.locationDetails}</td>
+    </tr>
+    <tr>
+      <td class="label">Filing Date:</td>
+      <td>${payload.submissionDate}</td>
+    </tr>
+    <tr>
+      <td class="label">Responsible Authority:</td>
+      <td>${payload.department}${payload.officerDesignation ? ` (${payload.officerDesignation})` : ""}</td>
+    </tr>
+    <tr>
+      <td class="label">Rectification Date:</td>
+      <td>${payload.rectifiedDate}</td>
+    </tr>
+    <tr>
+      <td class="label">Official Action Taken:</td>
+      <td>${payload.officerActionNote}</td>
+    </tr>
+    <tr>
+      <td class="label">Location Consistency:</td>
+      <td>${payload.locationConsistency} ${payload.distanceMeters !== undefined ? `(~${payload.distanceMeters}m separation)` : ""}</td>
+    </tr>
+    <tr>
+      <td class="label">Citizen Resolution Status:</td>
+      <td><strong>${payload.citizenStatus}</strong> ${payload.citizenComments ? `— "${payload.citizenComments}"` : ""}</td>
+    </tr>
+  </table>
+
+  ${payload.beforeEvidence ? `
+  <div class="evidence-box">
+    <div class="evidence-title">BEFORE EVIDENCE (${payload.beforeEvidence.id})</div>
+    <p style="margin: 2px 0;"><strong>Description:</strong> ${payload.beforeEvidence.description}</p>
+    <p style="margin: 2px 0;"><strong>Timestamp:</strong> ${payload.beforeEvidence.date}</p>
+    ${payload.beforeEvidence.locationText ? `<p style="margin: 2px 0;"><strong>Device Coordinates:</strong> ${payload.beforeEvidence.locationText}</p>` : ""}
+    <p style="margin: 2px 0; font-family: monospace; font-size: 8.5pt;"><strong>SHA-256:</strong> ${payload.beforeEvidence.checksum}</p>
+  </div>` : ""}
+
+  ${payload.afterEvidence ? `
+  <div class="evidence-box">
+    <div class="evidence-title">AFTER RECTIFICATION EVIDENCE (${payload.afterEvidence.id})</div>
+    <p style="margin: 2px 0;"><strong>Official Action:</strong> ${payload.afterEvidence.description}</p>
+    <p style="margin: 2px 0;"><strong>Timestamp:</strong> ${payload.afterEvidence.date}</p>
+    ${payload.afterEvidence.locationText ? `<p style="margin: 2px 0;"><strong>Device Coordinates:</strong> ${payload.afterEvidence.locationText}</p>` : ""}
+    <p style="margin: 2px 0; font-family: monospace; font-size: 8.5pt;"><strong>SHA-256:</strong> ${payload.afterEvidence.checksum}</p>
+  </div>` : ""}
+
+  <div class="disclaimer">
+    <strong>Statutory & Technical Disclaimer:</strong> Location values shown are device-reported metadata and are not independent proof of physical presence or official authentication. SHA-256 checksums provide client-side tamper detection across the lifecycle record.
+  </div>
+</body>
+</html>`;
+}
+
 export function triggerPrintDocument(htmlContent: string) {
   if (typeof window === "undefined") return;
   const printWindow = window.open("", "_blank", "width=850,height=1100");

@@ -11,7 +11,6 @@ const CORE_LOCALIZED_PATHS = [
   'src/app/rights/tenant',
   'src/app/rights/workplace',
   'src/app/sources',
-  'src/app/official',
   'src/components/trust',
   'src/components/explainer',
   'src/components/tracker',

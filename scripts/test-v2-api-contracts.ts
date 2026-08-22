@@ -16,7 +16,14 @@ import {
   exportRtiApplicationHtml,
   exportEvidenceIndexHtml,
   exportFirstAppealHtml,
+  exportRectificationEvidencePackHtml,
 } from "@/lib/pdf/print-export";
+import {
+  calculateDistanceMeters,
+  evaluateLocationConsistency,
+  calculateSha256,
+  getIssueProofRequirements,
+} from "@/lib/geo/distance-calculator";
 import { planCitizenAction } from "@/lib/triage/action-planner";
 import {
   generateRepresentationDocument,
@@ -1337,6 +1344,79 @@ async function runRouteHandlerContractTests() {
     const consumerPlanAction = planCitizenAction("Amazon delivery was defective and seller refuses replacement", undefined, "Delhi");
     assert(consumerPlanAction.domain === "CONSUMER", "Private seller dispute classifies as CONSUMER, NOT CIVIC_RTI");
     assert(consumerPlanAction.availableDocumentType === "CONSUMER_REPRESENTATION", "Consumer dispute creates CONSUMER_REPRESENTATION, NOT RTI_APPLICATION");
+  }
+
+  // =========================================================================
+  // SECTION 17: Closed-Loop Geo-Tagged Civic Rectification & Lifecycle Tests
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 17: Closed-Loop Civic Rectification & Lifecycle Tests ---");
+
+    // 1. Haversine distance calculations
+    const distCoimbatoreSame = calculateDistanceMeters(11.0168, 76.9678, 11.0170, 76.9679);
+    assert(distCoimbatoreSame <= 30, "Immediate road repair location calculated at ~25m distance");
+
+    const distFar = calculateDistanceMeters(11.0168, 76.9678, 13.0827, 80.2707); // Coimbatore to Chennai
+    assert(distFar > 400000, "Coimbatore to Chennai calculated at > 400 km");
+
+    // 2. Location Consistency Evaluator
+    const evalConsistent = evaluateLocationConsistency(
+      { latitude: 11.0168, longitude: 76.9678, accuracyMeters: 10 },
+      { latitude: 11.0170, longitude: 76.9679, accuracyMeters: 12 }
+    );
+    assert(evalConsistent.status === "CONSISTENT", "Separation under 200m evaluated as CONSISTENT");
+    assert(evalConsistent.message.includes("Device-reported location appears consistent"), "Message adheres to truthful device-reported wording");
+
+    const evalMismatch = evaluateLocationConsistency(
+      { latitude: 11.0168, longitude: 76.9678 },
+      { latitude: 11.0400, longitude: 76.9900 }
+    );
+    assert(evalMismatch.status === "SIGNIFICANT_MISMATCH", "Separation > 1km evaluated as SIGNIFICANT_MISMATCH");
+
+    const evalMissing = evaluateLocationConsistency(undefined, { latitude: 11.0168, longitude: 76.9678 });
+    assert(evalMissing.status === "NOT_AVAILABLE", "Missing coordinates safely return NOT_AVAILABLE");
+
+    // 3. Issue Proof Requirements
+    const potholeReqs = getIssueProofRequirements("POTHOLE_ROAD");
+    assert(potholeReqs.requiresAfterPhoto === true, "Pothole repair strictly requires after-repair photo");
+
+    const streetlightReqs = getIssueProofRequirements("STREETLIGHT_FAULT");
+    assert(streetlightReqs.requiresAfterPhoto === false, "Streetlight fault allows action note documentation without mandatory photo");
+
+    // 4. SHA-256 Checksum generation
+    const testChecksum = await calculateSha256("CIVIC_EVIDENCE_TEST_CONTENT");
+    assert(testChecksum.length === 64, "SHA-256 produces valid 64-character hex string");
+
+    // 5. Rectification Evidence Pack PDF Export
+    const htmlReport = exportRectificationEvidencePackHtml({
+      caseId: "INF-2026-002",
+      issueDescription: "Pothole on Crosscut Road",
+      locationDetails: "Gandhipuram, Coimbatore, Tamil Nadu",
+      submissionDate: "2026-08-18",
+      department: "Engineering & Roads Department",
+      officerDesignation: "Assistant Executive Engineer",
+      rectifiedDate: "2026-08-20",
+      officerActionNote: "Bituminous mastic patch completed",
+      locationConsistency: "CONSISTENT",
+      distanceMeters: 25,
+      citizenStatus: "RECTIFIED_PENDING_CITIZEN_CONFIRMATION",
+      beforeEvidence: {
+        id: "E1",
+        description: "Pothole crater",
+        date: "2026-08-18",
+        checksum: testChecksum,
+      },
+      afterEvidence: {
+        id: "E2",
+        description: "Mastic patch",
+        date: "2026-08-20",
+        checksum: testChecksum,
+      },
+    });
+
+    assert(htmlReport.includes("RECTIFICATION EVIDENCE RECORD"), "Report header includes official title");
+    assert(htmlReport.includes("Location values shown are device-reported metadata"), "Report strictly contains truthful technical disclaimer");
+    assert(htmlReport.includes("SHA-256"), "Report displays tamper-detection SHA-256 checksums");
   }
 
   console.log("\n=================================================================");

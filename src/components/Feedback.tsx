@@ -6,7 +6,31 @@ import { Loader2, Inbox, AlertOctagon, CheckCircle2, AlertTriangle, Info, X } fr
 
 // StatusBadge
 interface StatusBadgeProps {
-  status: "Pending" | "In Progress" | "Resolved" | "Low" | "Medium" | "High" | "Urgent" | "Verified" | "Unverified" | "GENERATED" | "SAVED" | "READY TO FILE" | "AWAITING RESPONSE" | "FIRST APPEAL AVAILABLE";
+  status:
+    | "Pending"
+    | "In Progress"
+    | "Resolved"
+    | "Low"
+    | "Medium"
+    | "High"
+    | "Urgent"
+    | "Verified"
+    | "Unverified"
+    | "GENERATED"
+    | "SAVED"
+    | "READY TO FILE"
+    | "READY_TO_SUBMIT"
+    | "SUBMITTED"
+    | "ASSIGNED"
+    | "IN_PROGRESS"
+    | "RECTIFIED_PENDING_CITIZEN_CONFIRMATION"
+    | "REOPENED"
+    | "AWAITING RESPONSE"
+    | "AWAITING_RESPONSE"
+    | "FIRST APPEAL AVAILABLE"
+    | "FIRST_APPEAL_FILED"
+    | "ESCALATION_AVAILABLE"
+    | "CLOSED";
   className?: string;
 }
 
@@ -15,17 +39,29 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = ""
     switch (status) {
       case "Pending":
       case "AWAITING RESPONSE":
+      case "AWAITING_RESPONSE":
+      case "SUBMITTED":
+      case "ASSIGNED":
         return "bg-warning-bg text-warning-amber border-warning-amber/20";
       case "In Progress":
+      case "IN_PROGRESS":
       case "READY TO FILE":
+      case "READY_TO_SUBMIT":
         return "bg-indigo-primary/10 text-indigo-primary border-indigo-primary/20";
       case "GENERATED":
       case "SAVED":
         return "bg-blue-50 text-blue-700 border-blue-200";
+      case "RECTIFIED_PENDING_CITIZEN_CONFIRMATION":
+        return "bg-amber-100 text-amber-900 border-amber-300 font-bold";
+      case "REOPENED":
+        return "bg-red-100 text-red-800 border-red-300";
       case "FIRST APPEAL AVAILABLE":
+      case "ESCALATION_AVAILABLE":
+      case "FIRST_APPEAL_FILED":
         return "bg-purple-50 text-purple-700 border-purple-200 animate-pulse";
       case "Resolved":
       case "Verified":
+      case "CLOSED":
         return "bg-success-bg text-success-green border-success-green/20";
       case "Urgent":
       case "High":
