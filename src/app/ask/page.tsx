@@ -37,6 +37,7 @@ import { CivicFormFiller } from "@/components/forms/CivicFormFiller";
 import { WhyThisResultPanel } from "@/components/trust/WhyThisResultPanel";
 import { PlainLanguageExplainer } from "@/components/explainer/PlainLanguageExplainer";
 import { SubmissionTracker } from "@/components/tracker/SubmissionTracker";
+import { ALL_STATES_AND_UTS } from "@/lib/location/location-context";
 
 const PREFILLED_SCENARIOS = [
   {
@@ -133,8 +134,8 @@ export default function AskPage() {
 
   // Dynamic Unified Action Plan
   const actionPlan: ActionPlan = useMemo(() => {
-    return planCitizenAction(issue || "Describe a civic or legal dispute", pinCode, state);
-  }, [issue, pinCode, state]);
+    return planCitizenAction(issue || "Describe a civic or legal dispute", pinCode, state, district);
+  }, [issue, pinCode, state, district]);
 
   const handlePinChange = (val: string) => {
     setPinCode(val);
@@ -450,6 +451,47 @@ export default function AskPage() {
               />
             </div>
 
+            {/* Pan-India Location Selectors */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100 text-xs">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">{t("ask.stateLabel")}</label>
+                <select
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  className="w-full p-2 bg-[#F4F9FF] border border-[#BCD7EE] font-semibold text-xs rounded-lg text-slate-900"
+                >
+                  {ALL_STATES_AND_UTS.map((s) => (
+                    <option key={s.code} value={s.name}>
+                      {s.name} ({s.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">{t("ask.districtLabel")}</label>
+                <input
+                  type="text"
+                  value={district}
+                  onChange={(e) => setDistrict(e.target.value)}
+                  placeholder={t("consumerEngine.districtPlaceholder")}
+                  className="w-full p-2 bg-[#F4F9FF] border border-[#BCD7EE] text-xs rounded-lg text-slate-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">{t("ask.pinCodeLabel")}</label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={pinCode}
+                  onChange={(e) => handlePinChange(e.target.value)}
+                  placeholder={t("consumerEngine.pinPlaceholder")}
+                  className="w-full p-2 bg-[#F4F9FF] border border-[#BCD7EE] font-mono font-bold text-xs text-center rounded-lg text-slate-900"
+                />
+              </div>
+            </div>
+
             {/* Voice Control Buttons */}
             <div className="flex items-center justify-between flex-wrap gap-2 pt-1 border-t border-slate-100 text-xs">
               <div className="flex items-center gap-2">
@@ -476,18 +518,6 @@ export default function AskPage() {
                 {isTranscribing && (
                   <span className="text-[11px] text-slate-500 font-medium">{t("ask.transcribingText")}</span>
                 )}
-              </div>
-
-              {/* PIN Code Input */}
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-600">{t("ask.pinLabel")}:</span>
-                <input
-                  type="text"
-                  maxLength={6}
-                  value={pinCode}
-                  onChange={(e) => handlePinChange(e.target.value)}
-                  className="w-24 p-1.5 bg-[#F4F9FF] border border-[#BCD7EE] font-mono font-bold text-xs text-center rounded-lg"
-                />
               </div>
             </div>
 
