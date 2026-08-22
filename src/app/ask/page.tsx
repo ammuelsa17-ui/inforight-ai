@@ -507,14 +507,14 @@ export default function AskPage() {
 
               <LocationMap
                 pinCode={pinCode}
-                initialLat={mapCoords?.lat || 11.0084}
-                initialLng={mapCoords?.lng || 76.9515}
+                initialLat={mapCoords?.lat}
+                initialLng={mapCoords?.lng}
                 interactive={true}
                 onLocationSelect={(lat, lng, source) => {
                   setMapCoords({ lat, lng, source });
                 }}
                 heightClass="h-[200px] sm:h-[240px]"
-                helperText="Entering a 6-digit PIN centers the map near that postal area. Use 'Use My Current Location' or click to refine the point."
+                helperText="Entering a verified PIN centers the map near that postal area. Use 'Use My Current Location' or click on the map to refine the spot."
               />
             </div>
 

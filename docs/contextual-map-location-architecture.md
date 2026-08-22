@@ -49,6 +49,8 @@ InfoRight AI strictly enforces the boundary between **visual spatial context** a
 ---
 
 ## 🛡️ Truthful Labeling & Fallback Invariants
+- **Open-Source Tech Stack**: Leaflet dynamic import (`leaflet` + `@types/leaflet`) with OpenStreetMap raster tiles (zero paid API keys, zero credential leakage).
+- **Centroid Registry Scope**: Employs verified demo PIN centroids with manual/GPS refinement; uncatalogued PINs safely display a neutral pan-India overview without fabricating false street coordinates.
 - **No False Verification Claims**: Labeled as *"Device-Reported Location"*, *"Approximate PIN Location"*, or *"Citizen-Confirmed Map Point"*—never *"Exact Ward Verified from GPS"*.
 - **GPS Denial Safety**: If GPS permission is denied or unsupported, the citizen is never blocked; manual map selection and text inputs remain 100% functional.
 - **SSRF & Privacy Protection**: Precision coordinates are never sent to external LLMs; GPS stays local to the client evidence package.
