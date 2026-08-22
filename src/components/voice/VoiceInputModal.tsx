@@ -254,9 +254,9 @@ export default function VoiceInputModal({
               <Mic className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900">Bharat Multilingual Voice Input</h2>
+              <h2 className="text-base font-bold text-slate-900">Multilingual Voice Recognition</h2>
               <span className="text-xs text-slate-500">
-                Voice input language: <strong className="text-indigo-700">{currentConfig.name}</strong> ({currentConfig.nativeName})
+                Voice Input Language: <strong className="text-indigo-700">{currentConfig.name}</strong> ({currentConfig.nativeName})
               </span>
             </div>
           </div>
