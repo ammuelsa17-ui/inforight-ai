@@ -10,12 +10,13 @@ export interface SpeechRecognitionHandlers {
 export class BharatSpeechRecognizer {
   private recognition: any | null = null;
   private isListening: boolean = false;
-  private currentLanguageLocale: string = "en-IN";
+  private currentLanguageLocale: string = "ta-IN";
   private handlers: SpeechRecognitionHandlers;
   private accumulatedFinalTranscript: string = "";
 
-  constructor(handlers: SpeechRecognitionHandlers) {
+  constructor(handlers: SpeechRecognitionHandlers, initialLocale: string = "ta-IN") {
     this.handlers = handlers;
+    this.currentLanguageLocale = initialLocale;
     this.initRecognition();
   }
 
@@ -34,6 +35,7 @@ export class BharatSpeechRecognizer {
       this.recognition.continuous = true;
       this.recognition.interimResults = true;
       this.recognition.maxAlternatives = 1;
+      this.recognition.lang = this.currentLanguageLocale;
 
       this.recognition.onstart = () => {
         this.isListening = true;
@@ -85,7 +87,12 @@ export class BharatSpeechRecognizer {
     return !!this.recognition;
   }
 
+  public getLanguage(): string {
+    return this.currentLanguageLocale;
+  }
+
   public setLanguage(locale: string) {
+    if (!locale) return;
     this.currentLanguageLocale = locale;
     if (this.recognition) {
       this.recognition.lang = locale;
