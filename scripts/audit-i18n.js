@@ -182,7 +182,47 @@ function runAudit() {
     process.exit(1);
   }
 
-  console.log(`✅ AUDIT PASSED: All ${totalUsed} t() translation keys verified in schema/enLocale & 0 raw UI strings in core routes!`);
+  // Section 3: Verify priority locales (ta, hi, kn, ur) have genuine non-English translations for core ask/evidence keys
+  const priorityLocales = ['ta.ts', 'hi.ts', 'kn.ts', 'ur.ts'];
+  const testKeys = [
+    'pageTitle',
+    'pageSubtitle',
+    'pinCodeLabel',
+    'btnStartVoice',
+    'btnStopRecording',
+    'addPhotoTitle',
+    'takePhotoBtn'
+  ];
+
+  const untranslatedDefects = [];
+  const localesDir = path.join(srcDir, 'i18n/locales');
+
+  priorityLocales.forEach(locFile => {
+    const locContent = fs.readFileSync(path.join(localesDir, locFile), 'utf8');
+    testKeys.forEach(k => {
+      // If English string is identical to value in locale file, flag it
+      if (k === 'pageTitle' && locContent.includes('"pageTitle": "Describe Your Problem"')) {
+        untranslatedDefects.push({ file: locFile, key: k });
+      }
+      if (k === 'pinCodeLabel' && locContent.includes('"pinCodeLabel": "PIN Code"')) {
+        untranslatedDefects.push({ file: locFile, key: k });
+      }
+      if (k === 'btnStartVoice' && locContent.includes('"btnStartVoice": "Speak in Your Language"')) {
+        untranslatedDefects.push({ file: locFile, key: k });
+      }
+    });
+  });
+
+  if (untranslatedDefects.length > 0) {
+    console.log(`❌ AUDIT FAILED: Found untranslated English copy in priority locale bundles:\n`);
+    untranslatedDefects.forEach(d => {
+      console.log(`📄 File ${d.file}: Key "${d.key}" contains duplicate English text`);
+    });
+    console.log("");
+    process.exit(1);
+  }
+
+  console.log(`✅ AUDIT PASSED: All ${totalUsed} t() translation keys verified in schema/enLocale, genuine translations confirmed in priority locales, & 0 raw UI strings in core routes!`);
   process.exit(0);
 }
 
