@@ -71,6 +71,18 @@ export const taLocale: UITranslationSchema = {
     "disclaimerText": "இன்ஃபோரைட் AI குடிமக்கள் அதிகாரமளிப்பிற்கான சட்டப்பூர்வ வழிகாட்டலை வழங்குகிறது. இது உத்தியோகபூர்வ சட்ட ஆலோசனையை மாற்றாது."
   },
   "ask": {
+    "describeProblemRequired": "Please describe your problem before continuing.",
+    "translationUnavailable": "Translation service currently unavailable. Showing canonical text.",
+    "pageTitle": "Describe Your Problem",
+    "pageSubtitle": "Tell us what happened. InfoRight will identify the relevant civic or legal path using source-grounded guidance.",
+    "pinCodeLabel": "PIN Code",
+    "btnStopRecording": "Stop",
+    "btnStartVoice": "Speak in Your Language",
+    "transcribingText": "Transcribing your voice...",
+    "voiceTranscriptLabel": "Voice Transcript",
+    "btnUseTranscript": "Use This Transcript",
+    "problemUnderstoodTitle": "Problem Understood",
+    "problemDescLabel": "Problem Description",
     "privacyBadge": "தனியுரிமை பாதுகாப்பானது • AI க்கு தனிப்பட்ட தரவு எதுவும் அனுப்பப்படவில்லை",
     "heading": "உங்கள் குடிமக்கள் அல்லது சட்டப் பிரச்சினையை விவரியுங்கள்",
     "subheading": "எளிய மொழியில் பேசுங்கள் அல்லது தட்டச்சு செய்யுங்கள். சர்வம் AI உங்கள் உள்ளீட்டை ஆங்கிலத்திற்கு மாற்றுகிறது.",
@@ -310,6 +322,14 @@ export const taLocale: UITranslationSchema = {
     "toggleContrastAria": "அதிக கான்ட்ராஸ்ட் நிலையை மாற்று"
   },
   "evidence": {
+    "addPhotoTitle": "Attach Photo Evidence (Before Rectification)",
+    "takePhotoBtn": "Take Photo",
+    "uploadPhotoBtn": "Upload File",
+    "descriptionLabel": "Evidence Description",
+    "descriptionPlaceholder": "Describe the visible defect (e.g., deep road trench)...",
+    "geoTagHeading": "Device Location & GPS Metadata",
+    "addLocationBtn": "Capture GPS Location",
+    "confirmEvidenceBtn": "Attach Evidence to Case",
     "organizerTitle": "உள் உலாவி ஆதார அமைப்பாளர்",
     "organizerSubtitle": "துணைப் புகைப்படங்கள், ரசீதுகள் மற்றும் அறிவிப்புகளை உங்கள் உலாவி நினைவகத்தில் உள்ளூரில் இணைக்கவும்",
     "privacyNotice": "நீங்கள் அவற்றைச் சமர்ப்பிக்கும் வரை கோப்புகள் உங்கள் உலாவியிலேயே இருக்கும்.",

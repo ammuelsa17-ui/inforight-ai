@@ -69,6 +69,18 @@ export interface UITranslationSchema {
     disclaimerText: string;
   };
   ask: {
+    describeProblemRequired: string;
+    translationUnavailable: string;
+    pageTitle: string;
+    pageSubtitle: string;
+    pinCodeLabel: string;
+    btnStopRecording: string;
+    btnStartVoice: string;
+    transcribingText: string;
+    voiceTranscriptLabel: string;
+    btnUseTranscript: string;
+    problemUnderstoodTitle: string;
+    problemDescLabel: string;
     privacyBadge: string;
     heading: string;
     subheading: string;
@@ -308,6 +320,14 @@ export interface UITranslationSchema {
     toggleContrastAria: string;
   };
   evidence: {
+    addPhotoTitle: string;
+    takePhotoBtn: string;
+    uploadPhotoBtn: string;
+    descriptionLabel: string;
+    descriptionPlaceholder: string;
+    geoTagHeading: string;
+    addLocationBtn: string;
+    confirmEvidenceBtn: string;
     organizerTitle: string;
     organizerSubtitle: string;
     privacyNotice: string;

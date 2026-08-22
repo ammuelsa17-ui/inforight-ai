@@ -71,6 +71,18 @@ export const knLocale: UITranslationSchema = {
     "disclaimerText": "ಇನ್ಫೋರೈಟ್ AI ನಾಗರಿಕ ಸಬಲೀಕರಣಕ್ಕಾಗಿ ಶಾಸನಬದ್ಧ ಮಾರ್ಗದರ್ಶನವನ್ನು ನೀಡುತ್ತದೆ. ಇದು ಔಪಚಾರಿಕ ಕಾನೂನು ಸಲಹೆಯನ್ನು ಬದಲಾಯಿಸುವುದಿಲ್ಲ."
   },
   "ask": {
+    "describeProblemRequired": "Please describe your problem before continuing.",
+    "translationUnavailable": "Translation service currently unavailable. Showing canonical text.",
+    "pageTitle": "Describe Your Problem",
+    "pageSubtitle": "Tell us what happened. InfoRight will identify the relevant civic or legal path using source-grounded guidance.",
+    "pinCodeLabel": "PIN Code",
+    "btnStopRecording": "Stop",
+    "btnStartVoice": "Speak in Your Language",
+    "transcribingText": "Transcribing your voice...",
+    "voiceTranscriptLabel": "Voice Transcript",
+    "btnUseTranscript": "Use This Transcript",
+    "problemUnderstoodTitle": "Problem Understood",
+    "problemDescLabel": "Problem Description",
     "privacyBadge": "ಗೌಪ್ಯತೆ ಸುರಕ್ಷಿತ • AI ಗೆ ಯಾವುದೇ ವೈಯಕ್ತಿಕ ಡೇಟಾ ಕಳುಹಿಸಿಲ್ಲ",
     "heading": "ನಿಮ್ಮ ನಾಗರಿಕ ಅಥವಾ ಕಾನೂನು ಸಮಸ್ಯೆಯನ್ನು ವಿವರಿಸಿ",
     "subheading": "ಸರಳ ಭಾಷೆಯಲ್ಲಿ ಮಾತನಾಡಿ ಅಥವಾ ಟೈಪ್ ಮಾಡಿ. ಸರ್ವಂ AI ನಿಮ್ಮ ಇನ್‌ಪುಟ್ ಅನ್ನು ಇಂಗ್ಲಿಷ್‌ಗೆ ಪ್ರಮಾಣೀಕರಿಸುತ್ತದೆ.",
@@ -310,6 +322,14 @@ export const knLocale: UITranslationSchema = {
     "toggleContrastAria": "ಹೆಚ್ಚಿನ ಕಾంట್ರಾಸ್ಟ್ ಶೈಲಿ ಬದಲಾಯಿಸಿ"
   },
   "evidence": {
+    "addPhotoTitle": "Attach Photo Evidence (Before Rectification)",
+    "takePhotoBtn": "Take Photo",
+    "uploadPhotoBtn": "Upload File",
+    "descriptionLabel": "Evidence Description",
+    "descriptionPlaceholder": "Describe the visible defect (e.g., deep road trench)...",
+    "geoTagHeading": "Device Location & GPS Metadata",
+    "addLocationBtn": "Capture GPS Location",
+    "confirmEvidenceBtn": "Attach Evidence to Case",
     "organizerTitle": "Client-Side Evidence Organizer",
     "organizerSubtitle": "Attach supporting photos, receipts & notices locally in your browser memory",
     "privacyNotice": "Files remain in your browser unless you explicitly submit/upload them.",

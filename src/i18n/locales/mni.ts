@@ -71,6 +71,18 @@ export const mniLocale: UITranslationSchema = {
     "disclaimerText": "InfoRight AI ꯅ ꯅꯥꯒꯔꯤꯛ ꯁꯣꯍꯣꯖ ꯕꯦꯅꯥꯋꯥ."
   },
   "ask": {
+    "describeProblemRequired": "Please describe your problem before continuing.",
+    "translationUnavailable": "Translation service currently unavailable. Showing canonical text.",
+    "pageTitle": "Describe Your Problem",
+    "pageSubtitle": "Tell us what happened. InfoRight will identify the relevant civic or legal path using source-grounded guidance.",
+    "pinCodeLabel": "PIN Code",
+    "btnStopRecording": "Stop",
+    "btnStartVoice": "Speak in Your Language",
+    "transcribingText": "Transcribing your voice...",
+    "voiceTranscriptLabel": "Voice Transcript",
+    "btnUseTranscript": "Use This Transcript",
+    "problemUnderstoodTitle": "Problem Understood",
+    "problemDescLabel": "Problem Description",
     "privacyBadge": "Privacy Protected • Zero Personal Data Sent to AI",
     "heading": "Draft Your Record-Based RTI Application",
     "subheading": "Speak or type in plain language.",
@@ -310,6 +322,14 @@ export const mniLocale: UITranslationSchema = {
     "toggleContrastAria": "Toggle high contrast mode"
   },
   "evidence": {
+    "addPhotoTitle": "Attach Photo Evidence (Before Rectification)",
+    "takePhotoBtn": "Take Photo",
+    "uploadPhotoBtn": "Upload File",
+    "descriptionLabel": "Evidence Description",
+    "descriptionPlaceholder": "Describe the visible defect (e.g., deep road trench)...",
+    "geoTagHeading": "Device Location & GPS Metadata",
+    "addLocationBtn": "Capture GPS Location",
+    "confirmEvidenceBtn": "Attach Evidence to Case",
     "organizerTitle": "Client-Side Evidence Organizer",
     "organizerSubtitle": "Attach supporting photos, receipts & notices locally in your browser memory",
     "privacyNotice": "Files remain in your browser unless you explicitly submit/upload them.",
