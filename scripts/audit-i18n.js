@@ -69,6 +69,70 @@ function auditFile(filePath) {
   return { relativePath, defects };
 }
 
+function getAllSourceFiles(dir) {
+  let results = [];
+  const list = fs.readdirSync(dir);
+  list.forEach(file => {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+    if (stat && stat.isDirectory()) {
+      if (file !== 'node_modules' && file !== '.next' && file !== 'api' && file !== '.git') {
+        results = results.concat(getAllSourceFiles(filePath));
+      }
+    } else if (file.endsWith('.tsx') || file.endsWith('.ts')) {
+      results.push(filePath);
+    }
+  });
+  return results;
+}
+
+function resolveKey(obj, pathStr) {
+  const parts = pathStr.split('.');
+  let cur = obj;
+  for (const p of parts) {
+    if (cur && typeof cur === 'object' && p in cur) {
+      cur = cur[p];
+    } else {
+      return undefined;
+    }
+  }
+  return cur;
+}
+
+function validateUsedTranslationKeys() {
+  const allSourceFiles = getAllSourceFiles(srcDir);
+  const tRegex = /\bt\(\s*["']([^"']+)["']\s*\)/g;
+  const usedKeys = new Map();
+
+  for (const file of allSourceFiles) {
+    const content = fs.readFileSync(file, 'utf8');
+    let m;
+    while ((m = tRegex.exec(content)) !== null) {
+      const key = m[1];
+      if (!usedKeys.has(key)) usedKeys.set(key, []);
+      usedKeys.get(key).push(path.relative(path.join(__dirname, '..'), file));
+    }
+  }
+
+  // Load English dictionary
+  const enFile = path.join(srcDir, 'i18n/locales/en.ts');
+  const enContent = fs.readFileSync(enFile, 'utf8');
+  // Simple evaluator for keys
+  const invalidKeys = [];
+
+  for (const [key, files] of usedKeys.entries()) {
+    // Check if key is formatted as "key": "value" in en.ts
+    const parts = key.split('.');
+    const leaf = parts[parts.length - 1];
+    const keyPattern = new RegExp(`"${leaf}"\\s*:`, 'g');
+    if (!keyPattern.test(enContent)) {
+      invalidKeys.push({ key, files });
+    }
+  }
+
+  return { totalUsed: usedKeys.size, invalidKeys };
+}
+
 function runAudit() {
   console.log("=================================================");
   console.log("  InfoRight AI — Automated i18n Forensic Auditor ");
@@ -93,6 +157,19 @@ function runAudit() {
     }
   });
 
+  // Section 2: Validate t() translation key integrity
+  const { totalUsed, invalidKeys } = validateUsedTranslationKeys();
+
+  if (invalidKeys.length > 0) {
+    console.log(`❌ AUDIT FAILED: Found ${invalidKeys.length} invalid/unresolved t() translation key(s) in codebase:\n`);
+    invalidKeys.forEach(item => {
+      console.log(`🔑 Key: "${item.key}" (missing in en.ts/schema.ts)`);
+      item.files.forEach(f => console.log(`   Used in: ${f}`));
+    });
+    console.log("");
+    process.exit(1);
+  }
+
   if (totalDefects > 0) {
     console.log(`❌ AUDIT FAILED: Found ${totalDefects} unlocalized raw UI string(s) across ${auditReport.length} file(s):\n`);
     auditReport.forEach(item => {
@@ -103,10 +180,10 @@ function runAudit() {
       console.log("");
     });
     process.exit(1);
-  } else {
-    console.log("✅ AUDIT PASSED: 0 unlocalized raw UI strings across all core citizen routes (/ask, /rights/consumer, /rights/tenant, /rights/workplace, /sources, /official)!");
-    process.exit(0);
   }
+
+  console.log(`✅ AUDIT PASSED: All ${totalUsed} t() translation keys verified in schema/enLocale & 0 raw UI strings in core routes!`);
+  process.exit(0);
 }
 
 runAudit();

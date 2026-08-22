@@ -71,6 +71,18 @@ export const hiLocale: UITranslationSchema = {
     "disclaimerText": "इन्फोराइट एआई नागरिक सशक्तिकरण के लिए वैधानिक मार्गदर्शन प्रदान करता है। यह औपचारिक कानूनी सलाह का स्थान नहीं लेता है।"
   },
   "ask": {
+    "describeProblemRequired": "Please describe your problem before continuing.",
+    "translationUnavailable": "Translation service currently unavailable. Showing canonical text.",
+    "pageTitle": "Describe Your Problem",
+    "pageSubtitle": "Tell us what happened. InfoRight will identify the relevant civic or legal path using source-grounded guidance.",
+    "pinCodeLabel": "PIN Code",
+    "btnStopRecording": "Stop",
+    "btnStartVoice": "Speak in Your Language",
+    "transcribingText": "Transcribing your voice...",
+    "voiceTranscriptLabel": "Voice Transcript",
+    "btnUseTranscript": "Use This Transcript",
+    "problemUnderstoodTitle": "Problem Understood",
+    "problemDescLabel": "Problem Description",
     "privacyBadge": "गोपनीयता सुरक्षित • शून्य व्यक्तिगत डेटा एआई को भेजा गया",
     "heading": "अपनी नागरिक या कानूनी समस्या का वर्णन करें",
     "subheading": "सरल भाषा में बोलें या टाइप करें। सरवम एआई आपके इनपुट को सामान्य अंग्रेजी में मानकीकृत करता है।",
@@ -310,6 +322,14 @@ export const hiLocale: UITranslationSchema = {
     "toggleContrastAria": "उच्च विषमता मोड बदलें"
   },
   "evidence": {
+    "addPhotoTitle": "Attach Photo Evidence (Before Rectification)",
+    "takePhotoBtn": "Take Photo",
+    "uploadPhotoBtn": "Upload File",
+    "descriptionLabel": "Evidence Description",
+    "descriptionPlaceholder": "Describe the visible defect (e.g., deep road trench)...",
+    "geoTagHeading": "Device Location & GPS Metadata",
+    "addLocationBtn": "Capture GPS Location",
+    "confirmEvidenceBtn": "Attach Evidence to Case",
     "organizerTitle": "ग्राहक-पक्ष साक्ष्य आयोजक",
     "organizerSubtitle": "अपने ब्राउज़र मेमोरी में स्थानीय रूप से सहायक फ़ोटो, रसीदें और नोटिस संलग्न करें",
     "privacyNotice": "फ़ाइलें आपके ब्राउज़र में तब तक रहती हैं जब तक आप उन्हें स्पष्ट रूप से सबमिट नहीं करते।",

@@ -98,6 +98,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const translations = getUITranslations(selectedLanguage);
 
+  const warnedKeysRef = React.useRef<Set<string>>(new Set());
+
   const t = useCallback(
     (keyPath: string): string => {
       const parts = keyPath.split(".");
@@ -111,13 +113,20 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             if (fallbackCurr && typeof fallbackCurr === "object" && fallbackPart in fallbackCurr) {
               fallbackCurr = (fallbackCurr as Record<string, unknown>)[fallbackPart];
             } else {
-              return keyPath;
+              if (process.env.NODE_ENV === "development") {
+                if (!warnedKeysRef.current.has(keyPath)) {
+                  warnedKeysRef.current.add(keyPath);
+                  console.warn(`[i18n] Missing translation key: "${keyPath}"`);
+                }
+                return `[MISSING: ${keyPath}]`;
+              }
+              return "";
             }
           }
-          return typeof fallbackCurr === "string" ? fallbackCurr : keyPath;
+          return typeof fallbackCurr === "string" ? fallbackCurr : "";
         }
       }
-      return typeof curr === "string" ? curr : keyPath;
+      return typeof curr === "string" ? curr : "";
     },
     [translations]
   );

@@ -16,18 +16,13 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2.5">
+          <Link href="/" className="flex items-center gap-2.5 shrink-0">
             <div className="w-9 h-9 rounded-lg bg-[#102A56] flex items-center justify-center text-white shadow-sm">
               <FileText className="w-5 h-5" />
             </div>
-            <div>
-              <span className="text-base font-bold text-[#102A56] tracking-tight">
-                InfoRight <span className="text-[#4F46E5]">AI</span>
-              </span>
-              <span className="block text-[10px] text-[#526176] font-medium leading-none">
-                {t("home.badge")}
-              </span>
-            </div>
+            <span className="text-base font-bold text-[#102A56] tracking-tight">
+              InfoRight <span className="text-[#4F46E5]">AI</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation Links (Simplified 4 Core Flow) */}
