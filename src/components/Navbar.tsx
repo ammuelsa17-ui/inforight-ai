@@ -31,37 +31,37 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-[#102A56]">
-            <Link href="/" className="hover:text-[#4F46E5] transition-colors">
+          <nav className="hidden md:flex items-center gap-3 lg:gap-6 text-sm font-semibold text-[#102A56] shrink-0">
+            <Link href="/" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
               {t("nav.home")}
             </Link>
-            <Link href="/ask" className="hover:text-[#4F46E5] transition-colors">
+            <Link href="/ask" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
               {t("nav.rtiDrafting")}
             </Link>
-            <Link href="/rights" className="hover:text-[#4F46E5] transition-colors">
+            <Link href="/rights" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
               {t("nav.rightsNavigator")}
             </Link>
-            <Link href="/schemes" className="hover:text-[#4F46E5] transition-colors">
+            <Link href="/schemes" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
               {t("nav.welfareSchemes")}
             </Link>
-            <Link href="/locator" className="hover:text-[#4F46E5] transition-colors">
+            <Link href="/locator" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
               Locator
             </Link>
-            <Link href="/dashboard" className="hover:text-[#4F46E5] transition-colors">
+            <Link href="/dashboard" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
               Tracker
             </Link>
-            <Link href="/sources" className="hover:text-[#4F46E5] transition-colors">
+            <Link href="/sources" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
               {t("nav.officialSources")}
             </Link>
           </nav>
 
           {/* Action CTA & Language Selector */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2 lg:gap-3 shrink-0">
             <AccessibilityToolbar textToRead="Welcome to InfoRight AI. Convert municipal road complaints into clear record-based RTI applications with verified official sources." />
             <LanguageSelector />
             <Link
               href="/ask"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-sm whitespace-nowrap"
             >
               <span>{t("nav.describeProblem")}</span>
               <ArrowRight className="w-4 h-4" />
