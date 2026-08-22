@@ -150,6 +150,15 @@ export const taLocale: UITranslationSchema = {
     "privacyKeptLocal": "உலாவி நினைவகத்தில் மட்டுமே தனிப்பட்ட விபரங்கள் இருக்கும்.",
     "appealUnlockNotice": "அதிகாரி 30 நாட்களுக்குள் பதிலளிக்கவில்லை எனில் பிரிவு 19(1)-ன் கீழ் முதல் மேல்முறையீடு அணுகலாம்.",
     "sec71Notice": "30 நாட்கள் (பிரிவு 7(1))",
+    "actionPlannerTitle": "ஒருங்கிணைந்த குடிமக்கள் & சட்ட நடவடிக்கை வழிகாட்டி",
+    "recommendedRoute": "பரிந்துரைக்கப்பட்ட நடவடிக்கை & சட்ட வழி",
+    "whyThisRoute": "இந்த நடவடிக்கைக்கான சட்டக் காரணம்",
+    "evidenceRequired": "தேவையான ஆவணங்கள் & பட்டியல்",
+    "generateDocBtn": "அதிகாரப்பூர்வ ஆவணத்தை உருவாக்கு",
+    "printFilingPackBtn": "முழு ஆவணக் கட்டை அச்சிடு (A4)",
+    "scenarioTenant": "வாடகை முன்பண பிடிப்பு சர்ச்சை",
+    "scenarioConsumer": "பழுதடைந்த பொருள் / பணம் திரும்பப் பெறாமை",
+    "scenarioWorkplace": "வழங்கப்படாத சம்பளம் / பணி நிலுவை",
     "pinStatutoryBasisLabel": "Statutory Basis:",
     "pinRtiPioLabel": "RTI Public Information Officer:",
     "pinResponsibleDeptLabel": "Responsible Department:",
@@ -375,4 +384,51 @@ export const taLocale: UITranslationSchema = {
     "privacyTitle": "தனியுரிமை பாதுகாப்பு",
     "privacyBody": "உங்கள் தனிப்பட்ட விவரங்கள் இந்த உலாவியிலேயே இருக்கும் மற்றும் AI சேவைகளுடன் பகிரப்படாது."
   }
+
+  ,
+  tracker: {
+    "title": "சட்டப்பூர்வ சமர்ப்பிப்பு & வழக்கு கண்காணிப்பான்",
+    "stepDraft": "1. வரைவு உருவாக்கப்பட்டது",
+    "stepSubmit": "2. சமர்ப்பிப்பு பதிவு",
+    "stepDeadline": "3. சட்டப்பூர்வ காலக்கெடு",
+    "stepEscalation": "4. மேல்முறையீடு / நடவடிக்கை",
+    "recordDispatch": "அலுவலக சமர்ப்பிப்பு / தபால் விவரங்களைப் பதிவு செய்:",
+    "dispatchDateLabel": "சமர்ப்பித்த தேதி *",
+    "methodLabel": "முறை *",
+    "speedPost": "பதிவுத் தபால் / ஸ்பீட் போஸ்ட் (தபால் நிலையம்)",
+    "onlinePortal": "இணையதளம் / ஆர்டிஐ போர்டல்",
+    "physicalCounter": "நேரடி அலுவலக தபால் கவுண்டர்",
+    "ackNoLabel": "தபால் கண்காணிப்பு / ஒப்புதல் எண் (விருப்பத்தேர்வு)",
+    "ackPlaceholder": "எ.கா. EM987654321IN",
+    "btnSaveCountdown": "சேமி & கால அளவைத் தொடங்கு",
+    "submittedOn": "சமர்ப்பிக்கப்பட்ட தேதி:",
+    "viaLabel": "வழியாக",
+    "refNoLabel": "ஒப்புதல் / தபால் எண்:",
+    "btnEditRecord": "பதிவைத் திருத்து",
+    "btnFirstAppeal": "முதல் மேல்முறையீடு உருவாக்கு"
+},
+  trust: {
+    "whyTitle": "இன்ஃபோரைட் ஏன் இந்த முடிவை எடுத்தது:",
+    "unresolvedFacts": "முடிவு செய்யப்படாத அதிகார வரம்பு / விவரங்கள்:",
+    "rulesEvaluated": "சரிபார்க்கப்பட்ட சட்ட விதிகள்:",
+    "officialSourceRecords": "அரசாங்க ஆதார பதிவுகள்:",
+    "showSources": "சரிபார்க்கப்பட்ட சட்ட ஆதாரங்களைக் காட்டு",
+    "hideSources": "சட்ட ஆதாரங்களை மறை"
+},
+  explainer: {
+    "whatItMeans": "இதன் பொருள் என்ன:",
+    "whatNext": "அடுத்து நீங்கள் செய்ய வேண்டியது:"
+},
+  planner: {
+    "tabPlanner": "ஒருங்கிணைந்த நடவடிக்கை திட்டம் (அனைத்து உரிமைகள்)",
+    "tabGuided": "வழிகாட்டப்பட்ட 5-படி குடிமக்கள் படிவம் (RTI)",
+    "legalDistinction": "சட்ட வரம்பு வேறுபாடு:",
+    "verifiedAuthTitle": "சரிபார்க்கப்பட்ட பொறுப்புள்ள அதிகாரம்:",
+    "printPdf": "அச்சிடு / PDF ஆக சேமி",
+    "toLabel": "பெறுநர்:",
+    "subjectLabel": "பொருள்:",
+    "factsLabel": "உண்மை விவரங்கள்:",
+    "statutoryBasisLabel": "சட்டப்பூர்வ அடிப்படை:",
+    "reliefLabel": "கோரப்படும் தீர்வு:"
+},
 };
