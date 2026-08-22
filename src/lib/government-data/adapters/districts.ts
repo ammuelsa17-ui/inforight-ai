@@ -69,7 +69,9 @@ export class DistrictDataProvider implements GovernmentDataProvider<string, Dist
         retrievedAt: new Date().toISOString(),
         lastVerified: "2026-08-22",
         freshness: "CURRENT",
-        resolutionMode: "STATIC_VERIFIED_REGISTRY"
+        resolutionMode: "STATIC_VERIFIED_REGISTRY",
+        trustLevel: "OFFICIAL_GOVERNMENT_DATASET",
+        isOfficialGovernmentSource: true
       }
     };
   }

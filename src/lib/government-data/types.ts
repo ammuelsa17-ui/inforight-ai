@@ -1,9 +1,18 @@
 // src/lib/government-data/types.ts — Core Contracts for Government Data & Authority Resolution
 
+export type SourceTrustLevel =
+  | "OFFICIAL_GOVERNMENT"
+  | "OFFICIAL_GOVERNMENT_DATASET"
+  | "VERIFIED_STATIC_GOVERNMENT_SOURCE"
+  | "THIRD_PARTY_REFERENCE"
+  | "CITIZEN_CONFIRMED"
+  | "VERIFICATION_REQUIRED";
+
 export type ResolutionMode =
   | "LIVE"
   | "VERIFIED_CACHE"
   | "STATIC_VERIFIED_REGISTRY"
+  | "THIRD_PARTY_LIVE"
   | "CITIZEN_CONFIRMED"
   | "VERIFICATION_REQUIRED";
 
@@ -33,6 +42,8 @@ export interface DataProvenance {
   lastVerified: string;
   freshness: SourceFreshnessStatus;
   resolutionMode: ResolutionMode;
+  trustLevel: SourceTrustLevel;
+  isOfficialGovernmentSource: boolean;
   eTag?: string;
   contentHash?: string;
 }

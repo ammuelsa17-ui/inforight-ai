@@ -31,7 +31,9 @@ export function resolveLabourOffice(
         retrievedAt: new Date().toISOString(),
         lastVerified: "2026-08-22",
         freshness: "CURRENT",
-        resolutionMode: "STATIC_VERIFIED_REGISTRY"
+        resolutionMode: "STATIC_VERIFIED_REGISTRY",
+        trustLevel: "OFFICIAL_GOVERNMENT",
+        isOfficialGovernmentSource: true
       }
     };
   }
@@ -50,7 +52,9 @@ export function resolveLabourOffice(
       retrievedAt: new Date().toISOString(),
       lastVerified: "2026-08-22",
       freshness: "CURRENT",
-      resolutionMode: "VERIFIED_CACHE"
+      resolutionMode: "VERIFIED_CACHE",
+      trustLevel: "OFFICIAL_GOVERNMENT",
+      isOfficialGovernmentSource: true
     }
   };
 }
