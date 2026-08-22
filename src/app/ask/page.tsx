@@ -146,7 +146,7 @@ export default function AskPage() {
 
   const [adminResolution, setAdminResolution] = useState<NormalizedLocationResolution | null>(null);
 
-  const handlePinChange = async (val: string) => {
+  const handlePinChange = (val: string) => {
     setPinCode(val);
     const cleanPin = val.trim();
     if (cleanPin.length === 6) {
@@ -157,26 +157,8 @@ export default function AskPage() {
         if (res.district) setDistrict(res.district);
         if (res.localBodyName) setLocalBodyName(res.localBodyName);
       }
-
-      // Fetch full all-India administrative hierarchy from server API
-      try {
-        const fetchRes = await fetch(`/api/location/pin?pin=${cleanPin}`);
-        if (fetchRes.ok) {
-          const normData: NormalizedLocationResolution = await fetchRes.json();
-          setAdminResolution(normData);
-          if (normData.postal.state && !res.state) {
-            setState(normData.postal.state);
-          }
-          if (normData.postal.district && !res.district) {
-            setDistrict(normData.postal.district);
-          }
-        }
-      } catch {
-        // Fallback gracefully
-      }
     } else {
       setPinResolution(null);
-      setAdminResolution(null);
     }
   };
 
@@ -530,6 +512,7 @@ export default function AskPage() {
 
               <LocationMap
                 pinCode={pinCode}
+                selectedLocality={locality || undefined}
                 initialLat={mapCoords?.lat}
                 initialLng={mapCoords?.lng}
                 interactive={true}
@@ -554,7 +537,6 @@ export default function AskPage() {
                     onChange={(e) => {
                       const newLoc = e.target.value;
                       setLocality(newLoc);
-                      handlePinChange(pinCode);
                     }}
                     className="w-full p-2 bg-white border border-indigo-200 rounded-lg text-slate-900 font-medium"
                   >
