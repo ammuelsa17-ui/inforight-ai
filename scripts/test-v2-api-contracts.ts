@@ -25,7 +25,9 @@ import {
 import { ALL_STATES_AND_UTS, resolveLocationContext } from "@/lib/location/location-context";
 import { STATE_TENANCY_REGISTRY, getStateTenancyRecord } from "@/data/tenancy/state-tenancy-registry";
 import { planConsumerAction, calculateConsumerJurisdiction } from "@/lib/consumer/consumer-engine";
+import { resolveConsumerCommissionJurisdiction } from "@/lib/consumer/jurisdiction-resolver";
 import { planTenantAction } from "@/lib/tenancy/tenancy-engine";
+import { resolveTenantRights } from "@/lib/tenancy/tenant-rights-resolver";
 import { checkSourceFreshness } from "@/lib/sources/freshness-checker";
 import { ALL_SOURCES } from "@/data/sources";
 import { NextRequest } from "next/server";
@@ -1253,6 +1255,72 @@ async function runRouteHandlerContractTests() {
     const missingSource = checkSourceFreshness("SRC-UNKNOWN-999", "2026-08-22");
     assert(missingSource.isFresh === false, "Unregistered source ID fails freshness check");
     assert(missingSource.status === "REVIEW_DUE", "Unregistered source status is REVIEW_DUE");
+  }
+
+  // =========================================================================
+  // SECTION 16: Pan-India Critical Negative Invariants & Jurisdiction Resolver Tests
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 16: Pan-India Critical Negative Invariants & Resolver Tests ---");
+
+    // 1. Maharashtra tenant case must NOT cite Tamil Nadu TNRRRLT Act
+    const mhTenantResolution = resolveTenantRights({
+      state: "Maharashtra",
+      district: "Pune",
+      propertyType: "RESIDENTIAL",
+      issueType: "SECURITY_DEPOSIT",
+      issueDescription: "Landlord withheld deposit in Pune",
+      handoverProof: true,
+    });
+    assert(!mhTenantResolution.applicableLaw.includes("TNRRRLT"), "Maharashtra tenant case strictly DOES NOT cite Tamil Nadu TNRRRLT Act");
+    assert(mhTenantResolution.applicableLaw.includes("Maharashtra Rent Control Act"), "Maharashtra case correctly cites Maharashtra Rent Control Act");
+
+    // 2. Unverified State (e.g. Goa) must NOT cite Model Tenancy Act as binding law
+    const goaTenantResolution = resolveTenantRights({
+      state: "Goa",
+      propertyType: "RESIDENTIAL",
+      issueType: "SECURITY_DEPOSIT",
+      issueDescription: "Deposit dispute in Panaji",
+    });
+    assert(goaTenantResolution.isModelActBinding === false, "Unverified State tenant dispute strictly DOES NOT cite Model Tenancy Act as binding law");
+    assert(goaTenantResolution.authority === undefined, "Unverified State produces undefined authority to prevent false precision");
+    assert(goaTenantResolution.authorityConfidence === "VERIFICATION_REQUIRED", "Unverified State yields VERIFICATION_REQUIRED");
+
+    // 3. Consumer missing jurisdiction facts must NOT invent Commission
+    const unknownConsumerJurisdiction = resolveConsumerCommissionJurisdiction({
+      state: "Karnataka",
+      considerationAmount: undefined,
+    });
+    assert(unknownConsumerJurisdiction.level === "VERIFICATION_REQUIRED", "Missing consideration amount yields VERIFICATION_REQUIRED level");
+    assert(unknownConsumerJurisdiction.missingFacts.length > 0, "Missing facts explicitly enumerated for consumer jurisdiction");
+
+    // 4. Consumer ₹45,000 claim routes to District Commission
+    const distResult = resolveConsumerCommissionJurisdiction({
+      state: "Tamil Nadu",
+      district: "Coimbatore",
+      considerationAmount: 45000,
+    });
+    assert(distResult.level === "DISTRICT_COMMISSION", "₹45,000 consideration routes to District Commission (DCDRC)");
+    assert(distResult.sourceIds.includes("SRC-CONS-2A-CENTRAL"), "District Commission cites CPA 2019 source");
+
+    // 5. Tenant representation in unverified State contains NO fake section numbers
+    const unverifiedStateDoc = generateRepresentationDocument({
+      documentType: "TENANT_REPRESENTATION",
+      problemDescription: "Landlord refusal",
+      state: "Sikkim",
+      applicantName: "T. Dorji",
+    });
+    assert(!unverifiedStateDoc.legalStatutoryBasis.some((b) => b.includes("TNRRRLT")), "Unverified State representation has zero fake TN citations");
+    assert(unverifiedStateDoc.legalStatutoryBasis.some((b) => b.includes("Transfer of Property Act, 1882")), "Unverified State falls back to Transfer of Property Act 1882");
+
+    // 6. Private disputes MUST NOT become RTI
+    const tenantPlanAction = planCitizenAction("My landlord refuses to refund my security deposit", undefined, "Karnataka");
+    assert(tenantPlanAction.domain === "TENANT", "Private landlord dispute classifies as TENANT, NOT CIVIC_RTI");
+    assert(tenantPlanAction.availableDocumentType === "TENANT_REPRESENTATION", "Tenant dispute creates TENANT_REPRESENTATION, NOT RTI_APPLICATION");
+
+    const consumerPlanAction = planCitizenAction("Amazon delivery was defective and seller refuses replacement", undefined, "Delhi");
+    assert(consumerPlanAction.domain === "CONSUMER", "Private seller dispute classifies as CONSUMER, NOT CIVIC_RTI");
+    assert(consumerPlanAction.availableDocumentType === "CONSUMER_REPRESENTATION", "Consumer dispute creates CONSUMER_REPRESENTATION, NOT RTI_APPLICATION");
   }
 
   console.log("\n=================================================================");
