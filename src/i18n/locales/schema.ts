@@ -69,6 +69,9 @@ export interface UITranslationSchema {
     disclaimerText: string;
   };
   ask: {
+    pinNotMappedLabel: string;
+    pinNotMappedHelp: string;
+    pinMappedHelp: string;
     confirmLocationTitle: string;
     rentalPropertyLocationTitle: string;
     workplaceLocationTitle: string;

@@ -46,37 +46,41 @@ export function LocationMap({
   helperText,
   showLocationStatus = true,
 }: LocationMapProps) {
+  const { t } = useLanguage();
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const leafletMarkersRef = useRef<any[]>([]);
 
-  // If pinCode provided, check if we have an approximate centroid
+  // Compute initial coordinates strictly if provided or if initial pinCode matches verified centroid
   const pinCoords = pinCode ? getApproximatePinCoordinates(pinCode) : null;
-  const effectiveLat = initialLat ?? pinCoords?.lat;
-  const effectiveLng = initialLng ?? pinCoords?.lng;
+  const hasExplicitInitial = initialLat !== undefined && initialLng !== undefined;
+  const effectiveLat = hasExplicitInitial ? initialLat : pinCoords?.lat;
+  const effectiveLng = hasExplicitInitial ? initialLng : pinCoords?.lng;
 
-  const [currentMarker, setCurrentMarker] = useState<{ lat: number; lng: number; source: LocationSource } | null>(
-    markers.length > 0
-      ? { lat: markers[0].lat, lng: markers[0].lng, source: markers[0].source || "MAP_SELECTED" }
-      : effectiveLat && effectiveLng
-      ? { lat: effectiveLat, lng: effectiveLng, source: "PIN_APPROXIMATE" }
-      : null
-  );
+  const [currentMarker, setCurrentMarker] = useState<{ lat: number; lng: number; source: LocationSource } | null>(() => {
+    if (markers.length > 0) {
+      return { lat: markers[0].lat, lng: markers[0].lng, source: markers[0].source || "MAP_SELECTED" };
+    }
+    if (hasExplicitInitial && initialLat !== undefined && initialLng !== undefined) {
+      return { lat: initialLat, lng: initialLng, source: "MANUAL" };
+    }
+    if (pinCoords) {
+      return { lat: pinCoords.lat, lng: pinCoords.lng, source: "PIN_APPROXIMATE" };
+    }
+    return null;
+  });
 
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
-  const [activeSource, setActiveSource] = useState<LocationSource>(
-    markers.length > 0
-      ? markers[0].source || "MAP_SELECTED"
-      : effectiveLat && effectiveLng
-      ? "PIN_APPROXIMATE"
-      : "MANUAL"
-  );
+  const [activeSource, setActiveSource] = useState<LocationSource | null>(() => {
+    if (markers.length > 0) return markers[0].source || "MAP_SELECTED";
+    if (hasExplicitInitial) return "MANUAL";
+    if (pinCoords) return "PIN_APPROXIMATE";
+    return null;
+  });
 
   // Initialize Leaflet Map
   useEffect(() => {
-    let isMounted = true;
-
     async function initMap() {
       if (typeof window === "undefined" || !mapContainerRef.current) return;
 
@@ -91,9 +95,10 @@ export function LocationMap({
       });
 
       if (!mapInstanceRef.current && mapContainerRef.current) {
+        const hasMarkerOrCoords = currentMarker !== null || (effectiveLat !== undefined && effectiveLng !== undefined);
         const centerLat = currentMarker?.lat ?? effectiveLat ?? NEUTRAL_INDIA_LAT;
         const centerLng = currentMarker?.lng ?? effectiveLng ?? NEUTRAL_INDIA_LNG;
-        const initialZoom = (currentMarker?.lat || effectiveLat) ? zoom : NEUTRAL_INDIA_ZOOM;
+        const initialZoom = hasMarkerOrCoords ? zoom : NEUTRAL_INDIA_ZOOM;
 
         const map = L.map(mapContainerRef.current, {
           center: [centerLat, centerLng],
@@ -123,7 +128,6 @@ export function LocationMap({
     initMap();
 
     return () => {
-      isMounted = false;
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
@@ -131,16 +135,23 @@ export function LocationMap({
     };
   }, []);
 
-  // Update center when PIN changes
+  // Update center and marker when PIN changes
   useEffect(() => {
-    if (pinCode && mapInstanceRef.current) {
-      const pinCoords = getApproximatePinCoordinates(pinCode);
-      if (pinCoords) {
-        mapInstanceRef.current.setView([pinCoords.lat, pinCoords.lng], 14);
-        setCurrentMarker({ lat: pinCoords.lat, lng: pinCoords.lng, source: "PIN_APPROXIMATE" });
-        setActiveSource("PIN_APPROXIMATE");
-        if (onLocationSelect) {
-          onLocationSelect(pinCoords.lat, pinCoords.lng, "PIN_APPROXIMATE");
+    if (mapInstanceRef.current) {
+      if (pinCode && pinCode.trim().length === 6) {
+        const coords = getApproximatePinCoordinates(pinCode);
+        if (coords) {
+          mapInstanceRef.current.setView([coords.lat, coords.lng], 14);
+          setCurrentMarker({ lat: coords.lat, lng: coords.lng, source: "PIN_APPROXIMATE" });
+          setActiveSource("PIN_APPROXIMATE");
+          if (onLocationSelect) {
+            onLocationSelect(coords.lat, coords.lng, "PIN_APPROXIMATE");
+          }
+        } else {
+          // Uncatalogued PIN -> Reset to neutral India overview without any false marker
+          mapInstanceRef.current.setView([NEUTRAL_INDIA_LAT, NEUTRAL_INDIA_LNG], NEUTRAL_INDIA_ZOOM);
+          setCurrentMarker(null);
+          setActiveSource(null);
         }
       }
     }
@@ -175,9 +186,14 @@ export function LocationMap({
         }
       } else if (currentMarker) {
         const marker = L.marker([currentMarker.lat, currentMarker.lng]);
-        marker.bindPopup(
-          `<strong>${activeSource === "DEVICE_GPS" ? "Device Location" : activeSource === "MAP_SELECTED" ? "Citizen Confirmed Location" : "Approximate PIN Location"}</strong><br/>${currentMarker.lat.toFixed(5)}°, ${currentMarker.lng.toFixed(5)}°`
-        );
+        const popupLabel =
+          activeSource === "DEVICE_GPS"
+            ? "Device Location"
+            : activeSource === "MAP_SELECTED"
+            ? "Citizen Confirmed Location"
+            : "Approximate PIN Location";
+
+        marker.bindPopup(`<strong>${popupLabel}</strong><br/>${currentMarker.lat.toFixed(5)}°, ${currentMarker.lng.toFixed(5)}°`);
         marker.addTo(mapInstanceRef.current);
         leafletMarkersRef.current.push(marker);
       }
@@ -222,9 +238,8 @@ export function LocationMap({
     );
   };
 
-  const { t } = useLanguage();
-
-  const getSourceLabel = (src: LocationSource) => {
+  const getSourceLabel = (src: LocationSource | null) => {
+    if (!src) return t("ask.pinNotMappedLabel");
     switch (src) {
       case "DEVICE_GPS":
         return t("ask.deviceGpsLabel");
@@ -235,6 +250,8 @@ export function LocationMap({
         return t("ask.approximatePinLabel");
     }
   };
+
+  const isPinUnsupported = Boolean(pinCode && pinCode.trim().length === 6 && !getApproximatePinCoordinates(pinCode));
 
   return (
     <div className={`space-y-2.5 ${className}`}>
@@ -251,8 +268,14 @@ export function LocationMap({
             <span>{geoLoading ? t("ask.detectingGps") : t("ask.useCurrentLocation")}</span>
           </button>
 
-          {showLocationStatus && currentMarker && (
-            <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">
+          {showLocationStatus && (
+            <span
+              className={`text-[11px] font-semibold px-2.5 py-1 rounded-md border ${
+                currentMarker
+                  ? "text-slate-600 bg-slate-100 border-slate-200"
+                  : "text-amber-800 bg-amber-50 border-amber-200"
+              }`}
+            >
               {getSourceLabel(activeSource)}
             </span>
           )}
@@ -271,11 +294,13 @@ export function LocationMap({
         <div ref={mapContainerRef} className="w-full h-full z-0" />
       </div>
 
-      {helperText && (
-        <p className="text-[11px] text-slate-500 leading-normal">
-          {helperText}
-        </p>
-      )}
+      {helperText ? (
+        <p className="text-[11px] text-slate-500 leading-normal">{helperText}</p>
+      ) : isPinUnsupported ? (
+        <p className="text-[11px] text-amber-700 leading-normal">{t("ask.pinNotMappedHelp")}</p>
+      ) : pinCoords ? (
+        <p className="text-[11px] text-slate-500 leading-normal">{t("ask.pinMappedHelp")}</p>
+      ) : null}
     </div>
   );
 }
