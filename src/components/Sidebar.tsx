@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRole } from "@/context/RoleContext";
@@ -20,6 +21,7 @@ import {
 } from "lucide-react";
 
 export default function Sidebar() {
+  const { t } = useLanguage();
   const { role } = useRole();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -104,9 +106,9 @@ export default function Sidebar() {
               <Scale className="h-4 w-4 text-indigo-primary" />
             </div>
             <div>
-              <span className="text-xs font-bold text-dark-text block">Privacy Shield</span>
+              <span className="text-xs font-bold text-dark-text block">{t("sidebar.privacyTitle")}</span>
               <p className="text-[10px] text-secondary-text leading-relaxed mt-1">
-                Your personal details remain on this browser and are not shared with AI services.
+                {t("sidebar.privacyBody")}
               </p>
             </div>
           </div>

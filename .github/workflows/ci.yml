@@ -27,6 +27,9 @@ jobs:
       - name: Run ESLint Audit
         run: npm run lint
 
+      - name: Run Localization Integrity Audit
+        run: npm run audit:i18n
+
       - name: Run API Route Handler Contract Tests
         run: npm run test:api
 

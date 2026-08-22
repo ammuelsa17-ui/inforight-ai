@@ -1,11 +1,12 @@
 "use client";
 
 import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { Loader2, Inbox, AlertOctagon, CheckCircle2, AlertTriangle, Info, X } from "lucide-react";
 
 // StatusBadge
 interface StatusBadgeProps {
-  status: "Pending" | "In Progress" | "Resolved" | "Low" | "Medium" | "High" | "Urgent" | "Verified" | "Unverified";
+  status: "Pending" | "In Progress" | "Resolved" | "Low" | "Medium" | "High" | "Urgent" | "Verified" | "Unverified" | "GENERATED" | "SAVED" | "READY TO FILE" | "AWAITING RESPONSE" | "FIRST APPEAL AVAILABLE";
   className?: string;
 }
 
@@ -13,9 +14,16 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = ""
   const getStatusClasses = () => {
     switch (status) {
       case "Pending":
+      case "AWAITING RESPONSE":
         return "bg-warning-bg text-warning-amber border-warning-amber/20";
       case "In Progress":
-        return "bg-indigo-primary/5 text-indigo-primary border-indigo-primary/20";
+      case "READY TO FILE":
+        return "bg-indigo-primary/10 text-indigo-primary border-indigo-primary/20";
+      case "GENERATED":
+      case "SAVED":
+        return "bg-blue-50 text-blue-700 border-blue-200";
+      case "FIRST APPEAL AVAILABLE":
+        return "bg-purple-50 text-purple-700 border-purple-200 animate-pulse";
       case "Resolved":
       case "Verified":
         return "bg-success-bg text-success-green border-success-green/20";
@@ -57,6 +65,7 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({
   onClose,
   className = ""
 }) => {
+  const { t } = useLanguage();
   const getBannerConfig = () => {
     switch (type) {
       case "success":
@@ -97,7 +106,7 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({
         <button
           onClick={onClose}
           className="p-1 rounded hover:bg-black/5 text-inherit h-fit"
-          aria-label="Close alert"
+          aria-label={t("common.close")}
         >
           <X className="h-4 w-4" />
         </button>
@@ -111,12 +120,13 @@ export const LoadingState: React.FC<{ message?: string; className?: string }> = 
   message = "Processing guidance...",
   className = ""
 }) => {
+  const { t } = useLanguage();
   return (
     <div className={`flex flex-col items-center justify-center p-12 text-center bg-white border border-borders rounded-lg shadow-2xs ${className}`}>
       <Loader2 className="h-8 w-8 text-indigo-primary animate-spin mb-4" />
       <span className="text-sm font-bold text-dark-text">{message}</span>
       <p className="text-xs text-secondary-text mt-1.5 max-w-xs">
-        Analyzing problem records and local public authority details. This should take just a moment.
+        {t("common.loading")}
       </p>
     </div>
   );
@@ -162,6 +172,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   onRetry,
   className = ""
 }) => {
+  const { t } = useLanguage();
   return (
     <div className={`flex flex-col items-center justify-center p-10 text-center bg-danger-bg border border-danger-red/10 rounded-lg shadow-2xs ${className}`}>
       <AlertOctagon className="h-8 w-8 text-danger-red mb-3" />
@@ -172,7 +183,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
           onClick={onRetry}
           className="mt-4 px-3.5 py-2 text-xs font-semibold text-white bg-danger-red hover:bg-danger-red/90 rounded-lg transition-colors"
         >
-          Retry Request
+          {t("common.search")}
         </button>
       )}
     </div>

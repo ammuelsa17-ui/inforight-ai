@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { calculateStatutoryTimeline } from "@/lib/statutory/timeline-engine";
 import { Calendar, AlertTriangle } from "lucide-react";
 
@@ -11,6 +12,7 @@ interface RtiStatutoryTimelineProps {
 export function RtiStatutoryTimeline({
   initialFilingDate = new Date().toISOString().split("T")[0],
 }: RtiStatutoryTimelineProps) {
+  const { t } = useLanguage();
   const [filingDate, setFilingDate] = useState(initialFilingDate);
   const [isLifeAndLiberty, setIsLifeAndLiberty] = useState(false);
   const [scenario, setScenario] = useState<"no_response" | "decision_received">("no_response");
@@ -28,10 +30,10 @@ export function RtiStatutoryTimeline({
           </div>
           <div>
             <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">
-              Statutory RTI Timeline & Legal Deadlines Engine
+              {t("timelineEngine.title")}
             </h4>
             <p className="text-xs text-slate-500">
-              Calculates indicative calendar dates under Sections 6(3), 7(1), and 19(1) of RTI Act 2005
+              {t("timelineEngine.subtitle")}
             </p>
           </div>
         </div>
@@ -41,7 +43,7 @@ export function RtiStatutoryTimeline({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
           <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-            Application Filing Date
+            {t("timelineEngine.filingDateLabel")}
           </label>
           <input
             type="date"
@@ -53,22 +55,22 @@ export function RtiStatutoryTimeline({
 
         <div>
           <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-            Appeal Scenario
+            {t("timelineEngine.scenarioLabel")}
           </label>
           <select
             value={scenario}
             onChange={(e) => setScenario(e.target.value as "no_response" | "decision_received")}
             className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs rounded-lg p-2 focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="no_response">Scenario A: No Response Received</option>
-            <option value="decision_received">Scenario B: Decision / Rejection Received</option>
+            <option value="no_response">{t("timelineEngine.scenNoResponse")}</option>
+            <option value="decision_received">{t("timelineEngine.scenDecision")}</option>
           </select>
         </div>
 
         {scenario === "decision_received" && (
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-              Decision Receipt Date
+              {t("timelineEngine.receiptDateLabel")}
             </label>
             <input
               type="date"
@@ -91,7 +93,7 @@ export function RtiStatutoryTimeline({
             className="w-4 h-4 text-red-600 rounded focus:ring-red-500 cursor-pointer"
           />
           <label htmlFor="life-liberty-check" className="text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer flex items-center gap-1.5">
-            Matter Concerning Life & Liberty (48-Hour Response)
+            {t("timelineEngine.lifeLibertyLabel")}
           </label>
         </div>
         <span className="text-[10px] text-red-600 font-bold bg-red-50 dark:bg-red-950/60 px-2 py-0.5 rounded border border-red-200 dark:border-red-800">

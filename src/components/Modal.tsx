@@ -1,6 +1,7 @@
 "use client";
 
 import React, { ReactNode, useEffect } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { X } from "lucide-react";
 
 interface ModalProps {
@@ -20,6 +21,7 @@ export const Modal: React.FC<ModalProps> = ({
   actions,
   size = "md"
 }) => {
+  const { t } = useLanguage();
   // Prevent background scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -71,7 +73,7 @@ export const Modal: React.FC<ModalProps> = ({
           <button
             onClick={onClose}
             className="p-1 rounded hover:bg-slate-100 text-secondary-text hover:text-dark-text transition-colors cursor-pointer"
-            aria-label="Close modal"
+            aria-label={t("common.close")}
           >
             <X className="h-4.5 w-4.5" />
           </button>

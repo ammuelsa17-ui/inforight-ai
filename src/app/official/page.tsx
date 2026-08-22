@@ -19,8 +19,9 @@ import { StatusBadge, EmptyState } from "@/components/Feedback";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function OfficialDashboardPage() {
+  const { t } = useLanguage();
   return (
-    <Suspense fallback={<div className="p-6 text-xs text-secondary-text font-bold uppercase tracking-wider">Loading Official Panel...</div>}>
+    <Suspense fallback={<div className="p-6 text-xs text-secondary-text font-bold uppercase tracking-wider">{t("common.loading")}</div>}>
       <OfficialDashboardContent />
     </Suspense>
   );
@@ -85,11 +86,11 @@ function OfficialDashboardContent() {
         <div className="space-y-6">
           {/* Official Formal Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-            <StatCard title="Total Requests" value={totalRequests} icon={FolderOpen} color="indigo" />
-            <StatCard title="Pending Review" value={pendingCount} icon={Clock} color="amber" />
-            <StatCard title="In Progress" value={inProgressCount} icon={Clock} color="indigo" />
-            <StatCard title="Resolved" value={resolvedCount} icon={CheckCircle2} color="green" />
-            <StatCard title="Urgent Action" value={urgentCount} icon={AlertOctagon} color="red" />
+            <StatCard title={t("official.title")} value={totalRequests} icon={FolderOpen} color="indigo" />
+            <StatCard title={t("official.title")} value={pendingCount} icon={Clock} color="amber" />
+            <StatCard title={t("official.title")} value={inProgressCount} icon={Clock} color="indigo" />
+            <StatCard title={t("official.title")} value={resolvedCount} icon={CheckCircle2} color="green" />
+            <StatCard title={t("official.title")} value={urgentCount} icon={AlertOctagon} color="red" />
           </div>
 
           {/* Filtering Tools */}
@@ -100,38 +101,38 @@ function OfficialDashboardContent() {
                 type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by ID, keyword, or applicant name..."
+                placeholder={t("common.search")}
                 className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-borders text-xs text-dark-text bg-white transition-colors focus:border-indigo-primary focus:outline-none"
               />
             </div>
 
             <div className="flex flex-wrap gap-3.5 w-full md:w-auto">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-secondary-text uppercase">Status:</span>
+                <span className="text-[10px] font-bold text-secondary-text uppercase">{t("common.status")}</span>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="px-2.5 py-1.5 border border-borders rounded-lg text-xs bg-white text-dark-text focus:outline-none focus:border-indigo-primary cursor-pointer font-semibold"
                 >
-                  <option value="all">All Statuses</option>
-                  <option value="Pending">Pending</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Resolved">Resolved</option>
+                  <option value="all">{t("common.filter")}</option>
+                  <option value="Pending">{t("common.status")}</option>
+                  <option value="In Progress">{t("common.status")}</option>
+                  <option value="Resolved">{t("common.status")}</option>
                 </select>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-secondary-text uppercase">Priority:</span>
+                <span className="text-[10px] font-bold text-secondary-text uppercase">{t("common.filter")}</span>
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
                   className="px-2.5 py-1.5 border border-borders rounded-lg text-xs bg-white text-dark-text focus:outline-none focus:border-indigo-primary cursor-pointer font-semibold"
                 >
-                  <option value="all">All Priorities</option>
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
-                  <option value="Urgent">Urgent</option>
+                  <option value="all">{t("common.filter")}</option>
+                  <option value="Low">{t("common.filter")}</option>
+                  <option value="Medium">{t("common.filter")}</option>
+                  <option value="High">{t("common.filter")}</option>
+                  <option value="Urgent">{t("common.filter")}</option>
                 </select>
               </div>
             </div>
@@ -143,13 +144,13 @@ function OfficialDashboardContent() {
               <table className="min-w-full divide-y divide-borders text-left text-xs">
                 <thead className="bg-slate-50 text-secondary-text font-bold uppercase tracking-wider">
                   <tr>
-                    <th className="px-6 py-4">Request ID</th>
-                    <th className="px-6 py-4">Citizen Applicant</th>
-                    <th className="px-6 py-4">Issue Summary</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4">Priority</th>
-                    <th className="px-6 py-4">Receipt Date</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
+                    <th className="px-6 py-4">{t("dashboard.title")}</th>
+                    <th className="px-6 py-4">{t("ask.applicantNameLabel")}</th>
+                    <th className="px-6 py-4">{t("ask.problemLabel")}</th>
+                    <th className="px-6 py-4">{t("common.status")}</th>
+                    <th className="px-6 py-4">{t("common.filter")}</th>
+                    <th className="px-6 py-4">{t("ask.dateRangeLabel")}</th>
+                    <th className="px-6 py-4 text-right">{t("common.action")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-borders text-dark-text font-medium">
@@ -179,7 +180,7 @@ function OfficialDashboardContent() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="inline-flex items-center gap-1 text-xs font-bold text-indigo-primary group-hover:underline">
-                          <span>Details</span>
+                          <span>{t("common.viewDetails")}</span>
                           <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
                         </div>
                       </td>
@@ -190,7 +191,7 @@ function OfficialDashboardContent() {
             </div>
           ) : (
             <EmptyState
-              title="No requests found"
+              title={t("dashboard.emptyState")}
               description="No citizen-submitted consultations match the selected filter or search terms."
               action={
                 <button
@@ -202,7 +203,7 @@ function OfficialDashboardContent() {
                   }}
                   className="px-4 py-2 text-xs font-bold text-indigo-primary hover:underline cursor-pointer"
                 >
-                  Reset Dashboard Filters
+                  {t("common.filter")}
                 </button>
               }
             />
@@ -213,7 +214,7 @@ function OfficialDashboardContent() {
       {activeTab === "citizens" && (
         <div className="space-y-4">
           <div className="bg-white border border-borders rounded-lg p-5 shadow-2xs">
-            <h3 className="text-sm font-bold text-dark-text uppercase tracking-wider mb-4">Citizens Registry Directory</h3>
+            <h3 className="text-sm font-bold text-dark-text uppercase tracking-wider mb-4">{t("official.title")}</h3>
             <div className="space-y-3">
               {cases.map((c) => (
                 <div key={c.id} className="p-4 border border-borders rounded-lg bg-slate-50/50 flex justify-between items-center text-xs">
@@ -222,7 +223,7 @@ function OfficialDashboardContent() {
                     <span className="text-secondary-text block">Address: {c.applicantAddress || "Client-Side Isolation"}</span>
                   </div>
                   <div className="text-right">
-                    <span className="text-secondary-text block mb-1">Associated Case ID</span>
+                    <span className="text-secondary-text block mb-1">{t("dashboard.title")}</span>
                     <Link href={`/official/cases/${c.id}`} className="text-xs font-bold text-indigo-primary hover:underline">
                       {c.id}
                     </Link>
@@ -237,8 +238,8 @@ function OfficialDashboardContent() {
       {activeTab === "settings" && (
         <Card className="max-w-2xl mx-auto space-y-6 bg-white">
           <div className="border-b border-borders pb-3">
-            <h3 className="text-sm font-bold text-dark-text uppercase tracking-wide">System & Department Settings</h3>
-            <p className="text-[10px] text-secondary-text">Configure designated PIO names, templates, and office parameters.</p>
+            <h3 className="text-sm font-bold text-dark-text uppercase tracking-wide">{t("official.title")}</h3>
+            <p className="text-[10px] text-secondary-text">{t("official.subtitle")}</p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -251,7 +252,7 @@ function OfficialDashboardContent() {
           <div className="bg-sky-light-bg border border-sky-blue/20 rounded-lg p-3.5 flex gap-2">
             <UserCheck className="h-5 w-5 text-indigo-primary shrink-0" />
             <span className="text-[11px] text-secondary-text leading-relaxed">
-              <strong>Official Credentials:</strong> Session is held locally. To toggle back to the public or citizen view, use the role switcher located at the top right header navigation bar.
+              <strong>{t("official.title")}</strong> {t("official.subtitle")}
             </span>
           </div>
         </Card>
