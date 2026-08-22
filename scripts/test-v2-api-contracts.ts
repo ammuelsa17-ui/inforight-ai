@@ -1561,16 +1561,16 @@ async function runRouteHandlerContractTests() {
     // 1. Language Resolution Assertions
     const tamilConfig = resolveSpeechLanguageConfig("ta-IN");
     assert(tamilConfig.code === "ta-IN", "Tamil code resolves to ta-IN");
-    assert(tamilConfig.bcp47SpeechLocale === "ta-IN", "Tamil speech locale is ta-IN");
-    assert(tamilConfig.sarvamLanguageCode === "ta-IN", "Tamil Sarvam code is ta-IN");
+    assert(tamilConfig.browserLocale === "ta-IN", "Tamil browser locale is ta-IN");
+    assert(tamilConfig.sarvamLocale === "ta-IN", "Tamil Sarvam code is ta-IN");
 
     const hindiConfig = resolveSpeechLanguageConfig("hi-IN");
     assert(hindiConfig.code === "hi-IN", "Hindi code resolves to hi-IN");
-    assert(hindiConfig.bcp47SpeechLocale === "hi-IN", "Hindi speech locale is hi-IN");
+    assert(hindiConfig.sarvamLocale === "hi-IN", "Hindi Sarvam locale is hi-IN");
 
     const kannadaConfig = resolveSpeechLanguageConfig("kn-IN");
     assert(kannadaConfig.code === "kn-IN", "Kannada code resolves to kn-IN");
-    assert(kannadaConfig.bcp47SpeechLocale === "kn-IN", "Kannada speech locale is kn-IN");
+    assert(kannadaConfig.sarvamLocale === "kn-IN", "Kannada Sarvam locale is kn-IN");
 
     const teluguConfig = resolveSpeechLanguageConfig("te-IN");
     assert(teluguConfig.code === "te-IN", "Telugu code resolves to te-IN");
@@ -1590,19 +1590,24 @@ async function runRouteHandlerContractTests() {
     const englishConfig = resolveSpeechLanguageConfig("en-IN");
     assert(englishConfig.code === "en-IN", "English code resolves to en-IN");
 
-    // 2. Short Prefix Matching Tests
+    // 2. Odia Specific Mapping Assertion (Sarvam: od-IN vs Browser: or-IN)
+    const odiaConfig = resolveSpeechLanguageConfig("od-IN");
+    assert(odiaConfig.sarvamLocale === "od-IN", "Odia Sarvam locale is od-IN");
+    assert(odiaConfig.browserLocale === "or-IN", "Odia browser locale is or-IN");
+
+    // 3. Short Prefix Matching Tests
     const shortTamil = resolveSpeechLanguageConfig("ta");
     assert(shortTamil.code === "ta-IN", "Short prefix 'ta' resolves to ta-IN");
-    assert(shortTamil.bcp47SpeechLocale === "ta-IN", "Short prefix 'ta' sets speech locale to ta-IN");
+    assert(shortTamil.sarvamLocale === "ta-IN", "Short prefix 'ta' sets Sarvam locale to ta-IN");
 
     const shortHindi = resolveSpeechLanguageConfig("hi");
     assert(shortHindi.code === "hi-IN", "Short prefix 'hi' resolves to hi-IN");
 
-    // 3. Dynamic Switch & Non-English Invariance
-    assert(tamilConfig.bcp47SpeechLocale !== "en-IN", "Selected Tamil strictly DOES NOT resolve to en-IN");
-    assert(hindiConfig.bcp47SpeechLocale !== "en-IN", "Selected Hindi strictly DOES NOT resolve to en-IN");
+    // 4. Dynamic Switch & Non-English Invariance
+    assert(tamilConfig.sarvamLocale !== "en-IN", "Selected Tamil strictly DOES NOT resolve to en-IN");
+    assert(hindiConfig.sarvamLocale !== "en-IN", "Selected Hindi strictly DOES NOT resolve to en-IN");
 
-    // 4. Registry Completeness
+    // 5. Registry Completeness
     const allVoiceLangs = getAllSpeechLanguages();
     assert(allVoiceLangs.length === 23, "All 23 Bharat voice languages registered");
   }

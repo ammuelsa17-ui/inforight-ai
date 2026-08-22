@@ -46,17 +46,19 @@ export class BharatSpeechRecognizer {
         let interimText = "";
         let newFinalText = "";
 
+        // Iterate through all results starting from event.resultIndex to avoid dropping or duplicating words
         for (let i = event.resultIndex; i < event.results.length; ++i) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
+          const item = event.results[i];
+          const transcript = item[0]?.transcript || "";
+          if (item.isFinal) {
             newFinalText += transcript + " ";
           } else {
             interimText += transcript;
           }
         }
 
-        if (newFinalText) {
-          this.accumulatedFinalTranscript += newFinalText;
+        if (newFinalText.trim()) {
+          this.accumulatedFinalTranscript = (this.accumulatedFinalTranscript + newFinalText).trim() + " ";
           this.handlers.onFinalTranscript(this.accumulatedFinalTranscript.trim());
         }
 
@@ -123,7 +125,6 @@ export class BharatSpeechRecognizer {
       this.recognition.start();
     } catch (err: any) {
       if (err.name === "InvalidStateError") {
-        // Recognition already started
         this.isListening = true;
         this.handlers.onStateChange("LISTENING");
       } else {
