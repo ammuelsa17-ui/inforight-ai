@@ -21,7 +21,9 @@ import {
   AlertCircle,
   ShieldCheck,
   Edit3,
-  Loader2
+  Loader2,
+  Volume2,
+  RefreshCw
 } from "lucide-react";
 
 interface VoiceInputModalProps {
@@ -48,13 +50,15 @@ export default function VoiceInputModal({
   const [finalText, setFinalText] = useState(initialText);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPermissionDenied, setIsPermissionDenied] = useState(false);
-  const [isSarvamProcessing, setIsSarvamProcessing] = useState(false);
-  const [recognitionMode, setRecognitionMode] = useState<"BROWSER_SPEECH" | "SARVAM_STT">("BROWSER_SPEECH");
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingMetrics, setProcessingMetrics] = useState<{ processingMs?: number } | null>(null);
+  const [mode, setMode] = useState<"SARVAM_PRIMARY" | "BROWSER_FALLBACK">("SARVAM_PRIMARY");
 
   const recognizerRef = useRef<BharatSpeechRecognizer | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentConfig: SpeechLanguageConfig = resolveSpeechLanguageConfig(selectedLanguageCode);
   const allLanguages = getAllSpeechLanguages();
@@ -67,74 +71,27 @@ export default function VoiceInputModal({
     }
   }, [isOpen, defaultLanguageCode]);
 
-  // Initialize Speech Recognizer
+  // Clean up on unmount or close
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      recognizerRef.current = new BharatSpeechRecognizer(
-        {
-          onStateChange: (state) => setVoiceState(state),
-          onInterimTranscript: (interim) => setInterimText(interim),
-          onFinalTranscript: (final) => {
-            setFinalText(final);
-            setErrorMessage(null);
-          },
-          onError: (err) => {
-            if (err.isPermissionDenied) {
-              setIsPermissionDenied(true);
-              setErrorMessage(err.message);
-            } else if (err.isUnsupported) {
-              // Fallback to server-side Sarvam STT automatically
-              setRecognitionMode("SARVAM_STT");
-              setErrorMessage(
-                `Browser speech recognition is not reliable for ${currentConfig.name}. Using Sarvam Multilingual Speech Recognition instead.`
-              );
-            } else {
-              setErrorMessage(err.message);
-            }
-          }
-        },
-        currentConfig.bcp47SpeechLocale
-      );
-    }
-
     return () => {
-      if (recognizerRef.current) {
-        recognizerRef.current.stopListening();
-      }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (recognizerRef.current) recognizerRef.current.stopListening();
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
       }
     };
   }, []);
 
-  // Update language in recognizer whenever user changes language
-  useEffect(() => {
-    if (recognizerRef.current) {
-      recognizerRef.current.setLanguage(currentConfig.bcp47SpeechLocale);
-    }
-  }, [currentConfig.bcp47SpeechLocale]);
-
   if (!isOpen) return null;
 
-  const handleStartListening = async () => {
+  const startSarvamRecording = async () => {
     setErrorMessage(null);
     setIsPermissionDenied(false);
+    setProcessingMetrics(null);
 
-    // If browser supports SpeechRecognition and it's marked reliable, try browser first
-    const hasBrowserSpeech = recognizerRef.current?.isAvailable() && currentConfig.isBrowserReliable;
-
-    if (hasBrowserSpeech && recognitionMode === "BROWSER_SPEECH") {
-      if (recognizerRef.current) {
-        recognizerRef.current.setLanguage(currentConfig.bcp47SpeechLocale);
-        recognizerRef.current.startListening(finalText);
-      }
-      return;
-    }
-
-    // Otherwise use high-fidelity server-side Sarvam STT recording
     try {
       if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
-        setErrorMessage("Microphone audio recording is not supported in this browser. Please type your problem.");
+        setErrorMessage("Microphone access is not supported in this browser. Please type your problem.");
         return;
       }
 
@@ -151,6 +108,8 @@ export default function VoiceInputModal({
         mimeType = "audio/mp4";
       } else if (MediaRecorder.isTypeSupported("audio/ogg")) {
         mimeType = "audio/ogg";
+      } else if (MediaRecorder.isTypeSupported("audio/wav")) {
+        mimeType = "audio/wav";
       }
 
       const mediaRecorder = new MediaRecorder(stream, { mimeType });
@@ -164,24 +123,41 @@ export default function VoiceInputModal({
 
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
-        setIsSarvamProcessing(true);
+        setIsProcessing(true);
         setVoiceState("PROCESSING");
 
+        // 12-second safety timeout
+        timeoutRef.current = setTimeout(() => {
+          if (isProcessing) {
+            setIsProcessing(false);
+            setVoiceState("ERROR");
+            setErrorMessage("Speech recognition is taking longer than expected. You can try speaking again, switch to browser dictation, or type directly.");
+          }
+        }, 12000);
+
+        const startTime = Date.now();
         try {
-          const res = await transcribeAudio(audioBlob, currentConfig.code);
+          // Explicitly pass target sarvamLocale (e.g. ta-IN, hi-IN, kn-IN, od-IN, en-IN)
+          const res = await transcribeAudio(audioBlob, currentConfig.sarvamLocale as BharatLanguageCode);
+          const elapsed = Date.now() - startTime;
+          setProcessingMetrics({ processingMs: elapsed });
+
           if (res.transcript && res.transcript.trim()) {
-            setFinalText((prev) => (prev ? `${prev.trim()} ${res.transcript}` : res.transcript));
+            setFinalText((prev) => (prev ? `${prev.trim()} ${res.transcript.trim()}` : res.transcript.trim()));
             setVoiceState("TRANSCRIPT_READY");
             setErrorMessage(null);
           } else {
             setVoiceState("IDLE");
-            setErrorMessage("No speech was detected. Please try speaking clearly into your microphone.");
+            setErrorMessage(`No clear speech was detected in ${currentConfig.name}. Please speak clearly into your microphone.`);
           }
         } catch (err: any) {
           setVoiceState("ERROR");
-          setErrorMessage(err.message || "Voice recognition is temporarily unavailable. Please type your problem.");
+          setErrorMessage(
+            `Multilingual voice recognition is temporarily unavailable (${err.message || "Network error"}). You can retry, use browser dictation, or type directly.`
+          );
         } finally {
-          setIsSarvamProcessing(false);
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          setIsProcessing(false);
           if (streamRef.current) {
             streamRef.current.getTracks().forEach((track) => track.stop());
             streamRef.current = null;
@@ -202,6 +178,42 @@ export default function VoiceInputModal({
     }
   };
 
+  const startBrowserFallback = () => {
+    setMode("BROWSER_FALLBACK");
+    setErrorMessage(null);
+
+    if (!recognizerRef.current) {
+      recognizerRef.current = new BharatSpeechRecognizer(
+        {
+          onStateChange: (state) => setVoiceState(state),
+          onInterimTranscript: (interim) => setInterimText(interim),
+          onFinalTranscript: (final) => {
+            setFinalText(final);
+            setErrorMessage(null);
+          },
+          onError: (err) => {
+            setVoiceState("ERROR");
+            setErrorMessage(`Browser dictation error: ${err.message}`);
+            if (err.isPermissionDenied) setIsPermissionDenied(true);
+          }
+        },
+        currentConfig.browserLocale
+      );
+    } else {
+      recognizerRef.current.setLanguage(currentConfig.browserLocale);
+    }
+
+    recognizerRef.current.startListening(finalText);
+  };
+
+  const handleStartListening = () => {
+    if (mode === "BROWSER_FALLBACK") {
+      startBrowserFallback();
+    } else {
+      startSarvamRecording();
+    }
+  };
+
   const handleStopListening = () => {
     if (recognizerRef.current && voiceState === "LISTENING") {
       recognizerRef.current.stopListening();
@@ -212,9 +224,7 @@ export default function VoiceInputModal({
   };
 
   const handleReset = () => {
-    if (recognizerRef.current) {
-      recognizerRef.current.reset();
-    }
+    if (recognizerRef.current) recognizerRef.current.reset();
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
       mediaRecorderRef.current.stop();
     }
@@ -222,6 +232,7 @@ export default function VoiceInputModal({
     setFinalText("");
     setErrorMessage(null);
     setVoiceState("IDLE");
+    setProcessingMetrics(null);
   };
 
   const handleConfirm = () => {
@@ -268,10 +279,10 @@ export default function VoiceInputModal({
             <label className="block font-bold text-slate-700 mb-1.5 flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <Globe className="w-3.5 h-3.5 text-indigo-600" />
-                <span>Select Voice Input Language:</span>
+                <span>Select Spoken Language:</span>
               </span>
               <span className="text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
-                Locale: {currentConfig.bcp47SpeechLocale}
+                Engine: {mode === "SARVAM_PRIMARY" ? `Sarvam saaras:v3 (${currentConfig.sarvamLocale})` : `Browser Dictation (${currentConfig.browserLocale})`}
               </span>
             </label>
             <select
@@ -281,15 +292,15 @@ export default function VoiceInputModal({
                 setSelectedLanguageCode(newCode);
                 const conf = resolveSpeechLanguageConfig(newCode);
                 if (recognizerRef.current) {
-                  recognizerRef.current.setLanguage(conf.bcp47SpeechLocale);
+                  recognizerRef.current.setLanguage(conf.browserLocale);
                 }
               }}
-              disabled={voiceState === "LISTENING" || isSarvamProcessing}
+              disabled={voiceState === "LISTENING" || isProcessing}
               className="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white font-medium text-slate-900 text-xs cursor-pointer"
             >
               {allLanguages.map((lang) => (
                 <option key={lang.code} value={lang.code}>
-                  {lang.name} — {lang.nativeName} ({lang.bcp47SpeechLocale})
+                  {lang.name} — {lang.nativeName} (STT: {lang.sarvamLocale})
                 </option>
               ))}
             </select>
@@ -306,7 +317,7 @@ export default function VoiceInputModal({
               >
                 <MicOff className="w-7 h-7" />
               </button>
-            ) : isSarvamProcessing ? (
+            ) : isProcessing ? (
               <div className="w-16 h-16 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center">
                 <Loader2 className="w-7 h-7 animate-spin" />
               </div>
@@ -325,8 +336,8 @@ export default function VoiceInputModal({
               <div className="font-bold text-slate-900 text-sm">
                 {voiceState === "LISTENING"
                   ? `Listening in ${currentConfig.name} (${currentConfig.nativeName})...`
-                  : isSarvamProcessing
-                  ? "Transcribing with Sarvam Multilingual STT..."
+                  : isProcessing
+                  ? `Transcribing ${currentConfig.name} with Sarvam Multilingual STT...`
                   : voiceState === "REQUESTING_PERMISSION"
                   ? "Requesting microphone permission..."
                   : voiceState === "TRANSCRIPT_READY"
@@ -335,25 +346,49 @@ export default function VoiceInputModal({
               </div>
               <span className="text-[11px] text-slate-500 mt-0.5 block">
                 {voiceState === "LISTENING"
-                  ? "Speak clearly in your selected language. Tap the red button when finished."
-                  : `Target voice recognition language: ${currentConfig.name} (${currentConfig.bcp47SpeechLocale})`}
+                  ? "Speak your sentence clearly. Tap red button when finished speaking."
+                  : processingMetrics?.processingMs
+                  ? `Processed in ${processingMetrics.processingMs}ms`
+                  : `Target recognition locale: ${currentConfig.sarvamLocale}`}
               </span>
             </div>
           </div>
 
-          {/* Error Banner */}
+          {/* Error Banner with Explicit Recovery Modes */}
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <div>
-                <span className="font-bold block">Voice Recognition Notice:</span>
-                <span>{errorMessage}</span>
-                {isPermissionDenied && (
-                  <span className="block mt-1 text-[11px] font-semibold text-rose-900">
-                    To enable: Click the site lock icon in your browser address bar and set Microphone to "Allow".
-                  </span>
-                )}
+            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs space-y-2">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold block">Voice Recognition Notice:</span>
+                  <span>{errorMessage}</span>
+                  {isPermissionDenied && (
+                    <span className="block mt-1 text-[11px] font-semibold text-rose-900">
+                      To enable: Click the site lock icon in your browser address bar and set Microphone to "Allow".
+                    </span>
+                  )}
+                </div>
               </div>
+
+              {mode === "SARVAM_PRIMARY" && (
+                <div className="flex items-center gap-2 pt-1 border-t border-amber-200/60">
+                  <button
+                    type="button"
+                    onClick={startBrowserFallback}
+                    className="px-2.5 py-1 bg-white border border-amber-300 rounded-lg text-[11px] font-semibold text-amber-900 hover:bg-amber-100"
+                  >
+                    Try Browser Dictation
+                  </button>
+                  <button
+                    type="button"
+                    onClick={startSarvamRecording}
+                    className="px-2.5 py-1 bg-indigo-50 border border-indigo-200 rounded-lg text-[11px] font-semibold text-indigo-900 hover:bg-indigo-100 flex items-center gap-1"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    Retry Sarvam
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
@@ -394,7 +429,7 @@ export default function VoiceInputModal({
           <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-500 flex items-start gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
             <span>
-              <strong>Zero Audio Storage:</strong> Voice recognition transcripts are processed in memory and never stored on InfoRight servers without your consent.
+              <strong>Zero Audio Retention:</strong> Audio is processed securely in memory for transcription and discarded immediately. Audio is never stored on InfoRight servers.
             </span>
           </div>
         </div>

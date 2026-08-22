@@ -198,7 +198,10 @@ export class SarvamLanguageProvider implements BharatLanguageProvider {
     formData.append("model", "saaras:v3");
     formData.append("mode", "transcribe");
     if (request.languageCode) {
-      formData.append("language_code", request.languageCode);
+      // Map Odia or prefix codes cleanly to Sarvam STT locale format (e.g. od-IN for Odia)
+      const langStr = String(request.languageCode);
+      const targetLang = langStr === "or-IN" || langStr === "od-IN" ? "od-IN" : langStr;
+      formData.append("language_code", targetLang);
     }
 
     const res = await fetch(`${SARVAM_BASE_URL}/speech-to-text`, {
