@@ -268,7 +268,7 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
         const matchesTitle = matter.title.toLowerCase().includes(q);
         const matchesAuth = matter.authority.toLowerCase().includes(q);
         const matchesRef = (matter.reference_number || "").toLowerCase().includes(q);
-        const matchesRule = calc.ruleName.toLowerCase().includes(q);
+        const matchesRule = calc.legalBasis.toLowerCase().includes(q);
         if (!matchesTitle && !matchesAuth && !matchesRef && !matchesRule) return false;
       }
 
@@ -278,7 +278,7 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
 
   return (
     <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
-      {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg("")} />}
+      {toastMsg && <Toast type="info" message={toastMsg} onClose={() => setToastMsg("")} />}
 
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header Title */}
@@ -479,11 +479,10 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                {filteredMatters.map(({ matter, calc }) => (
+                {filteredMatters.map(({ matter }) => (
                   <MatterCard
                     key={matter.id}
                     matter={matter}
-                    calculation={calc}
                     onToggleComplete={handleToggleComplete}
                     onDelete={handleDeleteMatter}
                   />
