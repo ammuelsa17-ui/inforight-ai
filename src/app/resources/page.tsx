@@ -1,15 +1,14 @@
-// src/app/resources/page.tsx — Polished Citizen Resources & Verified Public Directory
+// src/app/resources/page.tsx — Factually & Legally Verified Citizen Resources Directory
 "use client";
 
 import React, { useState } from "react";
-import { Search, Phone, ExternalLink, ShieldAlert, ChevronDown, ChevronUp, ShieldCheck, Globe, Building2, HelpCircle } from "lucide-react";
-import { Card } from "@/components/Card";
+import { Search, Phone, ExternalLink, ChevronDown, ChevronUp, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
 
 interface Resource {
   title: string;
-  category: "Legal Aid" | "Govt Portal" | "NGO" | "Helpline";
+  category: "Legal Aid" | "Govt Portal" | "Helpline";
   desc: string;
   contact: string;
   url?: string;
@@ -20,7 +19,7 @@ const RESOURCES_LIST: Resource[] = [
   {
     title: "National Legal Services Authority (NALSA)",
     category: "Legal Aid",
-    desc: "Statutory constitutional body providing free legal counsel, legal aid clinics, and representation to weaker sections, women, and marginalized citizens.",
+    desc: "Statutory authority constituted under the Legal Services Authorities Act, 1987, providing legal services to eligible persons and supporting Lok Adalats and access to justice.",
     contact: "Helpline: 15100",
     url: "https://nalsa.gov.in",
     isOfficial: true,
@@ -46,7 +45,7 @@ const RESOURCES_LIST: Resource[] = [
     category: "Helpline",
     desc: "Ministry of Home Affairs emergency response system to report digital banking frauds, identity theft, financial scams, and cyber stalking.",
     contact: "Helpline: 1930",
-    url: "https://cybercrime.gov.in",
+    url: "https://cybercrime.gov.in/Default.aspx",
     isOfficial: true,
   },
   {
@@ -57,17 +56,9 @@ const RESOURCES_LIST: Resource[] = [
     isOfficial: true,
   },
   {
-    title: "PRATHAM - Citizen Action Network",
-    category: "NGO",
-    desc: "Civil society network helping citizens formulate representations, monitor public works delivery, and file RTI follow-ups.",
-    contact: "Contact: info@pratham.org",
-    url: "https://www.pratham.org",
-    isOfficial: false,
-  },
-  {
-    title: "National Commission for Women (NCW) Emergency Cell",
+    title: "National Commission for Women (NCW) Cell",
     category: "Helpline",
-    desc: "24/7 statutory emergency legal response and counseling cell for women facing harassment, workplace abuse, or domestic disputes.",
+    desc: "NCW 24x7 Women Helpline providing support and referral to relevant police, hospitals, legal services authorities and counselling services.",
     contact: "Helpline: 7827170170",
     url: "https://ncw.nic.in",
     isOfficial: true,
@@ -83,20 +74,20 @@ const RESOURCES_LIST: Resource[] = [
 
 const FAQS_LIST = [
   {
-    q: "What is the Right to Information (RTI) Act, 2005?",
-    a: "The RTI Act empowers Indian citizens to inspect public works, access certified copies of work orders/measurement books, and request government records. Public authorities are legally mandated under Section 7(1) to reply within 30 calendar days.",
+    q: "What is the statutory response timeline for an RTI request?",
+    a: "Under Section 7(1), the ordinary RTI response period is 30 days from receipt of the request, subject to statutory exceptions such as life-or-liberty requests (48 hours) and other special situations.",
   },
   {
     q: "How do I file the generated RTI or Representation draft?",
-    a: "Download or print the draft generated in InfoRight AI. Verify the Public Information Officer (PIO) address. For RTI, attach the statutory fee (Rs. 10 via Postal Order / Court Fee Stamp) and send via Registered Post with Acknowledgment Due (RPAD) or submit in person.",
+    a: "Download or print the draft generated in InfoRight AI. Verify the Public Information Officer (PIO) address. For Central Government public authorities, the standard RTI application fee is ₹10, subject to applicable exemptions such as BPL. State RTI fees and accepted payment modes may differ. Follow the jurisdiction-specific fee guidance shown by InfoRight AI before filing.",
   },
   {
     q: "Does InfoRight AI store my personal information on remote servers?",
     a: "No. InfoRight AI uses a strict browser-local vault. Your personal identifiers (name, personal phone, address) are processed strictly in local browser memory and are never transmitted to external AI endpoints.",
   },
   {
-    q: "What happens if a public authority does not reply within 30 days?",
-    a: "If the PIO fails to respond within 30 days or rejects your application without valid statutory grounds, you have the legal right under Section 19(1) to file a First Appeal before the First Appellate Authority (FAA) within 45 days.",
+    q: "What is the statutory procedure and timeline for a First Appeal under RTI?",
+    a: "If the PIO does not respond within the applicable period, or the applicant is aggrieved by the decision, Section 19(1) ordinarily allows a First Appeal within 30 days from expiry of that period or receipt of the decision. A delayed appeal may be admitted for sufficient cause. Under Section 19(6), the First Appellate Authority (FAA) normally disposes of the appeal within 30 days, extendable up to a total of 45 days for recorded reasons.",
   },
   {
     q: "Are the AI action plans and drafts legally binding?",
@@ -143,7 +134,7 @@ export default function ResourcesPage() {
               National Citizen Emergency &amp; Statutory Helplines
             </span>
             <p className="text-xs text-[#56637A] leading-relaxed">
-              Immediate national hotlines for cyber fraud, women safety, senior citizen welfare, and consumer grievances.
+              Immediate national hotlines for cyber fraud, women safety &amp; emergency response, senior citizen welfare, and consumer grievances.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3">
@@ -160,13 +151,13 @@ export default function ResourcesPage() {
                 </div>
               </div>
 
-              {/* Women Helpline */}
+              {/* Women Helpline & Emergency Response */}
               <div className="bg-white border border-slate-200/80 rounded-xl p-3 flex items-center justify-between shadow-2xs">
                 <div>
                   <span className="text-[10px] font-bold text-[#56637A] uppercase block">
                     {t("resources.womenHelpline")}
                   </span>
-                  <span className="text-base font-bold text-[#102A56] font-mono">1091 / 112</span>
+                  <span className="text-base font-bold text-[#102A56] font-mono">181 / 112</span>
                 </div>
                 <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center text-xs font-bold border border-rose-200">
                   SOS
@@ -218,7 +209,7 @@ export default function ResourcesPage() {
 
             {/* Category Filter Pills */}
             <div className="flex flex-wrap gap-2">
-              {["all", "Legal Aid", "Govt Portal", "NGO", "Helpline"].map((cat) => {
+              {["all", "Legal Aid", "Govt Portal", "Helpline"].map((cat) => {
                 const isSelected = activeCategory === cat;
                 return (
                   <button
