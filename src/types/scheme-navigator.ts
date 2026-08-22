@@ -127,7 +127,7 @@ export interface DetailedWelfareSchemeRecord {
 export interface UserEligibilityProfile {
   age?: number;
   gender?: "MALE" | "FEMALE" | "TRANSGENDER" | "OTHER";
-  state_ut: string;
+  state_ut?: string;
   district?: string;
   rural_urban?: "RURAL" | "URBAN";
   annual_family_income?: number;
@@ -147,6 +147,7 @@ export interface UserEligibilityProfile {
   is_bpl?: boolean;
   marital_status?: "UNMARRIED" | "MARRIED" | "WIDOW" | "DIVORCED_DESERTED";
   is_pregnant_or_lactating?: boolean;
+  studied_tn_govt_school_class_6_12?: boolean;
 }
 
 export interface SchemeEvaluationResult {

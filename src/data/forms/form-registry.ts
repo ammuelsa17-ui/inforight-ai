@@ -12,6 +12,8 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
     form_id: "FORM-RTI-6-1",
     form_name: "Application for Seeking Information under Section 6(1) of the RTI Act, 2005",
     form_code: "RTI Section 6(1)",
+    form_category: "OFFICIAL_PRESCRIBED_FORM",
+    form_description: "Statutory application to obtain certified government records, documents, sanctioned project details, and public expenditure data from Central or State Public Authorities under Section 6(1) of the Right to Information Act, 2005.",
     domain: "RTI_ACCESS",
     authority: "Public Information Officer (CPIO / SPIO)",
     jurisdiction: {
@@ -142,6 +144,8 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
     form_id: "FORM-RTI-19-1",
     form_name: "First Appeal under Section 19(1) of the Right to Information Act, 2005",
     form_code: "RTI Form 19(1)",
+    form_category: "OFFICIAL_PRESCRIBED_FORM",
+    form_description: "Statutory appeal before the First Appellate Authority (FAA) against non-response, deemed refusal, wrongful denial, or excessive fee demand by the Public Information Officer under Section 19(1) of the RTI Act, 2005.",
     domain: "RTI_ACCESS",
     authority: "First Appellate Authority (FAA)",
     jurisdiction: {
@@ -255,6 +259,8 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
     form_id: "FORM-CONS-EJAGRITI",
     form_name: "Consumer Complaint Petition before District Consumer Commission (e-Jagriti)",
     form_code: "CPA 2019 Section 35",
+    form_category: "FILING_READY_DRAFT",
+    form_description: "Filing-ready consumer complaint petition under Section 35 of the Consumer Protection Act, 2019 for defective products, service deficiencies, or e-commerce refund denials, structured for submission on the official e-Jagriti portal.",
     domain: "CONSUMER_PROTECTION",
     authority: "District Consumer Disputes Redressal Commission (DCDRC)",
     jurisdiction: {
@@ -284,8 +290,8 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
       },
       {
         field_id: "complainant_address",
-        official_label: "Address of the Complainant",
-        plain_language_question: "What is your residential / communication address?",
+        official_label: "Full Residential Address",
+        plain_language_question: "What is your current residential address with PIN code?",
         required: true,
         data_type: "text",
         sensitive: true,
@@ -294,15 +300,15 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
       {
         field_id: "opposite_party_name",
         official_label: "Name of the Opposite Party (Seller / Manufacturer / Service Provider)",
-        plain_language_question: "What is the legal name of the company or merchant you are filing against?",
+        plain_language_question: "What is the exact company or seller name you have a dispute with?",
         required: true,
         data_type: "string",
         sensitive: false
       },
       {
         field_id: "opposite_party_address",
-        official_label: "Registered Office / Branch Address of Opposite Party",
-        plain_language_question: "What is the office address of the opposite party?",
+        official_label: "Registered Office Address of Opposite Party",
+        plain_language_question: "What is the opposite party's office address or email for notice?",
         required: true,
         data_type: "text",
         sensitive: false
@@ -310,13 +316,13 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
       {
         field_id: "transaction_date",
         official_label: "Date of Purchase / Transaction",
-        plain_language_question: "When did you buy the product or book the service?",
+        plain_language_question: "When did you purchase the item or pay for the service?",
         required: true,
         data_type: "date",
         sensitive: false
       },
       {
-        field_id: "total_consideration_paid",
+        field_id: "total_amount_paid",
         official_label: "Total Consideration Paid (in INR)",
         plain_language_question: "How much total money did you pay (in ₹)?",
         required: true,
@@ -325,17 +331,34 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
         sensitive: false
       },
       {
-        field_id: "dispute_summary",
-        official_label: "Facts of the Case / Summary of Deficiency or Defect",
-        plain_language_question: "Please describe what went wrong with the product or service.",
+        field_id: "dispute_type",
+        official_label: "Nature of Dispute / Unfair Trade Practice",
+        plain_language_question: "What type of problem did you experience?",
         required: true,
-        data_type: "text",
+        data_type: "select",
+        validation: {
+          allowedOptions: [
+            { label: "Defective goods delivered / refusal of replacement", value: "DEFECTIVE_PRODUCT" },
+            { label: "Deficiency in service / non-performance", value: "SERVICE_DEFICIENCY" },
+            { label: "Unfair contract terms / unilateral cancellation fee", value: "UNFAIR_TRADE_PRACTICE" },
+            { label: "Overcharging above MRP / hidden drip pricing", value: "MRP_VIOLATION" }
+          ]
+        },
         sensitive: false
       },
       {
         field_id: "compensation_claimed",
-        official_label: "Compensation & Relief Claimed",
-        plain_language_question: "What relief do you seek (e.g. full refund of ₹X with interest, replacement, damages)?",
+        official_label: "Compensation & Relief Claimed (in INR)",
+        plain_language_question: "What total financial relief (refund + damages) are you seeking?",
+        required: true,
+        data_type: "currency",
+        validation: { minValue: 1 },
+        sensitive: false
+      },
+      {
+        field_id: "brief_facts",
+        official_label: "Brief Statement of Facts",
+        plain_language_question: "Explain chronologically what happened, including previous grievance attempts.",
         required: true,
         data_type: "text",
         sensitive: false
@@ -344,25 +367,25 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
     documents_required: [
       {
         doc_id: "DOC-TAX-INVOICE",
-        document_name: "Tax Invoice / Bill of Purchase",
-        official_description: "Original or clear copy of purchase invoice / cash memo",
+        document_name: "Tax Invoice / Retail Bill / Proof of Purchase",
+        official_description: "Clear copy of invoice showing date, seller name, and amount paid",
         mandatory: true,
-        accepted_formats: ["PDF", "JPG"],
+        accepted_formats: ["PDF", "JPG", "PNG"],
         max_size_mb: 5
       },
       {
-        doc_id: "DOC-PAYMENT-PROOF",
-        document_name: "Payment Proof",
-        official_description: "Bank statement, UPI receipt, or credit card transaction slip",
+        doc_id: "DOC-PROOF-OF-DEFECT",
+        document_name: "Photographs / Service Center Report / Unboxing Video Link",
+        official_description: "Proof showing defect, damage, or service failure",
         mandatory: true,
-        accepted_formats: ["PDF", "JPG"],
+        accepted_formats: ["PDF", "JPG", "PNG"],
         max_size_mb: 5
       },
       {
-        doc_id: "DOC-LEGAL-NOTICE",
-        document_name: "Notice Served on Opposite Party & Reply",
-        official_description: "Copy of written notice sent to merchant and postal tracking proof",
-        mandatory: false,
+        doc_id: "DOC-COMMUNICATIONS",
+        document_name: "Customer Support Emails / Chat Transcripts / NCH Docket",
+        official_description: "Copies of written complaints made to seller and responses",
+        mandatory: true,
         accepted_formats: ["PDF"],
         max_size_mb: 5
       }
@@ -370,12 +393,14 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
   },
 
   // =========================================================================
-  // 3. TENANT RIGHTS FORMS (TAMIL NADU SPECIFIC)
+  // 3. TENANCY DISPUTE FORMS
   // =========================================================================
   {
     form_id: "FORM-TEN-TN-REG",
-    form_name: "Application for Registration of Tenancy Agreement (TNRRRLT Form I)",
+    form_name: "Application for Registration of Tenancy Agreement under Section 4(1) of TNRRRLT Act, 2017 (Form I)",
     form_code: "TNRRRLT Form I",
+    form_category: "OFFICIAL_PRESCRIBED_FORM",
+    form_description: "Statutory application for mandatory registration of tenancy agreements before the Rent Authority under Section 4(1) of the Tamil Nadu Regulation of Rights and Responsibilities of Landlords and Tenants Act, 2017.",
     domain: "TENANT_RIGHTS",
     authority: "Rent Authority (Revenue Divisional Officer / Tahsildar)",
     jurisdiction: {
@@ -488,6 +513,8 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
     form_id: "FORM-WRK-SAMADHAN",
     form_name: "Industrial Dispute Application under Industrial Relations Code, 2020 (SAMADHAN Portal)",
     form_code: "IR Code Section 4 / Section 70",
+    form_category: "FILING_READY_DRAFT",
+    form_description: "Filing-ready conciliation petition for unpaid wages, delayed full & final settlement, or unlawful termination under the Code on Wages, 2019 and Industrial Relations Code, 2020 for the Ministry of Labour SAMADHAN portal.",
     domain: "WORKPLACE_RIGHTS",
     authority: "Assistant Labour Commissioner (Central) / Conciliation Officer",
     jurisdiction: {
@@ -596,6 +623,8 @@ export const OFFICIAL_FORMS_REGISTRY: OfficialFormDefinition[] = [
     form_id: "FORM-WRK-GRATUITY-N",
     form_name: "Application for Direction to Pay Gratuity before the Controlling Authority (Form N)",
     form_code: "Payment of Gratuity Form N",
+    form_category: "OFFICIAL_PRESCRIBED_FORM",
+    form_description: "Statutory Form N application to the Controlling Authority under the Payment of Gratuity Act / Code on Social Security, 2020 where an employer fails or refuses to pay gratuity within the mandatory 30-day window.",
     domain: "WORKPLACE_RIGHTS",
     authority: "Controlling Authority under the Payment of Gratuity Act, 1972",
     jurisdiction: {

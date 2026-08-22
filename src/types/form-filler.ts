@@ -71,10 +71,14 @@ export interface FormSubmissionDetails {
   fee_payment_mode?: string;
 }
 
+export type FormTypeCategory = "OFFICIAL_PRESCRIBED_FORM" | "FILING_READY_DRAFT";
+
 export interface OfficialFormDefinition {
   form_id: string;
   form_name: string;
   form_code?: string; // e.g. "Form 1", "Form N", "Section 6(1)"
+  form_category?: FormTypeCategory;
+  form_description?: string;
   domain: MasterDomain;
   authority: string;
   jurisdiction: {

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { generateRtiApplication } from "@/services/api";
 import { GenerateRtiResponse } from "@/types/api";
 import GeneratedPreview, { ApplicantLocalDetails } from "@/components/rti/GeneratedPreview";
+import VoiceInputButton from "@/components/voice/VoiceInputButton";
 import { ArrowLeft, Sparkles, AlertCircle, Info, ShieldCheck } from "lucide-react";
 
 const PREFILLED_SCENARIOS = [
@@ -164,9 +165,16 @@ export default function AskPage() {
       {/* Guided RTI Form */}
       <form onSubmit={handleGenerate} className="p-6 sm:p-8 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-6">
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-[#102A56]">
-            1. Describe the Civic Road Problem <span className="text-red-500">*</span>
-          </label>
+          <div className="flex items-center justify-between">
+            <label className="block text-sm font-bold text-[#102A56]">
+              1. Describe the Civic Road Problem <span className="text-red-500">*</span>
+            </label>
+            <VoiceInputButton
+              onTranscriptConfirmed={(transcript) => setIssue(transcript)}
+              fieldLabel="Civic Problem Description"
+              defaultLanguageId="ta"
+            />
+          </div>
           <textarea
             rows={3}
             value={issue}

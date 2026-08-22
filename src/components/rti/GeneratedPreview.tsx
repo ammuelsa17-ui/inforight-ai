@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import FallbackBanner from "./FallbackBanner";
 import TrustPanel, { SourceCardInfo } from "./TrustPanel";
 import DocumentActions from "./DocumentActions";
+import ReadAloudButton from "@/components/voice/ReadAloudButton";
 import { CheckCircle2, AlertCircle, FileText, MapPin } from "lucide-react";
 
 export interface GeneratedRtiData {
@@ -92,11 +93,14 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
             Review, edit, and export your record-based RTI request
           </p>
         </div>
-        <DocumentActions
-          isEditing={isEditing}
-          onToggleEdit={() => setIsEditing(!isEditing)}
-          onCopy={() => navigator.clipboard.writeText(fullTextToCopy)}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <ReadAloudButton textToRead={fullTextToCopy} />
+          <DocumentActions
+            isEditing={isEditing}
+            onToggleEdit={() => setIsEditing(!isEditing)}
+            onCopy={() => navigator.clipboard.writeText(fullTextToCopy)}
+          />
+        </div>
       </div>
 
       {/* Printable Document Container */}
