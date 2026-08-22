@@ -117,34 +117,34 @@ export default function HomePage() {
           Officers cannot unilaterally close civic complaints. Cases transition to citizen review only after geo-verified rectification proof is uploaded, ensuring complete transparency.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-2 text-xs">
-          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-2 text-xs">
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
             <span className="text-[10px] text-indigo-400 font-bold uppercase block">Step 1 • Citizen</span>
-            <strong className="text-white block">Reports Issue</strong>
+            <strong className="text-white block truncate">Reports Issue</strong>
             <p className="text-[11px] text-slate-400">Uploads Before-photo &amp; locality details.</p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5">
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
             <span className="text-[10px] text-sky-400 font-bold uppercase block">Step 2 • Official</span>
-            <strong className="text-white block">Reviews &amp; Dispatches</strong>
+            <strong className="text-white block truncate">Reviews &amp; Dispatches</strong>
             <p className="text-[11px] text-slate-400">Assigned department crew marks IN_PROGRESS.</p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5">
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
             <span className="text-[10px] text-amber-400 font-bold uppercase block">Step 3 • Official</span>
-            <strong className="text-white block">Uploads Rectification</strong>
+            <strong className="text-white block truncate">Uploads Rectification</strong>
             <p className="text-[11px] text-slate-400">After-repair photo with GPS validation.</p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5">
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
             <span className="text-[10px] text-emerald-400 font-bold uppercase block">Step 4 • Citizen</span>
-            <strong className="text-white block">Confirms or Reopens</strong>
+            <strong className="text-white block truncate">Confirms or Reopens</strong>
             <p className="text-[11px] text-slate-400">Inspects Before vs After evidence comparison.</p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 space-y-1.5">
+          <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 space-y-1.5 min-w-0 sm:col-span-2 lg:col-span-1">
             <span className="text-[10px] text-emerald-300 font-bold uppercase block">Step 5 • Audit</span>
-            <strong className="text-emerald-100 block">SHA-256 Record</strong>
+            <strong className="text-emerald-100 block truncate">SHA-256 Record</strong>
             <p className="text-[11px] text-emerald-300/80">Tamper-evident PDF evidence package.</p>
           </div>
         </div>

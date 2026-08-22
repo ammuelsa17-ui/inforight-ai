@@ -21,7 +21,7 @@ export function PageContainer({
   const sizeClass = size === "narrow" ? "max-w-4xl" : "max-w-7xl";
 
   return (
-    <main className={`w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 lg:py-12 ${sizeClass} ${className}`}>
+    <main className={`w-full max-w-full min-w-0 mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 lg:py-12 ${sizeClass} ${className}`}>
       {children}
     </main>
   );
