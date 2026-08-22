@@ -22,7 +22,7 @@ import {
   generateRepresentationDocument,
   exportRepresentationHtml,
 } from "@/lib/templates/representation-generator";
-import { ALL_STATES_AND_UTS, resolveLocationContext } from "@/lib/location/location-context";
+import { ALL_STATES_AND_UTS, resolveLocationContext, getDistrictsForState } from "@/lib/location/location-context";
 import { STATE_TENANCY_REGISTRY, getStateTenancyRecord } from "@/data/tenancy/state-tenancy-registry";
 import { planConsumerAction, calculateConsumerJurisdiction } from "@/lib/consumer/consumer-engine";
 import { resolveConsumerCommissionJurisdiction } from "@/lib/consumer/jurisdiction-resolver";
@@ -1117,6 +1117,22 @@ async function runRouteHandlerContractTests() {
 
     const locMH = resolveLocationContext({ stateCode: "MH", district: "Pune" });
     assert(locMH.stateName === "Maharashtra", "MH resolved to Maharashtra");
+
+    // District Directory Verification
+    const tnDistricts = getDistrictsForState("TN");
+    assert(tnDistricts.includes("Coimbatore") && tnDistricts.includes("Chennai"), "Tamil Nadu returns verified districts including Coimbatore and Chennai");
+    assert(tnDistricts.length >= 38, "Tamil Nadu contains all 38 districts");
+
+    const mhDistricts = getDistrictsForState("MH");
+    assert(mhDistricts.includes("Pune") && mhDistricts.includes("Mumbai City"), "Maharashtra returns verified districts including Pune and Mumbai City");
+
+    // Location Conflict Guard Check
+    const conflictLoc = resolveLocationContext({ state: "Tamil Nadu", pinCode: "560001" }); // 560001 is Bengaluru, KA
+    assert(conflictLoc.conflictStatus === "LOCATION_CONFIRMATION_REQUIRED", "Conflicting State (Tamil Nadu) and PIN (560001 Karnataka) triggers confirmation required");
+    assert(Boolean(conflictLoc.conflictMessage?.includes("do not match")), "Conflict message clearly warns user of location mismatch");
+
+    const validLoc = resolveLocationContext({ state: "Tamil Nadu", pinCode: "641002" });
+    assert(validLoc.conflictStatus === "OK", "Matching State (Tamil Nadu) and PIN (641002) yields OK status");
   }
 
   // =========================================================================

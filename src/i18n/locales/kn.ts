@@ -159,6 +159,7 @@ export const knLocale: UITranslationSchema = {
     "scenarioTenant": "Tenant Deposit Dispute",
     "scenarioConsumer": "Defective Product / Refund Refusal",
     "scenarioWorkplace": "Unpaid Salary / Workplace Dues",
+    "conflictTitle": "Location Conflict Detected:",
     "pinStatutoryBasisLabel": "Statutory Basis:",
     "pinRtiPioLabel": "RTI Public Information Officer:",
     "pinResponsibleDeptLabel": "Responsible Department:",

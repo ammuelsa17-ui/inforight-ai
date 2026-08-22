@@ -159,6 +159,7 @@ export const taLocale: UITranslationSchema = {
     "scenarioTenant": "வாடகை முன்பண பிடிப்பு சர்ச்சை",
     "scenarioConsumer": "பழுதடைந்த பொருள் / பணம் திரும்பப் பெறாமை",
     "scenarioWorkplace": "வழங்கப்படாத சம்பளம் / பணி நிலுவை",
+    "conflictTitle": "இருப்பிடம் பொருந்தவில்லை:",
     "pinStatutoryBasisLabel": "Statutory Basis:",
     "pinRtiPioLabel": "RTI Public Information Officer:",
     "pinResponsibleDeptLabel": "Responsible Department:",

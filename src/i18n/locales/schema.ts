@@ -165,6 +165,7 @@ export interface UITranslationSchema {
     scenarioTenant: string;
     scenarioConsumer: string;
     scenarioWorkplace: string;
+    conflictTitle: string;
   };
   rights: {
     badge: string;
