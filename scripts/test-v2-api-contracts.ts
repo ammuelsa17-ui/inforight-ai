@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import assert from "assert";
 import { POST as triageHandler } from "@/app/api/triage/route";
 import { POST as rtiHandler } from "@/app/api/rti/generate/route";
 import { POST as rightsHandler } from "@/app/api/rights/navigate/route";
@@ -18,6 +17,11 @@ import {
   exportEvidenceIndexHtml,
   exportFirstAppealHtml,
 } from "@/lib/pdf/print-export";
+import { planCitizenAction } from "@/lib/triage/action-planner";
+import {
+  generateRepresentationDocument,
+  exportRepresentationHtml,
+} from "@/lib/templates/representation-generator";
 import { ALL_SOURCES } from "@/data/sources";
 import { NextRequest } from "next/server";
 
@@ -983,6 +987,109 @@ async function runRouteHandlerContractTests() {
     assert(Boolean(appealHtml.includes("First Appeal Under Section 19(1)")), "First Appeal PDF export contains Section 19(1) citation");
     assert(Boolean(appealHtml.includes("Deemed Refusal")), "First Appeal PDF export contains statutory grounds");
     assert(Boolean(appealHtml.includes("Section 7(6)")), "First Appeal PDF export contains fee waiver relief clause under Section 7(6)");
+  }
+
+  // =========================================================================
+  // SECTION 8: Unified Action Planner Classification & Routing Tests
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 8: Unified Action Planner Tests ---");
+
+    // Test 1: Tenant Dispute Classification
+    const tenantPlan = planCitizenAction("My landlord is refusing to return my security deposit of 40000", "641002");
+    assert(tenantPlan.domain === "TENANT", "Tenant security deposit classified as TENANT domain");
+    assert(tenantPlan.availableDocumentType === "TENANT_REPRESENTATION", "Tenant dispute recommends TENANT_REPRESENTATION, NOT RTI");
+    assert(Boolean(tenantPlan.whyNotOtherRoutes?.includes("RTI")), "Tenant plan explicitly explains why RTI is not applicable to private landlords");
+    assert(tenantPlan.authority.name.includes("Rent Authority"), "Tenant dispute routes to Rent Authority / RDO");
+    assert(tenantPlan.statutoryDeadline.days === 30, "Tenant security deposit statutory deadline is 30 days");
+
+    // Test 2: Consumer Dispute Classification
+    const consumerPlan = planCitizenAction("E-commerce company delivered a defective mobile phone and refused refund");
+    assert(consumerPlan.domain === "CONSUMER", "Defective product / refund refusal classified as CONSUMER domain");
+    assert(consumerPlan.availableDocumentType === "CONSUMER_REPRESENTATION", "Consumer dispute recommends CONSUMER_REPRESENTATION");
+    assert(Boolean(consumerPlan.authority.portalUrl?.includes("consumerhelpline")), "Consumer dispute links to verified National Consumer Helpline");
+
+    // Test 3: Workplace Dispute Classification
+    const workplacePlan = planCitizenAction("Employer withheld two months of earned salary and relieving letter");
+    assert(workplacePlan.domain === "WORKPLACE", "Unpaid salary classified as WORKPLACE domain");
+    assert(workplacePlan.availableDocumentType === "WORKPLACE_REPRESENTATION", "Workplace dispute recommends WORKPLACE_REPRESENTATION");
+
+    // Test 4: Civic / Road Pothole Grievance
+    const civicPlan = planCitizenAction("Potholes along DB road causing accidents", "641002");
+    assert(civicPlan.domain === "CIVIC_RTI", "Road potholes classified as CIVIC_RTI domain");
+    assert(civicPlan.availableDocumentType === "RTI_APPLICATION", "Civic grievance recommends RTI_APPLICATION");
+    assert(civicPlan.confidence === "HIGH", "PIN 641002 in CCMC West Zone yields HIGH confidence");
+  }
+
+  // =========================================================================
+  // SECTION 9: Representation Generator Template & Print HTML Tests
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 9: Representation Generator Tests ---");
+
+    // Test 1: Tenant Legal Demand Notice
+    const tenantDoc = generateRepresentationDocument({
+      documentType: "TENANT_REPRESENTATION",
+      problemDescription: "Landlord refusing to refund deposit",
+      locality: "R.S. Puram",
+      state: "Tamil Nadu",
+      applicantName: "R. Suresh",
+      amountClaimed: "₹40,000",
+    });
+
+    assert(Boolean(tenantDoc.title.includes("TENANCY SECURITY DEPOSIT")), "Tenant representation title includes security deposit demand");
+    assert(Boolean(tenantDoc.subject.includes("Section 11 of TNRRRLT Act")), "Tenant representation subject includes Section 11 statutory citation");
+    assert(tenantDoc.evidenceEnclosures.some((e) => e.includes("E1")), "Tenant representation contains formatted evidence IDs (E1, E2)");
+
+    const tenantHtml = exportRepresentationHtml(tenantDoc);
+    assert(Boolean(tenantHtml.includes("@page { size: A4;")), "Tenant representation export contains standard A4 print layout");
+    assert(Boolean(tenantHtml.includes("TNRRRLT Act, 2017")), "Tenant representation HTML contains TNRRRLT Act citation");
+
+    // Test 2: Consumer Pre-Litigation Grievance
+    const consumerDoc = generateRepresentationDocument({
+      documentType: "CONSUMER_REPRESENTATION",
+      problemDescription: "Defective item",
+      applicantName: "A. Kumar",
+    });
+    assert(Boolean(consumerDoc.title.includes("PRE-LITIGATION CONSUMER GRIEVANCE")), "Consumer representation title formatted properly");
+    assert(Boolean(consumerDoc.legalStatutoryBasis.some((b) => b.includes("Consumer Protection Act, 2019"))), "Consumer doc cites CPA 2019");
+
+    // Test 3: Workplace Wage Demand
+    const workDoc = generateRepresentationDocument({
+      documentType: "WORKPLACE_REPRESENTATION",
+      problemDescription: "Unpaid salary",
+      applicantName: "P. Vignesh",
+    });
+    assert(Boolean(workDoc.title.includes("DEMAND FOR PAYMENT OF OUTSTANDING SALARY")), "Workplace doc title formatted properly");
+    assert(Boolean(workDoc.legalStatutoryBasis.some((b) => b.includes("Payment of Wages Act"))), "Workplace doc cites Payment of Wages Act");
+  }
+
+  // =========================================================================
+  // SECTION 10: Submission Tracker & Statutory Countdown Tests
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 10: Submission Tracker & Countdown Tests ---");
+
+    const submissionDate = "2026-07-20";
+    const filingTime = new Date(submissionDate).getTime();
+    const nowTime = new Date("2026-08-22").getTime();
+    const daysDiff = Math.floor((nowTime - filingTime) / (1000 * 60 * 60 * 24));
+
+    assert(daysDiff === 33, "Days difference between 2026-07-20 and 2026-08-22 is 33 days");
+    assert(daysDiff >= 30, "33 days exceeds statutory 30-day response window under Section 7(1)");
+  }
+
+  // =========================================================================
+  // SECTION 11: Grounded Confidence Rating Invariance Tests
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 11: Grounded Confidence Invariance Tests ---");
+
+    const verifiedPlan = planCitizenAction("Potholes on road", "641002");
+    assert(verifiedPlan.confidence === "HIGH", "Fully verified Coimbatore PIN yields HIGH confidence");
+
+    const unverifiedPlan = planCitizenAction("Potholes on road", "999999");
+    assert(unverifiedPlan.confidence === "VERIFICATION_REQUIRED", "Unsupported PIN 999999 strictly returns VERIFICATION_REQUIRED, never HIGH");
   }
 
   console.log("\n=================================================================");

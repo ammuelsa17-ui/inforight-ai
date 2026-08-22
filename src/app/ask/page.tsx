@@ -1,26 +1,47 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import Link from "next/link";
 import { generateRtiApplication } from "@/services/api";
 import { GenerateRtiResponse } from "@/types/api";
-import GeneratedPreview, { ApplicantLocalDetails } from "@/components/rti/GeneratedPreview";
+import GeneratedPreview from "@/components/rti/GeneratedPreview";
 import RtiFeeCalculator from "@/components/RtiFeeCalculator";
 import RtiStatutoryTimeline from "@/components/RtiStatutoryTimeline";
-import EvidenceCompletenessScore from "@/components/EvidenceCompletenessScore";
 import EvidenceOrganizer from "@/components/EvidenceOrganizer";
-import { ArrowLeft, Sparkles, AlertCircle, Info, ShieldCheck, Mic, MicOff, Globe, Check } from "lucide-react";
+import {
+  ArrowLeft,
+  AlertCircle,
+  ShieldCheck,
+  Mic,
+  MicOff,
+  Globe,
+  Check,
+  Printer,
+  FileText,
+  Building,
+} from "lucide-react";
 import { ALL_BHARAT_LANGUAGES } from "@/lib/language/languages";
 import { BharatLanguageCode } from "@/lib/language/types";
 import { translateText, transcribeAudio } from "@/services/language";
 import { useLanguage } from "@/context/LanguageContext";
 
 import { resolvePinAuthority, PinRoutingResolution } from "@/lib/routing/pin-router";
+import { planCitizenAction, ActionPlan } from "@/lib/triage/action-planner";
+import {
+  generateRepresentationDocument,
+  exportRepresentationHtml,
+  RepresentationData,
+} from "@/lib/templates/representation-generator";
+import { triggerPrintDocument } from "@/lib/pdf/print-export";
 import { CivicFormFiller } from "@/components/forms/CivicFormFiller";
+import { WhyThisResultPanel } from "@/components/trust/WhyThisResultPanel";
+import { PlainLanguageExplainer } from "@/components/explainer/PlainLanguageExplainer";
+import { SubmissionTracker } from "@/components/tracker/SubmissionTracker";
 
 const PREFILLED_SCENARIOS = [
   {
     labelKey: "ask.scenario1Label" as const,
+    domain: "CIVIC_RTI",
     issue: "Deep potholes and unpaved trench cuts along DB Road, R.S. Puram causing severe traffic slowdowns and accidents.",
     state: "Tamil Nadu",
     district: "Coimbatore",
@@ -31,25 +52,39 @@ const PREFILLED_SCENARIOS = [
     pinCode: "641002",
   },
   {
-    labelKey: "ask.scenario2Label" as const,
-    issue: "Open storm water drain and broken slab covers near Peelamedu bus stop posing danger to pedestrians.",
+    labelKey: "ask.scenarioTenant" as const,
+    domain: "TENANT",
+    issue: "Landlord is refusing to refund my security deposit of ₹40,000 after 2 months of vacating the apartment in R.S. Puram.",
     state: "Tamil Nadu",
     district: "Coimbatore",
     localBodyName: "Coimbatore City Municipal Corporation",
-    locality: "Avinashi Road, Peelamedu",
+    locality: "R.S. Puram",
+    ward: "Ward 23",
+    dateRange: "June 2026 to Present",
+    pinCode: "641002",
+  },
+  {
+    labelKey: "ask.scenarioConsumer" as const,
+    domain: "CONSUMER",
+    issue: "E-commerce platform delivered a defective electronic product and rejected refund within the 7-day warranty window.",
+    state: "Tamil Nadu",
+    district: "Coimbatore",
+    localBodyName: "Coimbatore City Municipal Corporation",
+    locality: "Peelamedu",
     ward: "Ward 35",
-    dateRange: "Last 6 Months",
+    dateRange: "July 2026",
     pinCode: "641004",
   },
   {
-    labelKey: "ask.scenario3Label" as const,
-    issue: "Road re-tarring work completed 2 months ago is peeling off and damaged after rain; request inspection and MB records.",
+    labelKey: "ask.scenarioWorkplace" as const,
+    domain: "WORKPLACE",
+    issue: "Employer withheld 2 months of earned wages and has not issued relieving letter following resignation.",
     state: "Tamil Nadu",
     district: "Coimbatore",
     localBodyName: "Coimbatore City Municipal Corporation",
-    locality: "Cross Cut Road, Gandhipuram",
+    locality: "Gandhipuram",
     ward: "Ward 12",
-    dateRange: "FY 2025-26",
+    dateRange: "May - July 2026",
     pinCode: "641012",
   },
 ];
@@ -57,7 +92,7 @@ const PREFILLED_SCENARIOS = [
 type IssueInputSource = "manual" | "voice" | "prefilled";
 
 export default function AskPage() {
-  // Sync with Global Language Context
+  // Global Language Context
   const { selectedLanguage, setSelectedLanguage, t } = useLanguage();
 
   // Voice State
@@ -70,18 +105,36 @@ export default function AskPage() {
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Step form state
+  // Form state
   const [issue, setIssue] = useState("");
   const [issueInputSource, setIssueInputSource] = useState<IssueInputSource>("manual");
   const [issueInputLanguage, setIssueInputLanguage] = useState<BharatLanguageCode>("en-IN");
   const [pinCode, setPinCode] = useState("641002");
-  const [pinResolution, setPinResolution] = useState<PinRoutingResolution | null>(() => resolvePinAuthority("641002", "Deep potholes and unpaved trench cuts"));
+  const [pinResolution, setPinResolution] = useState<PinRoutingResolution | null>(() =>
+    resolvePinAuthority("641002", "Deep potholes and unpaved trench cuts")
+  );
   const [state, setState] = useState("Tamil Nadu");
   const [district, setDistrict] = useState("Coimbatore");
   const [localBodyName, setLocalBodyName] = useState("Coimbatore City Municipal Corporation");
   const [locality, setLocality] = useState("");
   const [ward, setWard] = useState("");
   const [dateRange, setDateRange] = useState("");
+
+  // Applicant details (Stored purely in browser local state — NEVER sent to external LLMs)
+  const [applicantName, setApplicantName] = useState("");
+  const [applicantAddress, setApplicantAddress] = useState("");
+
+  // Response & UI state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<GenerateRtiResponse | null>(null);
+  const [representationDoc, setRepresentationDoc] = useState<RepresentationData | null>(null);
+  const [flowMode, setFlowMode] = useState<"planner" | "guided">("planner");
+
+  // Dynamic Unified Action Plan
+  const actionPlan: ActionPlan = useMemo(() => {
+    return planCitizenAction(issue || "Describe a civic or legal dispute", pinCode, state);
+  }, [issue, pinCode, state]);
 
   const handlePinChange = (val: string) => {
     setPinCode(val);
@@ -98,27 +151,21 @@ export default function AskPage() {
     }
   };
 
-  // Applicant details (Local browser session memory ONLY — Never sent to API)
-  const [applicantName, setApplicantName] = useState("");
-  const [applicantAddress, setApplicantAddress] = useState("");
-
-  // Response & UI state
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<GenerateRtiResponse | null>(null);
-  const [showSuitabilityBanner, setShowSuitabilityBanner] = useState(false);
-  const [flowMode, setFlowMode] = useState<"guided" | "direct">("guided");
-
   const applyScenario = (scenario: typeof PREFILLED_SCENARIOS[0]) => {
     setIssue(scenario.issue);
     setIssueInputSource("prefilled");
-    setIssueInputLanguage("en-IN"); // Canonical prefilled scenarios are ALWAYS en-IN
+    setIssueInputLanguage("en-IN");
     setState(scenario.state);
     setDistrict(scenario.district);
     setLocalBodyName(scenario.localBodyName);
     setLocality(scenario.locality);
     setWard(scenario.ward);
     setDateRange(scenario.dateRange);
+    setPinCode(scenario.pinCode);
+    const res = resolvePinAuthority(scenario.pinCode, scenario.issue);
+    setPinResolution(res);
+    setResult(null);
+    setRepresentationDoc(null);
     setError(null);
   };
 
@@ -127,6 +174,8 @@ export default function AskPage() {
     setIssueInputSource("manual");
     setIssueInputLanguage(selectedLanguage);
     setError(null);
+    setResult(null);
+    setRepresentationDoc(null);
   };
 
   const startVoiceRecording = async () => {
@@ -192,84 +241,124 @@ export default function AskPage() {
     }
   };
 
-  const handleGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!issue.trim() || !locality.trim()) {
-      setError(t("ask.requiredFieldsError"));
+  const applyVoiceTranscript = () => {
+    if (voiceTranscript.trim()) {
+      setIssue(voiceTranscript);
+      setIssueInputSource("voice");
+      setIssueInputLanguage(selectedLanguage);
+      setVoiceTranscript("");
+      setVoiceError(null);
+    }
+  };
+
+  // Generate either RTI or Specific Legal Representation
+  const handleGenerate = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!issue.trim()) {
+      setError(t("ask.describeProblemRequired"));
       return;
     }
 
     setLoading(true);
     setError(null);
-    setResult(null);
-
-    // RTI Suitability check: detect subjective "why" or "opinion" questions
-    const isOpinionQuery = /why|reason|how come|who responsible/i.test(issue);
-    setShowSuitabilityBanner(isOpinionQuery);
 
     try {
-      // Step A: Translate Indic input to canonical English normalized input ONLY IF issueInputLanguage is not en-IN
-      let canonicalEnglishIssue = issue;
-      if (issueInputLanguage !== "en-IN") {
-        const transRes = await translateText(issue, "en-IN", issueInputLanguage);
-        if (transRes.fallbackOccurred) {
-          setError(t("ask.translationUnavailableError"));
-          setLoading(false);
-          return;
+      if (actionPlan.domain === "CIVIC_RTI") {
+        // RTI Generation Flow
+        let processedIssue = issue;
+        if (issueInputSource !== "prefilled" && issueInputLanguage !== "en-IN") {
+          try {
+            const translationResult = await translateText(issue, issueInputLanguage, "en-IN");
+            processedIssue = translationResult.translatedText;
+          } catch {
+            setError(t("ask.translationUnavailable"));
+            setLoading(false);
+            return;
+          }
         }
-        canonicalEnglishIssue = transRes.translatedText;
+
+        const res = await generateRtiApplication({
+          issue: processedIssue,
+          state,
+          district,
+          localBodyName: pinResolution?.responsibleAuthority || localBodyName,
+          locality: locality || "R.S. Puram",
+          ward,
+          dateRange,
+          sourceIds: [
+            pinResolution?.postalSourceId || "SRC-POST-IN-PIN",
+            pinResolution?.jurisdictionSourceId || "SRC-TN-CCMC-JURISDICTION",
+          ],
+        });
+        setResult(res);
+        setRepresentationDoc(null);
+      } else {
+        // Deterministic Representation Generator (Tenant / Consumer / Workplace)
+        const doc = generateRepresentationDocument({
+          documentType: actionPlan.availableDocumentType,
+          problemDescription: issue,
+          locality: locality || district || "Coimbatore",
+          state,
+          applicantName: applicantName || "Citizen Applicant",
+          applicantAddress: applicantAddress || "Address as per record",
+        });
+        setRepresentationDoc(doc);
+        setResult(null);
       }
-
-      // STRICT PRIVACY BOUNDARY: Payload contains ONLY civic context
-      // Prohibited applicantName and applicantAddress are strictly EXCLUDED
-      const response = await generateRtiApplication({
-        issue: canonicalEnglishIssue,
-        state,
-        district,
-        localBodyName,
-        locality,
-        ward: ward || undefined,
-        dateRange: dateRange || undefined,
-        sourceIds: ["RTI_ACT_2005_AMENDED", "CCMC_RTI_AUTHORITY", "CCMC_ENGINEERING_ROADS"],
-      });
-
-      setResult(response);
     } catch {
-      setResult(null);
       setError(t("ask.genericGenerationError"));
     } finally {
       setLoading(false);
     }
   };
 
-  const applicantLocalDetails: ApplicantLocalDetails = {
-    name: applicantName || "[Applicant Name]",
-    address: applicantAddress || "[Applicant Address]",
+  const handlePrintRepresentation = () => {
+    if (representationDoc) {
+      const html = exportRepresentationHtml(representationDoc);
+      triggerPrintDocument(html);
+    }
   };
 
   return (
-    <div className="w-full py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
-      {/* Header Navigation */}
-      <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-4">
-        <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#526176] hover:text-[#102A56] transition-colors font-medium">
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Top Header */}
+      <div className="flex items-center justify-between">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#526176] hover:text-[#102A56] transition-colors"
+        >
           <ArrowLeft className="w-4 h-4" />
           <span>{t("common.backToHome")}</span>
         </Link>
-        <span className="text-xs font-semibold text-[#0369A1] uppercase tracking-wider flex items-center gap-1.5 px-3 py-1 bg-[#E0F2FE] rounded-full border border-[#7DD3FC]">
-          <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
-          {t("ask.privacyBadge")}
+
+        <span className="px-3 py-1 bg-indigo-50 text-indigo-700 font-mono text-[11px] font-bold rounded-full border border-indigo-200 flex items-center gap-1">
+          <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+          <span>{t("ask.actionPlannerTitle")}</span>
         </span>
       </div>
 
-      <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56]">{t("ask.heading")}</h1>
-        <p className="text-sm text-[#526176]">
-          {t("ask.subheading")}
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56] tracking-tight">
+          {t("ask.pageTitle")}
+        </h1>
+        <p className="text-sm text-[#526176] mt-1 font-medium">
+          {t("ask.pageSubtitle")}
         </p>
       </div>
 
-      {/* Workflow Mode Switcher Tabs */}
+      {/* Mode Switcher Tabs */}
       <div className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold">
+        <button
+          type="button"
+          onClick={() => setFlowMode("planner")}
+          className={`flex-1 py-2 rounded-lg transition-all text-center ${
+            flowMode === "planner"
+              ? "bg-white text-indigo-950 shadow-xs border border-slate-200"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          <span>{t("planner.tabPlanner")}</span>
+        </button>
         <button
           type="button"
           onClick={() => setFlowMode("guided")}
@@ -279,18 +368,7 @@ export default function AskPage() {
               : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          <span>{t("ask.modeGuided")}</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setFlowMode("direct")}
-          className={`flex-1 py-2 rounded-lg transition-all text-center ${
-            flowMode === "direct"
-              ? "bg-white text-indigo-950 shadow-xs border border-slate-200"
-              : "text-slate-600 hover:text-slate-900"
-          }`}
-        >
-          <span>{t("ask.modeDirect")}</span>
+          <span>{t("planner.tabGuided")}</span>
         </button>
       </div>
 
@@ -300,8 +378,8 @@ export default function AskPage() {
           initialPin={pinCode || "641002"}
         />
       ) : (
-        <>
-          {/* Demo Scenario Selectors */}
+        <div className="space-y-6">
+          {/* Quick Scenario Selectors */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-[#526176] uppercase tracking-wider">
               {t("ask.quickScenariosLabel")}
@@ -318,354 +396,344 @@ export default function AskPage() {
                 </button>
               ))}
             </div>
-            <p className="text-[11px] text-[#526176]">
-              {t("ask.quickScenariosHelp")}
-            </p>
           </div>
 
-          {/* Guided RTI Form */}
-          <form onSubmit={handleGenerate} className="p-6 sm:p-8 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-6">
-        {/* Bharat Language & Voice Controls */}
-        <div className="bg-sky-50 border border-sky-200 rounded-xl p-4 space-y-3">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Globe className="w-5 h-5 text-sky-600 shrink-0" />
-              <div>
-                <span className="text-xs font-bold text-sky-900 block">{t("ask.selectLanguageLabel")}</span>
-                <span className="text-[11px] text-sky-700 block">{t("ask.sarvamInfoText")}</span>
+          {/* Citizen Input Box */}
+          <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-4">
+            {/* Language & Voice Banner */}
+            <div className="bg-sky-50 border border-sky-200 rounded-xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-sky-600 shrink-0" />
+                <span className="font-bold text-sky-950">{t("ask.selectLanguageLabel")}</span>
               </div>
-            </div>
-
-            <div className="flex items-center gap-2 w-full sm:w-auto">
               <select
                 value={selectedLanguage}
                 onChange={(e) => setSelectedLanguage(e.target.value as BharatLanguageCode)}
-                className="px-3 py-1.5 bg-white border border-sky-300 rounded-lg text-xs font-bold text-sky-900 focus:outline-none focus:border-sky-600"
+                className="p-1.5 bg-white border border-sky-300 rounded-lg text-xs font-semibold text-slate-800"
               >
-                {ALL_BHARAT_LANGUAGES.map((lang) => (
-                  <option key={lang.code} value={lang.code}>
-                    {lang.nativeName} ({lang.name})
+                {ALL_BHARAT_LANGUAGES.map((l) => (
+                  <option key={l.code} value={l.code}>
+                    {l.nativeName} ({l.name})
                   </option>
                 ))}
               </select>
-
-              <button
-                type="button"
-                onClick={isRecording ? stopVoiceRecording : startVoiceRecording}
-                disabled={isTranscribing}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1.5 ${
-                  isRecording
-                    ? "bg-red-600 text-white animate-pulse"
-                    : "bg-indigo-600 text-white hover:bg-indigo-700"
-                }`}
-                title={t("ask.recordVoiceTitle")}
-                aria-label={t("ask.recordVoiceAria")}
-              >
-                {isRecording ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
-                <span>{isRecording ? `${t("ask.stopRecording")} (${recordingSeconds}s / ${t("ask.recordingMaxSuffix")})` : isTranscribing ? t("ask.transcribing") : t("ask.startRecording")}</span>
-              </button>
             </div>
-          </div>
 
-          {voiceError && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-xs">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{voiceError}</span>
+            {/* Problem Textarea */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-[#102A56]">
+                  {t("ask.problemLabel")}
+                </label>
+                {issueInputSource === "prefilled" && (
+                  <button
+                    type="button"
+                    onClick={startManualProblem}
+                    className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 underline"
+                  >
+                    {t("ask.writeOwnProblem")}
+                  </button>
+                )}
+              </div>
+
+              <textarea
+                rows={3}
+                value={issue}
+                readOnly={issueInputSource === "prefilled"}
+                onChange={(e) => {
+                  setIssue(e.target.value);
+                  setIssueInputSource("manual");
+                  setIssueInputLanguage(selectedLanguage);
+                }}
+                placeholder={t("ask.problemPlaceholder")}
+                className="w-full p-3 bg-[#F4F9FF] border border-[#BCD7EE] focus:border-[#4F46E5] rounded-xl text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none"
+              />
             </div>
-          )}
 
-          {voiceTranscript && (
-            <div className="p-3 bg-white border border-sky-300 rounded-lg space-y-2 text-xs">
-              <span className="font-bold text-sky-900 block">{t("ask.transcriptReview")}</span>
-              <p className="text-slate-800 bg-slate-50 p-2 rounded border border-slate-200">{voiceTranscript}</p>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIssue(voiceTranscript);
-                    setIssueInputSource("voice");
-                    setIssueInputLanguage(selectedLanguage);
-                    setVoiceTranscript("");
-                  }}
-                  className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold text-xs flex items-center gap-1"
-                >
-                  <Check className="w-3.5 h-3.5" />
-                  {t("ask.useTranscript")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setVoiceTranscript("")}
-                  className="px-3 py-1 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded font-bold text-xs"
-                >
-                  {t("ask.discard")}
-                </button>
+            {/* Voice Control Buttons */}
+            <div className="flex items-center justify-between flex-wrap gap-2 pt-1 border-t border-slate-100 text-xs">
+              <div className="flex items-center gap-2">
+                {isRecording ? (
+                  <button
+                    type="button"
+                    onClick={stopVoiceRecording}
+                    className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg flex items-center gap-1.5 animate-pulse"
+                  >
+                    <MicOff className="w-3.5 h-3.5" />
+                    <span>{t("ask.btnStopRecording")} ({recordingSeconds}s)</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={startVoiceRecording}
+                    className="px-3 py-1.5 bg-white border border-[#BCD7EE] hover:bg-sky-50 text-indigo-900 font-bold rounded-lg flex items-center gap-1.5 shadow-2xs"
+                  >
+                    <Mic className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>{t("ask.btnStartVoice")}</span>
+                  </button>
+                )}
+
+                {isTranscribing && (
+                  <span className="text-[11px] text-slate-500 font-medium">{t("ask.transcribingText")}</span>
+                )}
+              </div>
+
+              {/* PIN Code Input */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-600">{t("ask.pinLabel")}:</span>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={pinCode}
+                  onChange={(e) => handlePinChange(e.target.value)}
+                  className="w-24 p-1.5 bg-[#F4F9FF] border border-[#BCD7EE] font-mono font-bold text-xs text-center rounded-lg"
+                />
               </div>
             </div>
-          )}
-        </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="block text-sm font-bold text-[#102A56]">
-              {t("ask.problemLabel")} <span className="text-red-500">*</span>
-            </label>
-            {issueInputSource === "prefilled" && (
-              <button
-                type="button"
-                onClick={startManualProblem}
-                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 underline"
-              >
-                {t("ask.writeOwnProblem")}
-              </button>
+            {voiceTranscript && (
+              <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-xl space-y-2 text-xs">
+                <span className="font-bold text-indigo-950 block">{t("ask.voiceTranscriptLabel")}:</span>
+                <p className="text-slate-800">{voiceTranscript}</p>
+                <button
+                  type="button"
+                  onClick={applyVoiceTranscript}
+                  className="px-3 py-1 bg-indigo-600 text-white font-bold rounded-lg text-xs"
+                >
+                  {t("ask.btnUseTranscript")}
+                </button>
+              </div>
+            )}
+
+            {voiceError && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-900 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>{voiceError}</span>
+              </div>
             )}
           </div>
-          <textarea
-            rows={3}
-            value={issue}
-            readOnly={issueInputSource === "prefilled"}
-            onChange={(e) => {
-              setIssue(e.target.value);
-              if (issueInputSource !== "prefilled") {
-                setIssueInputSource("manual");
-                setIssueInputLanguage(selectedLanguage);
-              }
-            }}
-            placeholder={t("ask.problemPlaceholder")}
-            className={`w-full p-3 border rounded-xl text-sm text-[#172033] focus:outline-none ${
-              issueInputSource === "prefilled"
-                ? "bg-slate-50 border-[#BCD7EE] cursor-not-allowed"
-                : "bg-white border-[#BCD7EE] placeholder-slate-400 focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
-            }`}
-            required
-          />
-        </div>
 
-        {/* PIN Code Authority Resolver Input & Card */}
-        <div className="p-4 bg-indigo-50/50 border border-indigo-200/60 rounded-xl space-y-3">
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <label className="block text-xs font-bold uppercase tracking-wider text-indigo-950">
-              {t("ask.pinResolverTitle")}
-            </label>
-            <span className="bg-indigo-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">
-              {t("ask.pinResolverTag")}
-            </span>
-          </div>
-
-          <div className="flex gap-2">
-            <input
-              type="text"
-              maxLength={6}
-              value={pinCode}
-              onChange={(e) => handlePinChange(e.target.value)}
-              placeholder={t("ask.pinPlaceholder")}
-              className="w-36 p-2.5 bg-white border border-indigo-300 rounded-lg text-sm text-[#172033] font-mono font-bold focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600"
-            />
-            <div className="text-xs text-indigo-900 flex items-center">
-              <span>{t("ask.pinResolverInstruction")}</span>
-            </div>
-          </div>
-
-          {pinResolution && pinResolution.resolved && (
-            <div className="p-3 bg-white border border-indigo-200 rounded-lg space-y-2 text-xs">
-              <div className="flex justify-between items-center flex-wrap gap-1">
-                <span className="font-bold text-indigo-950 text-sm">{pinResolution.localBodyName}</span>
-                <span className="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[10px] flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5" /> CONFIDENCE: {pinResolution.confidence}
+          {/* UNIFIED ACTION PLANNER DISPLAY */}
+          {issue.trim().length > 10 && (
+            <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-sm space-y-5">
+              {/* Domain & Recommended Route */}
+              <div className="flex items-start sm:items-center justify-between gap-3 flex-wrap border-b border-[#BCD7EE] pb-4">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 block">
+                    {t("ask.recommendedRoute")}
+                  </span>
+                  <h3 className="text-base font-extrabold text-[#102A56]">
+                    {actionPlan.recommendedAction}
+                  </h3>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-indigo-100 text-indigo-900 border border-indigo-300">
+                  {actionPlan.domain.replace(/_/g, " ")}
                 </span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700">
-                <div><strong>{t("ask.pinLocalityLabel")}</strong> {pinResolution.localityName}</div>
-                <div><strong>{t("ask.pinJurisdictionLabel")}</strong> {pinResolution.district}, {pinResolution.state}</div>
-                <div className="sm:col-span-2"><strong>{t("ask.pinResponsibleDeptLabel")}</strong> {pinResolution.responsibleAuthority}</div>
-                <div className="sm:col-span-2"><strong>{t("ask.pinRtiPioLabel")}</strong> {pinResolution.rtiAuthority}</div>
+
+              {/* Problem Understood */}
+              <div className="text-xs text-slate-700 space-y-1">
+                <strong className="text-[#102A56] block">{t("ask.problemUnderstoodTitle")}:</strong>
+                <p className="leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                  {actionPlan.problemUnderstood}
+                </p>
               </div>
-              <p className="text-[11px] text-slate-500 italic bg-slate-50 p-2 rounded border border-slate-200">
-                <strong>{t("ask.pinStatutoryBasisLabel")}</strong> {pinResolution.reasoning}
-              </p>
+
+              {/* Why This Action */}
+              <div className="space-y-1.5 text-xs">
+                <strong className="text-[#102A56] block">{t("ask.whyThisRoute")}:</strong>
+                <ul className="space-y-1 text-slate-700">
+                  {actionPlan.whyThisAction.map((w, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                      <span>{w}</span>
+                    </li>
+                  ))}
+                </ul>
+                {actionPlan.whyNotOtherRoutes && (
+                  <p className="text-[11px] text-amber-800 bg-amber-50/80 p-2 rounded-lg border border-amber-200 mt-2 font-medium">
+                    ℹ️ <strong>{t("planner.legalDistinction")}</strong> {actionPlan.whyNotOtherRoutes}
+                  </p>
+                )}
+              </div>
+
+              {/* Verified Authority Card */}
+              <div className="p-4 rounded-xl bg-[#F4F9FF] border border-[#BCD7EE] space-y-2 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-[#102A56] flex items-center gap-1.5">
+                    <Building className="w-4 h-4 text-indigo-600" />
+                    {t("planner.verifiedAuthTitle")}
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 border border-emerald-300">
+                    {actionPlan.authority.confidence} CONFIDENCE
+                  </span>
+                </div>
+                <div className="text-slate-800 font-semibold">{actionPlan.authority.name}</div>
+                {actionPlan.authority.department && (
+                  <div className="text-[11px] text-slate-600">{actionPlan.authority.department}</div>
+                )}
+              </div>
+
+              {/* Evidence Checklist */}
+              <div className="space-y-1.5 text-xs">
+                <strong className="text-[#102A56] block">{t("ask.evidenceRequired")}:</strong>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {actionPlan.evidenceRequired.map((ev, idx) => (
+                    <div key={idx} className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg flex items-start gap-2">
+                      <span className="font-mono text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
+                        E{idx + 1}
+                      </span>
+                      <span className="text-slate-800 text-[11px]">{ev}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Plain-Language Explainer */}
+              <PlainLanguageExplainer
+                custom={{
+                  term: actionPlan.statutoryDeadline.basis,
+                  whatItMeans: actionPlan.statutoryDeadline.plainLanguageMeaning,
+                  whatYouShouldDo: actionPlan.statutoryDeadline.nextAction,
+                }}
+              />
+
+              {/* Why This Result Panel */}
+              <WhyThisResultPanel
+                title={actionPlan.recommendedAction}
+                resultSummary={`InfoRight classified this dispute under ${actionPlan.domain.replace(/_/g, " ")} based on statutory provisions.`}
+                confidence={actionPlan.confidence}
+                reasons={actionPlan.whyThisAction}
+                officialSources={actionPlan.sourceReferences.map((id) => ({
+                  id,
+                  name: "Verified Legal & Government Gazette Repository",
+                  url: "/sources",
+                }))}
+              />
+
+              {/* Generate Document Action Button */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => handleGenerate()}
+                  disabled={loading}
+                  className="w-full p-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-all"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>{loading ? "Preparing Verified Legal Document..." : t("ask.generateDocBtn")}</span>
+                </button>
+              </div>
             </div>
           )}
 
-          {pinResolution && !pinResolution.resolved && (
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-center gap-2">
-              <Info className="w-4 h-4 text-amber-600 shrink-0" />
-              <span>{pinResolution.unsupportedMessage}</span>
+          {error && (
+            <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-900 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              <span>{error}</span>
             </div>
           )}
-        </div>
 
-        {/* Location Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("ask.stateLabel")}</label>
-            <input
-              type="text"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
-              required
-            />
-          </div>
+          {/* GENERATED REPRESENTATION DOCUMENT DISPLAY */}
+          {representationDoc && (
+            <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-sm space-y-5">
+              <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-3 flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-indigo-600" />
+                  <div>
+                    <h4 className="text-sm font-bold text-[#102A56]">{representationDoc.title}</h4>
+                    <span className="text-[11px] text-slate-500">Statutory Notice Period: {representationDoc.responseTimelineDays} Days</span>
+                  </div>
+                </div>
 
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("ask.districtLabel")}</label>
-            <input
-              type="text"
-              value={district}
-              onChange={(e) => setDistrict(e.target.value)}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
-              required
-            />
-          </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handlePrintRepresentation}
+                    className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 shadow-2xs"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>{t("planner.printPdf")}</span>
+                  </button>
+                </div>
+              </div>
 
-          <div className="space-y-2 sm:col-span-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("ask.localBodyLabel")}</label>
-            <input
-              type="text"
-              value={localBodyName}
-              onChange={(e) => setLocalBodyName(e.target.value)}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
-              required
-            />
-          </div>
+              {/* Document Text Box */}
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3 font-sans text-xs text-slate-900 leading-relaxed max-h-[350px] overflow-y-auto">
+                <div className="font-bold text-center uppercase tracking-wide text-[#102A56] pb-2 border-b border-slate-200">
+                  {representationDoc.title}
+                </div>
+                <div>
+                  <strong>{t("planner.toLabel")}</strong> {representationDoc.recipientTitle}, {representationDoc.recipientOrg} ({representationDoc.recipientAddress})
+                </div>
+                <div>
+                  <strong>{t("planner.subjectLabel")}</strong> {representationDoc.subject}
+                </div>
+                <div className="space-y-1">
+                  <strong>{t("planner.factsLabel")}</strong>
+                  {representationDoc.factsAndGrievance.map((f, i) => (
+                    <p key={i}>• {f}</p>
+                  ))}
+                </div>
+                <div className="space-y-1">
+                  <strong>{t("planner.statutoryBasisLabel")}</strong>
+                  {representationDoc.legalStatutoryBasis.map((b, i) => (
+                    <p key={i}>• {b}</p>
+                  ))}
+                </div>
+                <div className="space-y-1">
+                  <strong>{t("planner.reliefLabel")}</strong>
+                  {representationDoc.demandedRelief.map((r, i) => (
+                    <p key={i}>• {r}</p>
+                  ))}
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">
-              {t("ask.localityLabel")} <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={locality}
-              onChange={(e) => setLocality(e.target.value)}
-              placeholder={t("ask.localityPlaceholder")}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("ask.wardLabel")}</label>
-            <input
-              type="text"
-              value={ward}
-              onChange={(e) => setWard(e.target.value)}
-              placeholder={t("ask.wardPlaceholder")}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
-            />
-          </div>
-
-          <div className="space-y-2 sm:col-span-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("ask.dateRangeLabel")}</label>
-            <input
-              type="text"
-              value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)}
-              placeholder={t("ask.dateRangePlaceholder")}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] placeholder-slate-400 focus:outline-none focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
-            />
-          </div>
-        </div>
-
-        {/* Local Applicant Details (Kept strictly in browser session) */}
-        <div className="p-4 rounded-xl bg-[#F4F9FF] border border-[#BCD7EE] space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#0369A1] uppercase tracking-wider">
-            <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
-            {t("ask.applicantDetailsTitle")}
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-[#526176]">{t("ask.applicantNameLabel")}</label>
-              <input
-                type="text"
-                value={applicantName}
-                onChange={(e) => setApplicantName(e.target.value)}
-                placeholder={t("ask.applicantNamePlaceholder")}
-                className="w-full p-2 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
+              {/* Submission & Follow-Up Tracker */}
+              <SubmissionTracker
+                initialData={{
+                  caseId: "REP-2026-CURRENT",
+                  status: "READY_TO_SUBMIT",
+                  generatedDate: "2026-08-22",
+                  statutoryDaysLimit: representationDoc.responseTimelineDays,
+                  statutoryBasis: representationDoc.legalStatutoryBasis[0] || "Statutory Legal Notice",
+                }}
               />
             </div>
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-[#526176]">{t("ask.applicantAddressLabel")}</label>
-              <input
-                type="text"
-                value={applicantAddress}
-                onChange={(e) => setApplicantAddress(e.target.value)}
-                placeholder={t("ask.applicantAddressPlaceholder")}
-                className="w-full p-2 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
+          )}
+
+          {/* GENERATED RTI APPLICATION DISPLAY */}
+          {result && (
+            <div className="space-y-6">
+              <GeneratedPreview
+                data={result}
+                applicantDetails={{
+                  name: applicantName,
+                  address: applicantAddress,
+                }}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <RtiFeeCalculator
+                  initialState={state}
+                  initialAuthority={pinResolution?.responsibleAuthority || localBodyName}
+                />
+                <RtiStatutoryTimeline initialFilingDate="2026-08-22" />
+              </div>
+
+              <EvidenceOrganizer />
+
+              {/* Submission & Follow-Up Tracker */}
+              <SubmissionTracker
+                initialData={{
+                  caseId: "RTI-2026-CURRENT",
+                  status: "READY_TO_SUBMIT",
+                  generatedDate: "2026-08-22",
+                  statutoryDaysLimit: 30,
+                  statutoryBasis: "Section 7(1) of the Right to Information Act, 2005",
+                }}
               />
             </div>
-          </div>
-        </div>
-
-        {error && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] transition-colors shadow-md shadow-indigo-100 disabled:opacity-50"
-        >
-          <Sparkles className="w-5 h-5" />
-          <span>{loading ? t("ask.generating") : t("ask.generateBtn")}</span>
-        </button>
-      </form>
-      </>
-      )}
-
-      {/* RTI Suitability Banner */}
-      {showSuitabilityBanner && (
-        <div className="flex items-start gap-3 p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-sm shadow-xs">
-          <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <h4 className="font-bold text-blue-950">{t("ask.suitabilityTitle")}</h4>
-            <p className="text-blue-900/90 leading-relaxed">
-              {t("ask.suitabilityBody")}
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Generated Result Preview */}
-      {result && (
-        <div className="space-y-6">
-          <GeneratedPreview
-            data={result}
-            applicantDetails={applicantLocalDetails}
-            sources={[]}
-            civicContext={{
-              issue,
-              state,
-              district,
-              localBodyName,
-              locality,
-              ward,
-              dateRange,
-            }}
-            targetLanguage={selectedLanguage}
-          />
-
-          {/* Evidence Completeness Scorecard */}
-          <EvidenceCompletenessScore
-            issueDescription={issue}
-            locationAndAuthority={`${locality}, ${localBodyName}, ${state}`}
-            dateRange={dateRange}
-            hasSupportingDocuments={false}
-            hasSpecificQuestions={Boolean(result.questions && result.questions.length > 0)}
-          />
-
-          {/* Statutory Fee & Payment Mode Calculator */}
-          <RtiFeeCalculator
-            initialState={state}
-            initialAuthority={localBodyName}
-          />
-
-          {/* Statutory Timeline Engine */}
-          <RtiStatutoryTimeline />
-
-          {/* Client-Side Evidence Organizer */}
-          <EvidenceOrganizer />
+          )}
         </div>
       )}
     </div>

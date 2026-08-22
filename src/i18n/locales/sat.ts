@@ -150,6 +150,15 @@ export const satLocale: UITranslationSchema = {
     "privacyKeptLocal": "Kept browser-local for printable A4 export only.",
     "appealUnlockNotice": "First Appeal under Section 19(1) unlocks if PIO does not respond within 30 days.",
     "sec71Notice": "30 Days (Sec 7(1))",
+    "actionPlannerTitle": "Unified Civic & Legal Action Planner",
+    "recommendedRoute": "Recommended Action & Legal Route",
+    "whyThisRoute": "Why this route & legal basis",
+    "evidenceRequired": "Evidence Required & Checklist",
+    "generateDocBtn": "Generate Formal Document",
+    "printFilingPackBtn": "Print Complete Filing Pack (A4)",
+    "scenarioTenant": "Tenant Deposit Dispute",
+    "scenarioConsumer": "Defective Product / Refund Refusal",
+    "scenarioWorkplace": "Unpaid Salary / Workplace Dues",
     "pinStatutoryBasisLabel": "Statutory Basis:",
     "pinRtiPioLabel": "RTI Public Information Officer:",
     "pinResponsibleDeptLabel": "Responsible Department:",
@@ -375,4 +384,51 @@ export const satLocale: UITranslationSchema = {
     "privacyTitle": "Privacy Shield",
     "privacyBody": "Your personal details remain on this browser and are not shared with AI services."
   }
+
+  ,
+  tracker: {
+    "title": "Statutory Submission & Lifecycle Tracker",
+    "stepDraft": "1. Draft Created",
+    "stepSubmit": "2. Citizen Submission",
+    "stepDeadline": "3. Statutory Deadline",
+    "stepEscalation": "4. Escalation / Appeal",
+    "recordDispatch": "Record Official Filing / Dispatch Details:",
+    "dispatchDateLabel": "Dispatch / Filing Date *",
+    "methodLabel": "Method *",
+    "speedPost": "Speed Post / RPAD (Post Office)",
+    "onlinePortal": "Online Portal / RTI Online",
+    "physicalCounter": "Physical Tapal Counter",
+    "ackNoLabel": "Tracking / Ack No. (Optional)",
+    "ackPlaceholder": "e.g. EM987654321IN",
+    "btnSaveCountdown": "Save & Start Countdown",
+    "submittedOn": "Submitted on:",
+    "viaLabel": "via",
+    "refNoLabel": "Reference / Tracking No:",
+    "btnEditRecord": "Edit Filing Record",
+    "btnFirstAppeal": "Generate First Appeal"
+},
+  trust: {
+    "whyTitle": "Why InfoRight Decided This:",
+    "unresolvedFacts": "Unresolved Jurisdiction / Facts:",
+    "rulesEvaluated": "Deterministic Rules Evaluated:",
+    "officialSourceRecords": "Official Source Records:",
+    "showSources": "View Verified Statutory Grounding & Sources",
+    "hideSources": "Hide Verified Statutory Grounding"
+},
+  explainer: {
+    "whatItMeans": "What this means:",
+    "whatNext": "What you should do next:"
+},
+  planner: {
+    "tabPlanner": "Unified Action Planner (All Rights)",
+    "tabGuided": "Guided 5-Step Civic Form (RTI)",
+    "legalDistinction": "Legal Scope Distinction:",
+    "verifiedAuthTitle": "Verified Competent Authority:",
+    "printPdf": "Print / Save as PDF",
+    "toLabel": "To:",
+    "subjectLabel": "Subject:",
+    "factsLabel": "Statement of Facts:",
+    "statutoryBasisLabel": "Statutory Basis:",
+    "reliefLabel": "Demanded Relief:"
+},
 };
