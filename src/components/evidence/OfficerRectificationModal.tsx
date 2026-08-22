@@ -5,6 +5,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { Camera, Upload, MapPin, X, CheckCircle2, AlertTriangle, RefreshCw, ShieldCheck } from "lucide-react";
 import { CivicEvidenceItem, LocationSource } from "@/types/rectification";
 import { calculateSha256 } from "@/lib/geo/distance-calculator";
+import { LocationMap } from "@/components/location/LocationMap";
 
 interface OfficerRectificationModalProps {
   caseId: string;
@@ -322,11 +323,38 @@ export function OfficerRectificationModal({
             )}
 
             {location && (
-              <div className="flex items-center justify-between text-[11px] text-emerald-800 bg-emerald-50 p-2 rounded-lg border border-emerald-200">
-                <span className="font-mono">
-                  {location.latitude.toFixed(5)}°, {location.longitude.toFixed(5)}° (±{location.accuracyMeters}m)
-                </span>
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-emerald-800 bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+                  <span className="font-mono">
+                    {location.latitude.toFixed(5)}°, {location.longitude.toFixed(5)}° (±{location.accuracyMeters}m)
+                  </span>
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                </div>
+
+                <LocationMap
+                  initialLat={location.latitude}
+                  initialLng={location.longitude}
+                  markers={[
+                    {
+                      lat: location.latitude,
+                      lng: location.longitude,
+                      label: "Officer Rectification Location",
+                      color: "emerald",
+                      source: location.source,
+                    },
+                  ]}
+                  interactive={true}
+                  onLocationSelect={(lat, lng, source) => {
+                    setLocation((prev) =>
+                      prev
+                        ? { ...prev, latitude: lat, longitude: lng, source }
+                        : { latitude: lat, longitude: lng, source }
+                    );
+                  }}
+                  heightClass="h-[160px]"
+                  showLocationStatus={false}
+                  helperText="Officer location confirmed. You can click on the map to refine the marker."
+                />
               </div>
             )}
           </div>

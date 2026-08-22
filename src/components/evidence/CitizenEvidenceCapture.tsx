@@ -5,6 +5,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { Camera, Upload, MapPin, X, CheckCircle2, AlertTriangle, RefreshCw } from "lucide-react";
 import { CivicEvidenceItem, LocationSource } from "@/types/rectification";
 import { calculateSha256 } from "@/lib/geo/distance-calculator";
+import { LocationMap } from "@/components/location/LocationMap";
 
 interface CitizenEvidenceCaptureProps {
   onEvidenceCaptured: (evidence: Omit<CivicEvidenceItem, "id" | "cycleNumber">, blob?: Blob) => void;
@@ -279,21 +280,48 @@ export function CitizenEvidenceCapture({
             )}
 
             {location && (
-              <div className="flex items-center justify-between text-[11px] text-emerald-800 bg-emerald-50 p-2 rounded-lg border border-emerald-200">
-                <div className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span className="font-mono">
-                    Device-reported: {location.latitude.toFixed(5)}°, {location.longitude.toFixed(5)}°
-                    {location.accuracyMeters ? ` (±${location.accuracyMeters}m)` : ""}
-                  </span>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-emerald-800 bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span className="font-mono">
+                      Device-reported: {location.latitude.toFixed(5)}°, {location.longitude.toFixed(5)}°
+                      {location.accuracyMeters ? ` (±${location.accuracyMeters}m)` : ""}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setLocation(null)}
+                    className="text-slate-500 hover:text-slate-700 text-[10px] underline"
+                  >
+                    Remove
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setLocation(null)}
-                  className="text-slate-500 hover:text-slate-700 text-[10px] underline"
-                >
-                  Remove
-                </button>
+
+                <LocationMap
+                  initialLat={location.latitude}
+                  initialLng={location.longitude}
+                  markers={[
+                    {
+                      lat: location.latitude,
+                      lng: location.longitude,
+                      label: "Captured Photo Location",
+                      color: "indigo",
+                      source: location.source,
+                    },
+                  ]}
+                  interactive={true}
+                  onLocationSelect={(lat, lng, source) => {
+                    setLocation((prev) =>
+                      prev
+                        ? { ...prev, latitude: lat, longitude: lng, source }
+                        : { latitude: lat, longitude: lng, source }
+                    );
+                  }}
+                  heightClass="h-[180px]"
+                  showLocationStatus={false}
+                  helperText="You can click on the map to refine the photo location if GPS accuracy was low."
+                />
               </div>
             )}
           </div>

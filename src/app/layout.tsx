@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
 import Navbar from "@/components/Navbar";
 import { RoleProvider } from "@/context/RoleContext";
 import { LanguageProvider } from "@/context/LanguageContext";

@@ -1612,6 +1612,45 @@ async function runRouteHandlerContractTests() {
     assert(allVoiceLangs.length === 23, "All 23 Bharat voice languages registered");
   }
 
+  // --- SECTION 20: Contextual Map-Assisted Location Confirmation Tests ---
+  {
+    console.log("\n--- SECTION 20: Contextual Map & Location Invariant Tests ---");
+    const { getApproximatePinCoordinates, APPROXIMATE_PIN_CENTROIDS } = await import("@/lib/geo/contextual-location");
+
+    // 1. Approximate Centroid Resolution
+    const cbeCoords = getApproximatePinCoordinates("641002");
+    assert(cbeCoords !== null, "Coimbatore 641002 resolves approximate centroid");
+    assert(cbeCoords?.locality.includes("R.S. Puram") === true, "641002 locality name includes R.S. Puram");
+    assert(cbeCoords !== null && Math.abs(cbeCoords.lat - 11.0084) < 0.01, "641002 latitude is near ~11.0084");
+
+    const blrCoords = getApproximatePinCoordinates("560001");
+    assert(blrCoords !== null, "Bengaluru 560001 resolves approximate centroid");
+    assert(blrCoords !== null && Math.abs(blrCoords.lat - 12.9716) < 0.01, "560001 latitude is near ~12.9716");
+
+    // 2. Unknown PIN behavior
+    const unknownCoords = getApproximatePinCoordinates("999999");
+    assert(unknownCoords === null, "Unknown PIN returns null without fabricating coordinates");
+
+    // 3. Location Source Types Integrity
+    const testLocationObj = {
+      latitude: 11.0084,
+      longitude: 76.9515,
+      accuracyMeters: 15,
+      source: "DEVICE_GPS" as const,
+      pinCode: "641002",
+      state: "Tamil Nadu",
+      district: "Coimbatore",
+      locality: "R.S. Puram",
+      capturedAt: new Date().toISOString()
+    };
+    assert(testLocationObj.source === "DEVICE_GPS", "Location source accepts DEVICE_GPS");
+
+    // 4. Map never determines jurisdiction independently
+    const pinRes = resolvePinAuthority("641002", "Pothole repair");
+    assert(pinRes.resolved === true, "Legal routing resolves authority deterministically");
+    assert(pinRes.localBodyName?.includes("Coimbatore City Municipal Corporation") === true, "CCMC resolved without requiring map GPS");
+  }
+
   console.log("\n=================================================================");
   console.log(`   Route-Handler Contract Tests Completed: ${passed} Passed, ${failed} Failed`);
   console.log("=================================================================\n");

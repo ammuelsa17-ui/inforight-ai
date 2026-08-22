@@ -71,6 +71,14 @@ export const neLocale: UITranslationSchema = {
     "disclaimerText": "इन्फोराइट एआईले नागरिक सशक्तिकरणका लागि कानूनी मार्गदर्शन प्रदान गर्दछ। यसले औपचारिक कानूनी सल्लाहको ठाउँ लिँदैन।"
   },
   "ask": {
+    "confirmLocationTitle": "Confirm Issue Location (Optional Visual Context)",
+    "rentalPropertyLocationTitle": "Rental Property Location (Map Context)",
+    "workplaceLocationTitle": "Workplace / Incident Location (Optional Map Context)",
+    "useCurrentLocation": "Use My Current Location",
+    "detectingGps": "Detecting GPS...",
+    "deviceGpsLabel": "Device-Reported Location (GPS)",
+    "citizenConfirmedLabel": "Citizen-Confirmed Map Point",
+    "approximatePinLabel": "Approximate Area from Postal PIN",
     "describeProblemRequired": "Please describe your problem before continuing.",
     "translationUnavailable": "Translation service currently unavailable. Showing canonical text.",
     "pageTitle": "Describe Your Problem",

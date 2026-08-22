@@ -11,6 +11,7 @@ import { triggerPrintDocument } from "@/lib/pdf/print-export";
 import { WhyThisResultPanel } from "@/components/trust/WhyThisResultPanel";
 import { PlainLanguageExplainer } from "@/components/explainer/PlainLanguageExplainer";
 import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
+import { LocationMap } from "@/components/location/LocationMap";
 
 export default function TenantRightsPage() {
   const { t } = useLanguage();
@@ -147,6 +148,26 @@ export default function TenantRightsPage() {
               className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 font-mono"
             />
           </div>
+        </div>
+
+        {/* Contextual Rental Property Location Map */}
+        <div className="pt-2 border-t border-slate-100 space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-bold text-slate-800 flex items-center gap-1.5">
+              <Building className="w-3.5 h-3.5 text-amber-600" />
+              {t("ask.rentalPropertyLocationTitle")}
+            </span>
+            <span className="text-[11px] font-semibold text-slate-500">
+              {pinCode ? `PIN: ${pinCode}` : "Select area on map"}
+            </span>
+          </div>
+
+          <LocationMap
+            pinCode={pinCode}
+            interactive={true}
+            heightClass="h-[180px] sm:h-[220px]"
+            helperText="Rental property jurisdiction and Tenancy Act applicability are governed by the property's state and revenue district."
+          />
         </div>
 
         {/* Property & Issue Details */}

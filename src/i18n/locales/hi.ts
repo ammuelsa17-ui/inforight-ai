@@ -71,6 +71,14 @@ export const hiLocale: UITranslationSchema = {
     "disclaimerText": "इन्फोराइट एआई नागरिक सशक्तिकरण के लिए वैधानिक मार्गदर्शन प्रदान करता है। यह औपचारिक कानूनी सलाह का स्थान नहीं लेता है।"
   },
   "ask": {
+    "confirmLocationTitle": "समस्या का स्थान सुनिश्चित करें (मानचित्र संदर्भ)",
+    "rentalPropertyLocationTitle": "किराये की संपत्ति का स्थान (मानचित्र संदर्भ)",
+    "workplaceLocationTitle": "कार्यस्थल / घटना स्थल (मानचित्र संदर्भ)",
+    "useCurrentLocation": "मेरे वर्तमान स्थान का उपयोग करें",
+    "detectingGps": "GPS खोजा जा रहा है...",
+    "deviceGpsLabel": "डिवाइस स्थान (GPS)",
+    "citizenConfirmedLabel": "नागरिक द्वारा पुष्ट मानचित्र बिंदु",
+    "approximatePinLabel": "पिन कोड से अनुमानित क्षेत्र",
     "describeProblemRequired": "आगे बढ़ने से पहले कृपया अपनी समस्या का विवरण दें।",
     "translationUnavailable": "अनुवाद सेवा वर्तमान में अनुपलब्ध है। प्रामाणिक पाठ दिखाया जा रहा है।",
     "pageTitle": "अपनी समस्या का विवरण दें",
