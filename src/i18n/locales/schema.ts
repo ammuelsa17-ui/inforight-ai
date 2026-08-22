@@ -156,6 +156,15 @@ export interface UITranslationSchema {
     privacyKeptLocal: string;
     appealUnlockNotice: string;
     sec71Notice: string;
+    actionPlannerTitle: string;
+    recommendedRoute: string;
+    whyThisRoute: string;
+    evidenceRequired: string;
+    generateDocBtn: string;
+    printFilingPackBtn: string;
+    scenarioTenant: string;
+    scenarioConsumer: string;
+    scenarioWorkplace: string;
   };
   rights: {
     badge: string;
@@ -368,6 +377,51 @@ export interface UITranslationSchema {
     title: string;
     noticeTitle: string;
     noticeBody: string;
+  };
+  tracker: {
+    title: string;
+    stepDraft: string;
+    stepSubmit: string;
+    stepDeadline: string;
+    stepEscalation: string;
+    recordDispatch: string;
+    dispatchDateLabel: string;
+    methodLabel: string;
+    speedPost: string;
+    onlinePortal: string;
+    physicalCounter: string;
+    ackNoLabel: string;
+    ackPlaceholder: string;
+    btnSaveCountdown: string;
+    submittedOn: string;
+    viaLabel: string;
+    refNoLabel: string;
+    btnEditRecord: string;
+    btnFirstAppeal: string;
+  };
+  trust: {
+    whyTitle: string;
+    unresolvedFacts: string;
+    rulesEvaluated: string;
+    officialSourceRecords: string;
+    showSources: string;
+    hideSources: string;
+  };
+  explainer: {
+    whatItMeans: string;
+    whatNext: string;
+  };
+  planner: {
+    tabPlanner: string;
+    tabGuided: string;
+    legalDistinction: string;
+    verifiedAuthTitle: string;
+    printPdf: string;
+    toLabel: string;
+    subjectLabel: string;
+    factsLabel: string;
+    statutoryBasisLabel: string;
+    reliefLabel: string;
   };
   sidebar: {
     privacyTitle: string;
