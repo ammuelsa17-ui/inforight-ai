@@ -71,6 +71,9 @@ export const neLocale: UITranslationSchema = {
     "disclaimerText": "इन्फोराइट एआईले नागरिक सशक्तिकरणका लागि कानूनी मार्गदर्शन प्रदान गर्दछ। यसले औपचारिक कानूनी सल्लाहको ठाउँ लिँदैन।"
   },
   "ask": {
+    "pinNotMappedLabel": "PIN not in map registry — use GPS or select manually",
+    "pinNotMappedHelp": "This PIN is not available in the demo map registry. Use your current location or click the map to select the actual location.",
+    "pinMappedHelp": "Approximate postal area shown from PIN. Use your current location or click the map to refine.",
     "confirmLocationTitle": "Confirm Issue Location (Optional Visual Context)",
     "rentalPropertyLocationTitle": "Rental Property Location (Map Context)",
     "workplaceLocationTitle": "Workplace / Incident Location (Optional Map Context)",

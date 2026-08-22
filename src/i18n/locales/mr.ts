@@ -71,6 +71,9 @@ export const mrLocale: UITranslationSchema = {
     "disclaimerText": "InfoRight AI provides statutory guidance for civic empowerment."
   },
   "ask": {
+    "pinNotMappedLabel": "PIN not in map registry — use GPS or select manually",
+    "pinNotMappedHelp": "This PIN is not available in the demo map registry. Use your current location or click the map to select the actual location.",
+    "pinMappedHelp": "Approximate postal area shown from PIN. Use your current location or click the map to refine.",
     "confirmLocationTitle": "Confirm Issue Location (Optional Visual Context)",
     "rentalPropertyLocationTitle": "Rental Property Location (Map Context)",
     "workplaceLocationTitle": "Workplace / Incident Location (Optional Map Context)",

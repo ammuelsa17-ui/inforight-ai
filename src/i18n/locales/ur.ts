@@ -71,6 +71,9 @@ export const urLocale: UITranslationSchema = {
     "disclaimerText": "InfoRight AI provides statutory guidance for civic empowerment."
   },
   "ask": {
+    "pinNotMappedLabel": "پن کوڈ نقشہ رجسٹری میں نہیں ہے — GPS استعمال کریں یا دستی طور پر منتخب کریں",
+    "pinNotMappedHelp": "یہ پن کوڈ ڈیمو نقشہ رجسٹری میں دستیاب نہیں ہے۔ اپنا موجودہ مقام استعمال کریں یا نقشے پر کلک کریں۔",
+    "pinMappedHelp": "پن کوڈ کے مطابق تخمینی ڈاک کا علاقہ دکھایا گیا ہے۔ موجودہ مقام استعمال کریں یا نقشے پر منتخب کریں۔",
     "confirmLocationTitle": "مسئلے کے مقام کی تصدیق کریں (نقشہ حوالہ)",
     "rentalPropertyLocationTitle": "کرایہ کی جائیداد کا مقام (نقشہ حوالہ)",
     "workplaceLocationTitle": "کام کی جگہ / جائے وقوعہ (نقشہ حوالہ)",

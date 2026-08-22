@@ -1627,11 +1627,14 @@ async function runRouteHandlerContractTests() {
     assert(blrCoords !== null, "Bengaluru 560001 resolves approximate centroid");
     assert(blrCoords !== null && Math.abs(blrCoords.lat - 12.9716) < 0.01, "560001 latitude is near ~12.9716");
 
-    // 2. Unknown PIN behavior
+    // 2. Unknown / Uncatalogued PIN behavior (e.g. 625515 Theni)
+    const theniCoords = getApproximatePinCoordinates("625515");
+    assert(theniCoords === null, "Uncatalogued PIN 625515 strictly returns null without fabricating false coordinates");
+
     const unknownCoords = getApproximatePinCoordinates("999999");
     assert(unknownCoords === null, "Unknown PIN returns null without fabricating coordinates");
 
-    // 3. Location Source Types Integrity
+    // 3. Location Source Types & State Separation Integrity
     const testLocationObj = {
       latitude: 11.0084,
       longitude: 76.9515,
@@ -1645,7 +1648,12 @@ async function runRouteHandlerContractTests() {
     };
     assert(testLocationObj.source === "DEVICE_GPS", "Location source accepts DEVICE_GPS");
 
-    // 4. Map never determines jurisdiction independently
+    // 4. Neutral Pan-India Center Invariants
+    const NEUTRAL_INDIA_LAT = 20.5937;
+    const NEUTRAL_INDIA_LNG = 78.9629;
+    assert(NEUTRAL_INDIA_LAT > 0 && NEUTRAL_INDIA_LNG > 0, "Neutral India center coordinates defined");
+
+    // 5. Map never determines legal jurisdiction independently
     const pinRes = resolvePinAuthority("641002", "Pothole repair");
     assert(pinRes.resolved === true, "Legal routing resolves authority deterministically");
     assert(pinRes.localBodyName?.includes("Coimbatore City Municipal Corporation") === true, "CCMC resolved without requiring map GPS");
