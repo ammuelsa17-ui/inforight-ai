@@ -381,6 +381,20 @@ export const asLocale: UITranslationSchema = {
     "catOther": "অন্যান্য নথি",
     "previewFileTitle": "ফাইল প্ৰদৰ্শন কৰক",
     "removeFileTitle": "ফাইল মচক"
+  ,
+    "clientSideVerified": "ব্ৰাউজাৰত প্ৰমাণিত • AI লৈ কোনো তথ্য প্ৰেৰণ নহয়",
+    "supportedFormatsHelp": "সমৰ্থিত ফৰ্মেট: JPEG, PNG, WebP (সৰ্বাধিক 10MB)। ফটোসমূহ ব্ৰাউজাৰত সুৰক্ষিত থাকে।",
+    "errOnlyImagesAllowed": "কেৱল JPEG, PNG, বা WebP ছবিহে অনুমোদিত।",
+    "errFileTooLarge": "ফাইলৰ আকাৰ 10MB সীমাৰ বাহিৰত।",
+    "errProcessImage": "ছবি ফাইলটো প্ৰচেছ কৰিব পৰা নগ’ল।",
+    "errGeoNotSupported": "আপোনাৰ ব্ৰাউজাৰত অৱস্থান সেৱা সমৰ্থিত নহয়।",
+    "errGeoPermissionDenied": "অৱস্থানৰ অনুমতি অস্বীকাৰ কৰা হৈছে। আপুনি GPS অবিহনেও ফটো দাখিল কৰিব পাৰে।",
+    "errGeoUnavailable": "ডিভাইচৰ পৰা অৱস্থান তথ্য পোৱা নগ’ল।",
+    "errGeoTimeout": "অৱস্থান অনুৰোধৰ সময়সীমা উকলি গ’ল। অনুগ্ৰহ কৰি পুনৰ চেষ্টা কৰক।",
+    "errGeoFailed": "অৱস্থান নিৰ্ধাৰণ কৰিব পৰা নগ’ল।",
+    "acquiringGps": "GPS সন্ধান কৰা হৈছে...",
+    "removeLocationBtn": "মচক",
+    "removePhotoBtn": "ফটো মচক"
   },
   "appeal": {
     "title": "ধাৰা ১৯(১) প্ৰথম আপীল জেনেৰেটৰ",

@@ -46,13 +46,13 @@ export function CitizenEvidenceCapture({
     // Validate MIME types
     const validMimes = ["image/jpeg", "image/png", "image/webp"];
     if (!validMimes.includes(file.type)) {
-      setFileError("Only JPEG, PNG, or WebP images are allowed.");
+      setFileError(t("evidence.errOnlyImagesAllowed"));
       return;
     }
 
     // Limit size to 10MB
     if (file.size > 10 * 1024 * 1024) {
-      setFileError("File size exceeds 10MB limit.");
+      setFileError(t("evidence.errFileTooLarge"));
       return;
     }
 
@@ -65,7 +65,7 @@ export function CitizenEvidenceCapture({
       setFileName(file.name);
       setChecksum(sha);
     } catch {
-      setFileError("Could not process image file.");
+      setFileError(t("evidence.errProcessImage"));
     } finally {
       setIsProcessing(false);
     }
@@ -74,7 +74,7 @@ export function CitizenEvidenceCapture({
   const handleCaptureLocation = () => {
     setGeoError(null);
     if (typeof window === "undefined" || !navigator.geolocation) {
-      setGeoError("Geolocation is not supported by your browser.");
+      setGeoError(t("evidence.errGeoNotSupported"));
       return;
     }
 
@@ -93,16 +93,16 @@ export function CitizenEvidenceCapture({
         setGeoLoading(false);
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            setGeoError("Location permission denied. You can still submit photo evidence without GPS.");
+            setGeoError(t("evidence.errGeoPermissionDenied"));
             break;
           case error.POSITION_UNAVAILABLE:
-            setGeoError("Position information is unavailable from device.");
+            setGeoError(t("evidence.errGeoUnavailable"));
             break;
           case error.TIMEOUT:
-            setGeoError("Location request timed out. Please try again.");
+            setGeoError(t("evidence.errGeoTimeout"));
             break;
           default:
-            setGeoError("Could not acquire location.");
+            setGeoError(t("evidence.errGeoFailed"));
         }
       },
       {
@@ -160,7 +160,7 @@ export function CitizenEvidenceCapture({
           {t("evidence.addPhotoTitle")}
         </span>
         <span className="text-[10px] font-semibold text-slate-500">
-          Client-Side Verified • Zero AI Leak
+          {t("evidence.clientSideVerified")}
         </span>
       </div>
 
@@ -209,7 +209,7 @@ export function CitizenEvidenceCapture({
             </button>
           </div>
           <p className="text-[11px] text-slate-500 text-center">
-            Supported formats: JPEG, PNG, WebP (Max 10MB). Photos are stored securely in your browser.
+            {t("evidence.supportedFormatsHelp")}
           </p>
         </div>
       ) : (
@@ -226,7 +226,7 @@ export function CitizenEvidenceCapture({
               type="button"
               onClick={handleClearEvidence}
               className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors"
-              title="Remove photo"
+              title={t("evidence.removePhotoBtn")}
             >
               <X className="w-4 h-4" />
             </button>
@@ -263,7 +263,7 @@ export function CitizenEvidenceCapture({
                   {geoLoading ? (
                     <>
                       <RefreshCw className="w-3 h-3 animate-spin" />
-                      <span>Acquiring GPS...</span>
+                      <span>{t("evidence.acquiringGps")}</span>
                     </>
                   ) : (
                     <span>{t("evidence.addLocationBtn")}</span>
@@ -294,7 +294,7 @@ export function CitizenEvidenceCapture({
                     onClick={() => setLocation(null)}
                     className="text-slate-500 hover:text-slate-700 text-[10px] underline"
                   >
-                    Remove
+                    {t("evidence.removeLocationBtn")}
                   </button>
                 </div>
 

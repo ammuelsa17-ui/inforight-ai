@@ -379,6 +379,19 @@ export interface UITranslationSchema {
     catOther: string;
     previewFileTitle: string;
     removeFileTitle: string;
+    clientSideVerified: string;
+    supportedFormatsHelp: string;
+    errOnlyImagesAllowed: string;
+    errFileTooLarge: string;
+    errProcessImage: string;
+    errGeoNotSupported: string;
+    errGeoPermissionDenied: string;
+    errGeoUnavailable: string;
+    errGeoTimeout: string;
+    errGeoFailed: string;
+    acquiringGps: string;
+    removeLocationBtn: string;
+    removePhotoBtn: string;
   };
   appeal: {
     title: string;

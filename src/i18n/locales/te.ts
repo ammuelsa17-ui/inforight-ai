@@ -381,6 +381,20 @@ export const teLocale: UITranslationSchema = {
     "catOther": "ఇతర పత్రం",
     "previewFileTitle": "ఫైల్‌ను వీక్షించండి",
     "removeFileTitle": "ఫైల్‌ను తొలగించండి"
+  ,
+    "clientSideVerified": "బ్రౌజర్‌లో ధృవీకరించబడింది • AI కి డేటా పంపబడదు",
+    "supportedFormatsHelp": "మద్దతు ఉన్న ఆకృతులు: JPEG, PNG, WebP (గరిష్టంగా 10MB). ఫోటోలు మీ బ్రౌజర్‌లో సురక్షితంగా ఉంటాయి.",
+    "errOnlyImagesAllowed": "JPEG, PNG, లేదా WebP చిత్రాలు మాత్రమే అనుమతించబడతాయి.",
+    "errFileTooLarge": "ఫైల్ పరిమాణం 10MB పరిమితిని మించిపోయింది.",
+    "errProcessImage": "చిత్రం ఫైల్‌ను ప్రాసెస్ చేయడం సాధ్యం కాలేదు.",
+    "errGeoNotSupported": "మీ బ్రౌజర్‌లో భౌగోళిక స్థానం సపోర్ట్ చేయబడదు.",
+    "errGeoPermissionDenied": "స్థాన అనుమతి నిరాకరించబడింది. మీరు GPS లేకుండా కూడా ఫోటో సాక్ష్యాన్ని సమర్పించవచ్చు.",
+    "errGeoUnavailable": "పరికరం నుండి స్థాన సమాచారం అందుబాటులో లేదు.",
+    "errGeoTimeout": "స్థాన అభ్యర్థన సమయం ముగిసింది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+    "errGeoFailed": "స్థానాన్ని పొందడం సాధ్యం కాలేదు.",
+    "acquiringGps": "GPS కనుగొనబడుతోంది...",
+    "removeLocationBtn": "తొలగించు",
+    "removePhotoBtn": "ఫోటోను తొలగించు"
   },
   "appeal": {
     "title": "సెక్షన్ 19(1) మొదటి అప్పీల్ జనరేటర్",
