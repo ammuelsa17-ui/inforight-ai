@@ -28,9 +28,14 @@ export interface LocationMapProps {
   showLocationStatus?: boolean;
 }
 
+// Neutral Pan-India center for default unpinned view
+const NEUTRAL_INDIA_LAT = 20.5937;
+const NEUTRAL_INDIA_LNG = 78.9629;
+const NEUTRAL_INDIA_ZOOM = 4;
+
 export function LocationMap({
-  initialLat = 11.0084, // Default: Coimbatore R.S. Puram
-  initialLng = 76.9515,
+  initialLat,
+  initialLng,
   zoom = 14,
   markers = [],
   onLocationSelect,
@@ -45,18 +50,27 @@ export function LocationMap({
   const mapInstanceRef = useRef<any>(null);
   const leafletMarkersRef = useRef<any[]>([]);
 
+  // If pinCode provided, check if we have an approximate centroid
+  const pinCoords = pinCode ? getApproximatePinCoordinates(pinCode) : null;
+  const effectiveLat = initialLat ?? pinCoords?.lat;
+  const effectiveLng = initialLng ?? pinCoords?.lng;
+
   const [currentMarker, setCurrentMarker] = useState<{ lat: number; lng: number; source: LocationSource } | null>(
     markers.length > 0
       ? { lat: markers[0].lat, lng: markers[0].lng, source: markers[0].source || "MAP_SELECTED" }
-      : initialLat && initialLng
-      ? { lat: initialLat, lng: initialLng, source: "PIN_APPROXIMATE" }
+      : effectiveLat && effectiveLng
+      ? { lat: effectiveLat, lng: effectiveLng, source: "PIN_APPROXIMATE" }
       : null
   );
 
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
   const [activeSource, setActiveSource] = useState<LocationSource>(
-    markers.length > 0 ? markers[0].source || "MAP_SELECTED" : "PIN_APPROXIMATE"
+    markers.length > 0
+      ? markers[0].source || "MAP_SELECTED"
+      : effectiveLat && effectiveLng
+      ? "PIN_APPROXIMATE"
+      : "MANUAL"
   );
 
   // Initialize Leaflet Map
@@ -77,12 +91,13 @@ export function LocationMap({
       });
 
       if (!mapInstanceRef.current && mapContainerRef.current) {
-        const centerLat = currentMarker?.lat || initialLat;
-        const centerLng = currentMarker?.lng || initialLng;
+        const centerLat = currentMarker?.lat ?? effectiveLat ?? NEUTRAL_INDIA_LAT;
+        const centerLng = currentMarker?.lng ?? effectiveLng ?? NEUTRAL_INDIA_LNG;
+        const initialZoom = (currentMarker?.lat || effectiveLat) ? zoom : NEUTRAL_INDIA_ZOOM;
 
         const map = L.map(mapContainerRef.current, {
           center: [centerLat, centerLng],
-          zoom,
+          zoom: initialZoom,
           zoomControl: true,
           attributionControl: true,
         });
