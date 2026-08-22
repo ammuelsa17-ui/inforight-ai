@@ -39,7 +39,7 @@ export const enLocale: UITranslationSchema = {
   "home": {
     "badge": "InfoRight AI — 22 Scheduled Indian Languages + English (Version 2.0)",
     "title": "Understand and Act on Your Civic & Legal Rights",
-    "subtitle": "InfoRight AI transforms bureaucratic complexity into simple, step-by-step statutory guidance. Convert plain-language complaints into certified RTI applications or match welfare schemes.",
+    "subtitle": "InfoRight AI turns complex civic and legal information into clear, source-grounded actions — across rights, schemes, authorities, documents, and case follow-up.",
     "cta": "Describe Your Problem (Unified Entrypoint)",
     "modulesTitle": "Four Integrated Empowerment Modules",
     "modulesSubtitle": "Addressing every civic & legal dispute category under statutory frameworks",
