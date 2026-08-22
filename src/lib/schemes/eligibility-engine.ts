@@ -188,19 +188,23 @@ export function evaluateAllWelfareSchemes(
       matchedConditions.push("All-India Central / National Scheme");
     }
 
+    const userIncome = profile.annual_income !== undefined ? profile.annual_income : profile.annual_family_income;
+    const userStudent = profile.is_student !== undefined ? profile.is_student : profile.current_student;
+    const userDisability = profile.has_disability !== undefined ? profile.has_disability : profile.is_pwd;
+
     // 2. Annual Income Check
     if (rules.annual_income_limit !== undefined) {
-      if (profile.annual_income === undefined || profile.annual_income === null) {
+      if (userIncome === undefined || userIncome === null) {
         missingConditions.push(
           `Annual family income verification (Ceiling: ₹${rules.annual_income_limit.toLocaleString("en-IN")})`
         );
-      } else if (profile.annual_income <= rules.annual_income_limit) {
+      } else if (userIncome <= rules.annual_income_limit) {
         matchedConditions.push(
-          `Income ₹${profile.annual_income.toLocaleString("en-IN")} within ceiling limit (₹${rules.annual_income_limit.toLocaleString("en-IN")})`
+          `Income ₹${userIncome.toLocaleString("en-IN")} within ceiling limit (₹${rules.annual_income_limit.toLocaleString("en-IN")})`
         );
       } else {
         failedConditions.push(
-          `Income ₹${profile.annual_income.toLocaleString("en-IN")} exceeds maximum ceiling of ₹${rules.annual_income_limit.toLocaleString("en-IN")}`
+          `Income ₹${userIncome.toLocaleString("en-IN")} exceeds maximum ceiling of ₹${rules.annual_income_limit.toLocaleString("en-IN")}`
         );
       }
     }
@@ -244,9 +248,9 @@ export function evaluateAllWelfareSchemes(
       recordText.includes("pre-matric") ||
       recordText.includes("pudhumai")
     ) {
-      if (profile.is_student === undefined) {
+      if (userStudent === undefined) {
         missingConditions.push("Student enrollment confirmation (School / College / University)");
-      } else if (!profile.is_student) {
+      } else if (!userStudent) {
         failedConditions.push("Requires active student enrollment in recognized educational institution");
       } else {
         matchedConditions.push("Active student enrollment confirmed");
@@ -278,9 +282,9 @@ export function evaluateAllWelfareSchemes(
       recordText.includes("pwd") ||
       recordText.includes("adip")
     ) {
-      if (profile.has_disability === undefined) {
+      if (userDisability === undefined) {
         missingConditions.push("Person with Benchmark Disability (PwD) status verification");
-      } else if (!profile.has_disability) {
+      } else if (!userDisability) {
         failedConditions.push("Requires Person with Disability (PwD) certificate (Minimum 40% benchmark)");
       } else if (
         profile.disability_percentage !== undefined &&
@@ -493,7 +497,7 @@ export function evaluateSchemeEligibility(profile: CitizenSchemeProfile): Scheme
           `State selection required (Scheme restricted to ${scheme.applicableStates.join(", ")})`
         );
       } else if (
-        scheme.applicableStates.some((s) => s.toLowerCase() === profile.state?.toLowerCase())
+        scheme.applicableStates.some((s: string) => s.toLowerCase() === profile.state?.toLowerCase())
       ) {
         satisfiedConditions.push(`State condition met (${profile.state})`);
       } else {
@@ -558,7 +562,7 @@ export function evaluateSchemeEligibility(profile: CitizenSchemeProfile): Scheme
       if (!profile.gender) {
         missingFields.push(`Gender selection required (Restricted to ${scheme.allowedGenders.join(", ")})`);
       } else if (
-        scheme.allowedGenders.some((g) => g.toLowerCase() === profile.gender?.toLowerCase())
+        scheme.allowedGenders.some((g: string) => g.toLowerCase() === profile.gender?.toLowerCase())
       ) {
         satisfiedConditions.push(`Gender requirement met (${profile.gender})`);
       } else {
@@ -575,7 +579,7 @@ export function evaluateSchemeEligibility(profile: CitizenSchemeProfile): Scheme
           `Social category required (Allowed: ${scheme.allowedCategories.join(", ")})`
         );
       } else if (
-        scheme.allowedCategories.some((c) => c.toLowerCase() === profile.socialCategory?.toLowerCase())
+        scheme.allowedCategories.some((c: string) => c.toLowerCase() === profile.socialCategory?.toLowerCase())
       ) {
         satisfiedConditions.push(`Social category requirement met (${profile.socialCategory})`);
       } else {

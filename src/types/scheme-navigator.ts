@@ -131,13 +131,16 @@ export interface UserEligibilityProfile {
   district?: string;
   rural_urban?: "RURAL" | "URBAN";
   annual_family_income?: number;
+  annual_income?: number;
   community?: "SC" | "ST" | "OBC" | "MBC" | "DNC" | "GENERAL" | "EWS";
   is_minority?: boolean;
   is_pwd?: boolean;
+  has_disability?: boolean;
   disability_percentage?: number;
   has_disability_certificate?: boolean;
   education_level?: string;
   current_student?: boolean;
+  is_student?: boolean;
   institution_type?: "GOVERNMENT" | "GOVERNMENT_AIDED" | "PRIVATE";
   occupation_or_vocation?: string;
   is_farmer?: boolean;
