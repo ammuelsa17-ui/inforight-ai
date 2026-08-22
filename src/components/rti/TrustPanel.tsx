@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { ShieldCheck, CheckCircle2, FileText, ExternalLink } from "lucide-react";
 
 export interface SourceCardInfo {
@@ -22,6 +23,7 @@ export default function TrustPanel({
   sources = [],
   applicantDataSentToAI = false,
 }: TrustPanelProps) {
+  const { t } = useLanguage();
   const trustBadges = [
     { text: "Applicant identity stayed in the browser", status: !applicantDataSentToAI },
     { text: "Civic input was checked for sensitive data", status: true },
@@ -37,9 +39,9 @@ export default function TrustPanel({
       <div className="flex items-center gap-3 border-b border-[#BCD7EE] pb-4">
         <ShieldCheck className="w-6 h-6 text-[#4F46E5] shrink-0" />
         <div>
-          <h3 className="text-base font-bold text-[#102A56]">Safety & Trust Panel</h3>
+          <h3 className="text-base font-bold text-[#102A56]">{t("trustPanel.title")}</h3>
           <p className="text-xs text-[#526176]">
-            Real-time verification metrics and privacy guarantees
+            {t("trustPanel.subtitle")}
           </p>
         </div>
       </div>
@@ -87,14 +89,14 @@ export default function TrustPanel({
                   </span>
                 </div>
                 <p className="text-[#526176]">
-                  <strong className="text-[#102A56]">Authority:</strong> {source.authority}
+                  <strong className="text-[#102A56]">{t("trustPanel.authLabel")}</strong> {source.authority}
                 </p>
                 <p className="text-[#526176] flex items-center gap-1">
-                  <strong className="text-[#102A56]">Domain:</strong> {source.domain}
+                  <strong className="text-[#102A56]">{t("trustPanel.domainLabel")}</strong> {source.domain}
                   <ExternalLink className="w-3 h-3 text-[#526176]" />
                 </p>
                 <p className="text-[#526176]">
-                  <strong className="text-[#102A56]">Supports:</strong> {source.supports}
+                  <strong className="text-[#102A56]">{t("trustPanel.supportsLabel")}</strong> {source.supports}
                 </p>
                 <div className="text-[11px] text-[#526176] pt-1 border-t border-[#BCD7EE]">
                   Verified: {source.lastVerifiedDate}

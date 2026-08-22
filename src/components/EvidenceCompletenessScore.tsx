@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { calculateEvidenceCompletenessScore } from "@/lib/statutory/evidence-completeness";
 import { CheckCircle2, Circle, AlertCircle, BarChart3 } from "lucide-react";
 
@@ -21,6 +22,7 @@ export function EvidenceCompletenessScore({
   hasSupportingDocuments,
   hasSpecificQuestions,
 }: EvidenceCompletenessScoreProps) {
+  const { t } = useLanguage();
   const completeness = calculateEvidenceCompletenessScore({
     issueDescription,
     locationAndAuthority,
@@ -46,10 +48,10 @@ export function EvidenceCompletenessScore({
           </div>
           <div>
             <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">
-              Evidence Completeness Scorecard
+              {t("evidence.scorecardTitle")}
             </h4>
             <p className="text-xs text-slate-500">
-              Measures completeness of supporting facts & evidence (Not a legal outcome probability)
+              {t("evidence.scorecardSubtitle")}
             </p>
           </div>
         </div>

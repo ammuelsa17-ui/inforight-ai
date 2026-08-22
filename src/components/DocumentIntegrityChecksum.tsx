@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { Hash, Copy, Check, ShieldCheck } from "lucide-react";
 
 interface DocumentIntegrityChecksumProps {
@@ -8,6 +9,7 @@ interface DocumentIntegrityChecksumProps {
 }
 
 export function DocumentIntegrityChecksum({ documentText }: DocumentIntegrityChecksumProps) {
+  const { t } = useLanguage();
   const [hash, setHash] = useState<string>("Calculating hash...");
   const [copied, setCopied] = useState(false);
 
@@ -53,12 +55,13 @@ export function DocumentIntegrityChecksum({ documentText }: DocumentIntegrityChe
         <div className="flex items-center gap-2">
           <Hash className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           <span className="text-xs font-bold text-slate-900 dark:text-slate-100">
-            Document Integrity Checksum (SHA-256)
+            {t("checksum.title")}
           </span>
         </div>
         <button
           onClick={handleCopy}
           className="text-[11px] text-slate-600 dark:text-slate-400 hover:text-blue-600 flex items-center gap-1 font-medium"
+          aria-label={t("checksum.copyAria")}
         >
           {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
           <span>{copied ? "Copied" : "Copy Hash"}</span>
@@ -71,7 +74,7 @@ export function DocumentIntegrityChecksum({ documentText }: DocumentIntegrityChe
 
       <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
         <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-        <span>Integrity checksum — helps detect whether this draft has been modified after generation.</span>
+        <span>{t("checksum.subtitle")}</span>
       </div>
     </div>
   );

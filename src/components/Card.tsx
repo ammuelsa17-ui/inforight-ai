@@ -1,6 +1,7 @@
 "use client";
 
 import React, { ReactNode } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
 import { ArrowRight, LucideIcon, HelpCircle } from "lucide-react";
 
@@ -89,6 +90,7 @@ export const RightsCard: React.FC<RightsCardProps> = ({
   icon: Icon,
   exploreUrl
 }) => {
+  const { t } = useLanguage();
   return (
     <div className="bg-white border border-borders rounded-lg p-5 shadow-2xs hover:border-indigo-primary/30 transition-all flex flex-col justify-between group">
       <div>
@@ -102,7 +104,7 @@ export const RightsCard: React.FC<RightsCardProps> = ({
         href={exploreUrl}
         className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-primary hover:text-indigo-primary/80 transition-colors mt-2"
       >
-        <span>Explore Right</span>
+        <span>{t("common.learnMore")}</span>
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </Link>
     </div>
