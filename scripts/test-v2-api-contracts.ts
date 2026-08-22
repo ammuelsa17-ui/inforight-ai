@@ -1695,6 +1695,26 @@ async function runRouteHandlerContractTests() {
     assert(invalidPinRes.valid === false, "Malformed PIN 000000 returns valid: false");
     assert(invalidPinRes.confidence === "VERIFICATION_REQUIRED", "Invalid PIN yields VERIFICATION_REQUIRED");
     assert(invalidPinRes.administrative.state.name === null, "Invalid PIN never fabricates state name");
+
+    // 4. Truthful Provenance Classification Invariants
+    assert(
+      (invalidPinRes.administrative.state.source as string) !== "OFFICIAL_LGD",
+      "Zero false OFFICIAL_LGD source claims"
+    );
+
+    // 5. Code Structure Forensic Verification: LocationMap must not import static centroid helper
+    const fs = await import("fs");
+    const path = await import("path");
+    const locationMapPath = path.join(process.cwd(), "src/components/location/LocationMap.tsx");
+    const locationMapContent = fs.readFileSync(locationMapPath, "utf8");
+    assert(
+      !locationMapContent.includes("getApproximatePinCoordinates"),
+      "LocationMap strictly does NOT import getApproximatePinCoordinates"
+    );
+    assert(
+      locationMapContent.includes("/api/location/pin"),
+      "LocationMap calls runtime /api/location/pin route"
+    );
   }
 
   console.log("\n=================================================================");

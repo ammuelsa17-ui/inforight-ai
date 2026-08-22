@@ -21,7 +21,7 @@ export interface AdministrativeLevel {
   name: string | null;
   code?: string | null;
   type?: string;
-  source: "OFFICIAL_LGD" | "INDIA_POST" | "GEOCODER_MAP" | "CITIZEN_OVERRIDE" | "NONE";
+  source: "VERIFIED_DIRECTORY" | "THIRD_PARTY_POSTAL" | "GEOCODER_MAP" | "CITIZEN_OVERRIDE" | "NONE";
   status: AdministrativeConfidence;
   verified: boolean;
 }
@@ -47,6 +47,7 @@ export interface NormalizedLocationResolution {
     localities: string[];
     postOffices: PostOfficeDetail[];
     hasMultipleLocalities: boolean;
+    selectedLocality?: string;
   };
   map: {
     latitude: number | null;
@@ -100,7 +101,7 @@ export function getSubDistrictLabelForState(stateName?: string | null): "Taluk" 
 }
 
 /**
- * Verifies if state & district match official government directory (e.g. LGD / Central Data).
+ * Verifies if state & district match verified administrative directory.
  */
 export function verifyStateAndDistrict(stateName?: string | null, districtName?: string | null): {
   stateValid: boolean;
@@ -135,9 +136,12 @@ export function verifyStateAndDistrict(stateName?: string | null, districtName?:
 }
 
 /**
- * Resolves any Indian 6-digit PIN code via runtime API with multi-tier cache and graceful degradation.
+ * Resolves any Indian 6-digit PIN code via runtime postal provider + server-side geocoding suggestion.
  */
-export async function resolveAllIndiaPin(pinCode: string): Promise<NormalizedLocationResolution> {
+export async function resolveAllIndiaPin(
+  pinCode: string,
+  selectedLocality?: string
+): Promise<NormalizedLocationResolution> {
   const cleanPin = (pinCode || "").trim();
   const isValidFormat = /^[1-9][0-9]{5}$/.test(cleanPin);
 
@@ -145,17 +149,17 @@ export async function resolveAllIndiaPin(pinCode: string): Promise<NormalizedLoc
     return createEmptyResolution(cleanPin, "Invalid PIN format: must be 6 numeric digits starting with 1-9.");
   }
 
-  const cacheKey = LocationCacheManager.getPinKey(cleanPin);
+  const cacheKey = LocationCacheManager.getPinKey(cleanPin + (selectedLocality ? `_${selectedLocality.trim()}` : ""));
   const cached = LocationCacheManager.get<NormalizedLocationResolution>(cacheKey);
 
   if (cached.hit && cached.data && !cached.isStale) {
     return cached.data;
   }
 
-  // 1. Live Fetch from Postal API
+  // 1. Live Fetch from Postal Reference API
   try {
     const url = `https://api.postalpincode.in/pincode/${cleanPin}`;
-    const res = await safeGovernmentFetch(url, { timeoutMs: 3500 });
+    const res = await safeGovernmentFetch(url, { timeoutMs: 6000 });
 
     if (res.ok) {
       const raw = JSON.parse(res.data);
@@ -175,11 +179,29 @@ export async function resolveAllIndiaPin(pinCode: string): Promise<NormalizedLoc
         const rawState = postOffices[0]?.state || null;
         const rawDistrict = postOffices[0]?.district || null;
         const localities = Array.from(new Set(postOffices.map((po) => po.name))).filter(Boolean);
+        const activeLocality = selectedLocality && localities.includes(selectedLocality) ? selectedLocality : localities[0];
 
         const { stateValid, districtValid, matchedDistrictName } = verifyStateAndDistrict(rawState, rawDistrict);
-
-        // Calculate subdistrict label
         const subDistrictLabel = getSubDistrictLabelForState(rawState);
+
+        // 2. Server-side Geocoding Suggestion for Map Placement
+        let geoLat: number | null = null;
+        let geoLng: number | null = null;
+
+        // Try primary postal query, fallback to PIN + State
+        const geocodeQuery = `${cleanPin}, ${matchedDistrictName || rawDistrict || ""}, ${rawState || ""}, India`.trim();
+        let geocodeCoords = await geocodeAddressSuggestion(geocodeQuery);
+        if (!geocodeCoords && activeLocality) {
+          geocodeCoords = await geocodeAddressSuggestion(`${activeLocality}, ${matchedDistrictName || rawDistrict || ""}, India`);
+        }
+        if (!geocodeCoords) {
+          geocodeCoords = await geocodeAddressSuggestion(`${cleanPin}, India`);
+        }
+
+        if (geocodeCoords) {
+          geoLat = geocodeCoords.lat;
+          geoLng = geocodeCoords.lng;
+        }
 
         const resolution: NormalizedLocationResolution = {
           pinCode: cleanPin,
@@ -190,28 +212,29 @@ export async function resolveAllIndiaPin(pinCode: string): Promise<NormalizedLoc
             localities,
             postOffices,
             hasMultipleLocalities: localities.length > 1,
+            selectedLocality: activeLocality,
           },
           map: {
-            latitude: null, // Geocoding or GPS can supply coordinates; postal alone gives postal context
-            longitude: null,
+            latitude: geoLat,
+            longitude: geoLng,
             precision: "POSTAL_AREA",
             source: "PIN_APPROXIMATE",
           },
           administrative: {
             state: {
               name: rawState,
-              source: stateValid ? "OFFICIAL_LGD" : "INDIA_POST",
+              source: stateValid ? "VERIFIED_DIRECTORY" : "THIRD_PARTY_POSTAL",
               status: stateValid ? "VERIFIED" : "SUGGESTED",
               verified: stateValid,
             },
             district: {
               name: matchedDistrictName || rawDistrict,
-              source: districtValid ? "OFFICIAL_LGD" : "INDIA_POST",
+              source: districtValid ? "VERIFIED_DIRECTORY" : "THIRD_PARTY_POSTAL",
               status: districtValid ? "VERIFIED" : "SUGGESTED",
               verified: districtValid,
             },
             subDistrict: {
-              name: null, // Postal API does not definitively provide Taluk/Tehsil/Mandal
+              name: null,
               label: subDistrictLabel,
               source: "NONE",
               status: "VERIFICATION_REQUIRED",
@@ -230,16 +253,16 @@ export async function resolveAllIndiaPin(pinCode: string): Promise<NormalizedLoc
               verified: false,
             },
             village: {
-              name: localities[0] || null,
-              source: "INDIA_POST",
+              name: activeLocality || null,
+              source: "THIRD_PARTY_POSTAL",
               status: "SUGGESTED",
               verified: false,
             },
           },
           sourceStatus: {
-            postal: "India Post PIN Directory (via api.postalpincode.in)",
-            administrative: stateValid && districtValid ? "Grounded in Government State/District Directory" : "Postal Reference Only",
-            geocoding: "Postal Area Centroid Pending GPS / Map Click",
+            postal: "Third-party postal reference (api.postalpincode.in)",
+            administrative: stateValid && districtValid ? "InfoRight Grounded State/District Directory" : "Postal Reference Only",
+            geocoding: geoLat ? "OpenStreetMap Nominatim Geocoding Suggestion" : "Pending GPS / Map Selection",
           },
           confidence: stateValid && districtValid ? "VERIFIED" : "SUGGESTED",
           conflictStatus: "NONE",
@@ -263,8 +286,46 @@ export async function resolveAllIndiaPin(pinCode: string): Promise<NormalizedLoc
     }
   }
 
-  // If uncatalogued / network unavailable, return clean unverified state without false Coimbatore data
-  return createEmptyResolution(cleanPin, "Location could not be resolved automatically from postal directory. Please select on map or enter manually.");
+  // If uncatalogued / network unavailable, return clean unverified state without false demo data
+  return createEmptyResolution(cleanPin, "Location could not be resolved automatically from postal reference directory. Please select on map or enter manually.");
+}
+
+/**
+ * Server-side address geocoding suggestion via Nominatim
+ */
+async function geocodeAddressSuggestion(query: string): Promise<{ lat: number; lng: number } | null> {
+  if (!query || query.length < 3) return null;
+  const cacheKey = `geocode_${query.replace(/\s+/g, "_").toLowerCase()}`;
+  const cached = LocationCacheManager.get<{ lat: number; lng: number }>(cacheKey);
+  if (cached.hit && cached.data) {
+    return cached.data;
+  }
+
+  try {
+    const encoded = encodeURIComponent(query);
+    const url = `https://nominatim.openstreetmap.org/search?q=${encoded}&format=json&limit=1&countrycodes=in`;
+    const res = await safeGovernmentFetch(url, {
+      timeoutMs: 3500,
+      headers: { "User-Agent": "InfoRightAI-LegalPlatform/2.0" },
+    });
+
+    if (res.ok) {
+      const data = JSON.parse(res.data);
+      if (Array.isArray(data) && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lng = parseFloat(data[0].lon);
+        if (!isNaN(lat) && !isNaN(lng)) {
+          const result = { lat, lng };
+          LocationCacheManager.set(cacheKey, result, "PROV-OSM-NOMINATIM", "GEOCODER_SUGGESTION", url);
+          return result;
+        }
+      }
+    }
+  } catch {
+    // Geocoding failure / timeout
+  }
+
+  return null;
 }
 
 /**

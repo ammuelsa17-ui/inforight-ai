@@ -536,9 +536,37 @@ export default function AskPage() {
                 onLocationSelect={(lat, lng, source) => {
                   setMapCoords({ lat, lng, source });
                 }}
+                onResolutionChange={(res) => {
+                  setAdminResolution(res);
+                  if (res?.postal.state && !state) setState(res.postal.state);
+                  if (res?.postal.district && !district) setDistrict(res.postal.district);
+                }}
                 heightClass="h-[200px] sm:h-[240px]"
-                helperText="Entering a verified PIN centers the map near that postal area. Use 'Use My Current Location' or click on the map to refine the spot."
+                helperText="Entering a valid 6-digit PIN dynamically centers the map on that postal area across India. Use GPS or click on the map to refine."
               />
+
+              {/* Multiple Localities Selection Control */}
+              {adminResolution?.postal.hasMultipleLocalities && (
+                <div className="p-2.5 rounded-xl bg-indigo-50/70 border border-indigo-200 text-xs space-y-1.5">
+                  <span className="font-bold text-indigo-900 block">{t("ask.multipleLocalitiesNotice")}</span>
+                  <select
+                    value={locality || adminResolution.postal.selectedLocality || ""}
+                    onChange={(e) => {
+                      const newLoc = e.target.value;
+                      setLocality(newLoc);
+                      handlePinChange(pinCode);
+                    }}
+                    className="w-full p-2 bg-white border border-indigo-200 rounded-lg text-slate-900 font-medium"
+                  >
+                    <option value="">-- {t("ask.selectLocalityPrompt")} --</option>
+                    {adminResolution.postal.localities.map((loc) => (
+                      <option key={loc} value={loc}>
+                        {loc}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               {/* Administrative Hierarchy & Provenance Details */}
               <AdministrativeDetailsPanel resolution={adminResolution} />
