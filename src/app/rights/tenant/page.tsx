@@ -10,6 +10,7 @@ import { generateRepresentationDocument, exportRepresentationHtml, Representatio
 import { triggerPrintDocument } from "@/lib/pdf/print-export";
 import { WhyThisResultPanel } from "@/components/trust/WhyThisResultPanel";
 import { PlainLanguageExplainer } from "@/components/explainer/PlainLanguageExplainer";
+import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
 
 export default function TenantRightsPage() {
   const { t } = useLanguage();
@@ -26,7 +27,7 @@ export default function TenantRightsPage() {
   const [agreementAvailable, setAgreementAvailable] = useState(true);
   const [agreementRegistered, setAgreementRegistered] = useState(false);
   const [handoverProofAvailable, setHandoverProofAvailable] = useState(true);
-  const [communicationsAvailable] = useState(true);
+  const [communicationsAvailable, setCommunicationsAvailable] = useState(true);
 
   const [tenantName] = useState("Citizen Tenant");
   const [tenantAddress] = useState("R.S. Puram, Coimbatore, Tamil Nadu - 641002");
@@ -80,29 +81,28 @@ export default function TenantRightsPage() {
   };
 
   return (
-    <div className="w-full py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
+    <PageContainer size="narrow">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-4">
-        <Link href="/rights" className="inline-flex items-center gap-2 text-sm text-[#526176] hover:text-[#102A56] font-medium">
+      <div className="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
+        <Link
+          href="/rights"
+          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 font-medium transition-colors"
+        >
           <ArrowLeft className="w-4 h-4" />
           <span>{t("common.backToHome")}</span>
         </Link>
-        <span className="text-xs font-semibold text-[#D97706] uppercase tracking-wider px-3 py-1 bg-[#FEF3C7] rounded-full border border-[#FDE68A]">
+        <span className="text-xs font-semibold text-amber-800 uppercase tracking-wider px-3 py-1 bg-amber-50 rounded-full border border-amber-200">
           {t("tenantEngine.badge")}
         </span>
       </div>
 
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56] tracking-tight">
-          {t("tenantEngine.title")}
-        </h1>
-        <p className="mt-2 text-sm text-[#526176]">
-          {t("tenantEngine.subtitle")}
-        </p>
-      </div>
+      <PageHeader
+        title={t("tenantEngine.title")}
+        description={t("tenantEngine.subtitle")}
+      />
 
       {/* Guided Tenant Interview */}
-      <form onSubmit={handlePlanAction} className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-sm space-y-6">
+      <form onSubmit={handlePlanAction} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-6">
         <h2 className="text-base font-bold text-[#102A56] flex items-center gap-2">
           <Building className="w-5 h-5 text-amber-600" />
           {t("tenantEngine.tellUsTitle")}
@@ -384,6 +384,6 @@ export default function TenantRightsPage() {
           )}
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

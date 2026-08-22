@@ -6,6 +6,7 @@ import { navigateRightsDispute } from "@/services/api";
 import { RightsNavigateResponse } from "@/types/api";
 import { ArrowLeft, Sparkles, AlertCircle, ExternalLink, Copy, Printer, Check } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
 
 export default function WorkplaceRightsPage() {
   const { t } = useLanguage();
@@ -49,23 +50,24 @@ export default function WorkplaceRightsPage() {
   };
 
   return (
-    <div className="w-full py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
-      <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-4">
-        <Link href="/rights" className="inline-flex items-center gap-2 text-sm text-[#526176] hover:text-[#102A56] font-medium">
+    <PageContainer size="narrow">
+      <div className="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
+        <Link
+          href="/rights"
+          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 font-medium transition-colors"
+        >
           <ArrowLeft className="w-4 h-4" />
           <span>{t("common.backToHome")}</span>
         </Link>
-        <span className="text-xs font-semibold text-[#0F9D76] uppercase tracking-wider px-3 py-1 bg-[#E6F4EA] rounded-full border border-[#A8DADC]">
+        <span className="text-xs font-semibold text-emerald-800 uppercase tracking-wider px-3 py-1 bg-emerald-50 rounded-full border border-emerald-200">
           {t("rights.workplaceLegalBasis")}
         </span>
       </div>
 
-      <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56]">{t("rights.workplaceTitle")}</h1>
-        <p className="text-sm text-[#526176]">
-          {t("rights.workplaceDesc")}
-        </p>
-      </div>
+      <PageHeader
+        title={t("rights.workplaceTitle")}
+        description={t("rights.workplaceDesc")}
+      />
 
       {/* Form Input */}
       <form onSubmit={handleNavigate} className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-6">
@@ -164,6 +166,6 @@ export default function WorkplaceRightsPage() {
           )}
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

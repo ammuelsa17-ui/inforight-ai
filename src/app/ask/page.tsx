@@ -39,6 +39,7 @@ import { WhyThisResultPanel } from "@/components/trust/WhyThisResultPanel";
 import { PlainLanguageExplainer } from "@/components/explainer/PlainLanguageExplainer";
 import { SubmissionTracker } from "@/components/tracker/SubmissionTracker";
 import { ALL_STATES_AND_UTS } from "@/lib/location/location-context";
+import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
 
 const PREFILLED_SCENARIOS = [
   {
@@ -322,31 +323,27 @@ export default function AskPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <PageContainer size="narrow">
       {/* Top Header */}
-      <div className="flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#526176] hover:text-[#102A56] transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t("common.backToHome")}</span>
         </Link>
 
-        <span className="px-3 py-1 bg-indigo-50 text-indigo-700 font-mono text-[11px] font-bold rounded-full border border-indigo-200 flex items-center gap-1">
+        <span className="px-3 py-1 bg-indigo-50 text-indigo-700 font-mono text-xs font-bold rounded-full border border-indigo-200 flex items-center gap-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
           <span>{t("ask.actionPlannerTitle")}</span>
         </span>
       </div>
 
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56] tracking-tight">
-          {t("ask.pageTitle")}
-        </h1>
-        <p className="text-sm text-[#526176] mt-1 font-medium">
-          {t("ask.pageSubtitle")}
-        </p>
-      </div>
+      <PageHeader
+        title={t("ask.pageTitle")}
+        description={t("ask.pageSubtitle")}
+      />
 
       {/* Mode Switcher Tabs */}
       <div className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold">
@@ -777,6 +774,6 @@ export default function AskPage() {
           )}
         </div>
       )}
-    </div>
+    </PageContainer>
   );
 }
