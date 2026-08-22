@@ -6,16 +6,16 @@
 
 ---
 
-## 1. Overview & Problem Statement Alignment
+## 1. Overview & Problem Statement
 
-**InfoRight AI** directly addresses the core challenge of civic and legal empowerment by bridging the gap between ordinary citizen grievances and complex statutory procedures.
+**InfoRight AI** bridges the gap between ordinary citizen grievances and complex statutory procedures across India.
 
 Citizens often struggle to navigate municipal authorities, statutory dispute redressal portals, or welfare eligibility requirements due to bureaucratic jargon, ambiguous forms, and uncertain jurisdiction boundaries. InfoRight AI translates plain-language citizen problems into a clear, guided empowerment workflow across four integrated modules:
 
-1. **RTI Drafting Agent**: Converts civic road complaints into 3–5 objective requests for certified copies of government records under Section 6(1) of the RTI Act 2005.
-2. **Rights Navigator**: Guides citizens through Consumer Protection (e-Commerce), Tenancy, and Workplace disputes with simple-language legal breakdowns, evidence checklists, statutory portal links (**e-Jagriti**, **1915**, **SAMADHAN 2.0**), and draft representation letters.
-3. **Scheme Eligibility Reader**: Evaluates citizen profiles against verified National and Tamil Nadu welfare schemes using deterministic conditional rules (referencing **myScheme** framework).
-4. **Conversational Form-Filler & Bureaucracy Translator**: Asks guided questions step-by-step to auto-populate draft applications, explain *What this means*, *What you should do now*, *Documents to collect*, *Where to submit*, and *What to do if unresolved*.
+1. **RTI Drafting & Civic Navigation**: Converts civic grievances into 3–5 objective requests for certified copies of government records under Section 6(1) of the RTI Act 2005, with exact Public Authority and PIO routing.
+2. **Pan-India Rights Navigator**: Guides citizens through Consumer Protection (e-Commerce), State-Specific Tenancy, and Workplace/Labour disputes with simple-language legal breakdowns, evidence checklists, statutory portal links (**e-Jagriti**, **1915 NCH**, **Shram Suvidha / CLC**), and formal legal notices.
+3. **Welfare Scheme Eligibility Reader**: Evaluates citizen profiles against verified National and State welfare schemes using deterministic conditional rules (referencing **myScheme** framework).
+4. **Closed-Loop Civic Rectification**: Connects citizen "before" evidence to municipal officer action and "after" rectification proof, with deterministic Haversine distance validation and citizen-only closure.
 
 ---
 
@@ -23,71 +23,59 @@ Citizens often struggle to navigate municipal authorities, statutory dispute red
 
 ```mermaid
 flowchart TD
-    A["Citizen Problem & Guided Form"] --> B["Validation & Strict Schema Parsing"]
-    B --> C["Intent Router / Request Triage"]
-    C -->|Civic Infrastructure| D["/ask (RTI Drafting Agent)"]
-    C -->|Consumer / Tenant / Workplace| E["/rights (Rights Navigator)"]
-    C -->|Welfare Schemes| F["/schemes (Scheme Eligibility Matcher)"]
-    D --> G["Curated Official Source Registry"]
-    E --> G
-    F --> G
-    G --> H["Validation & Citation Guard"]
-    H --> I["Guidance, Draft Document & Print / Save as PDF"]
+    A["Citizen Plain-Language Input (Text / Voice)"] --> B["Multilingual & Location Context"]
+    B --> C["Real-Time Government Data & Authority Resolver"]
+    C -->|Official APIs / LGD Datasets / Portals| D["Source-Grounded Data Layer"]
+    D --> E["Deterministic Legal Rule Engine"]
+    E --> F["Unified Action Planner & Document Generator"]
+    F --> G["Citizen Case Dashboard & Closed-Loop Rectification"]
+    G --> H["Officer Action -> Citizen Confirmation / Reopen"]
 ```
 
 ---
 
-## 3. Core Technical & Privacy Architecture
+## 3. AI vs. Deterministic Legal Logic Principle
 
-### 3.1 Browser Privacy Boundary
-* **Applicant Identity Separation**: Applicant identity fields (`applicantName`, `applicantAddress`, `phoneNumber`, `email`, `signature`) remain strictly in local browser state.
-* **Excluded from API Payload**: Identity fields are excluded from API payloads sent to external server routes and AI services. Identity fields are merged into document templates locally in browser memory only during preview rendering and **Print / Save as PDF** export.
-* **Privacy Verification**: `validation.applicantDataSentToAI === false` is returned in every response.
-
-### 3.2 Source-Grounded Curated Registry
-* Official URLs, statutory authority designations, and portal links are resolved exclusively from a bundled, curated source registry (`src/data/source-registry.ts`).
-* AI generation is restricted to structured text drafting; Gemini is prohibited from inventing government URLs, PIO designations, or legal fees.
-
-### 3.3 Rule-Based Scheme Eligibility Engine
-* Scheme eligibility is evaluated deterministically against structured conditional rules. Gemini explains matching reasons but does not decide eligibility. Results are clearly designated as **potential scheme matches requiring official department confirmation**.
-
-### 3.4 Failure Resilience & Fallback Engine
-* Includes a server-side failure simulation toggle (`ENABLE_DEMO_FAILURE=true` in preview environments). If AI generation times out (>8s), fails, or returns malformed JSON, the server automatically executes a deterministic fallback engine returning pre-approved record request templates.
+InfoRight AI strictly enforces the **Non-Delegation Principle**:
+* **AI's Role**: Multilingual translation, intent classification, plain-language explanation, and natural drafting assistance.
+* **Deterministic Rules' Role**: Statutory timeframes (RTI 30 days / 48 hrs), Consumer pecuniary limits (DCDRC ₹50L, SCDRC ₹2Cr, NCDRC >₹2Cr), State tenancy deposit caps (Tamil Nadu 3 months, UP 2 months), and eligibility criteria are hardcoded and versioned in deterministic TypeScript engines.
+* **Zero Hallucination Guarantee**: If an authority or portal is not in an official or verified registry, the system explicitly returns `VERIFICATION_REQUIRED` rather than fabricating an answer.
 
 ---
 
-## 4. Five Mandatory Demonstration Use Cases
+## 4. Key Features
 
-1. **RTI Drafting Agent (Coimbatore Road Repair)**: Converts DB Road pothole complaints into 3–5 objective requests for certified copies of estimates, Measurement Book (MB) entries, completion certificates, and expenditure statements.
-2. **Consumer Dispute Navigator (Online Laptop Refund Denial)**: Provides rights summary under Consumer Protection Act 2019, escalation pathways to National Consumer Helpline (**1915**) and **e-Jagriti** portal (`https://consumerhelpline.gov.in/`), and a draft consumer representation letter.
-3. **Tenant Rights Navigator (Security Deposit Recovery)**: Provides rights breakdown under Tamil Nadu Regulation of Rights and Responsibilities of Landlords and Tenants Act 2017, State Rent Authority links, explicit state-jurisdiction warnings, and a draft deposit notice letter.
-4. **Workplace Rights Navigator (Unpaid Salary Settlement)**: Evaluates wage recovery options, provides links to **SAMADHAN 2.0** Conciliation Portal (`https://betasamadhaan.labour.gov.in/`), central vs. state jurisdiction warnings, and a draft employer grievance letter.
-5. **Scheme Eligibility Reader (Low-Income Female Student)**: Evaluates Tamil Nadu female student profile against scheme criteria, matching `TN_POST_MATRIC_SCHOLARSHIP` and `TN_MOOVALUR_RAMAMIRTHAM_PUDHUMAI_PENN` (Pudhumai Penn Scheme) with **myScheme** discovery links (`https://www.myscheme.gov.in/`).
+- **Pan-India Location & Authority Resolution**: 36 States & UTs, 700+ Districts (LGD-backed), and 6-digit Indian PIN resolver with verified fallbacks.
+- **Multilingual Bharat Voice Support**: 23 Scheduled Indian Languages mapped dynamically to BCP-47 speech locales with server-side Sarvam STT (`saaras:v3`) fallback.
+- **Consumer Protection Engine**: Automatically resolves territorial and pecuniary jurisdiction under CPA 2019, routing to **e-Jagriti** (`https://e-jagriti.gov.in/`) and National Consumer Helpline (**1915**).
+- **State-Aware Tenancy Engine**: Applies specific enacted state laws (e.g. TNRRRLT Act 2017 in Tamil Nadu, MRCA 1999 in Maharashtra) without conflating the Model Tenancy Act as binding state law.
+- **Closed-Loop Civic Rectification**: Citizen before-photo evidence → Officer assignment → Officer after-photo repair proof → Deterministic location comparison (Haversine formula) → Citizen-only confirmation or reopening cycle.
+- **Strict Privacy & Zero Secret Exposure**: Identity data is stored locally in browser memory (`localStorage` / `IndexedDB`) and never transmitted to LLMs during problem drafting.
 
 ---
 
 ## 5. Technology Stack & Quality Controls
 
-| Component | Technology | Role / Control Purpose |
+| Layer | Technologies Used | Purpose |
 | :--- | :--- | :--- |
-| **Framework** | Next.js 16.3.1 (App Router) | Full-stack server routes & static rendering |
-| **UI Library** | React 19, Tailwind CSS v4, Lucide Icons | Responsive civic sky & indigo theme |
-| **AI Model** | Gemini 1.5 Flash (`gemini-1.5-flash`) | Structured application drafting assistant |
-| **Language** | TypeScript 5 | Strict interface contract enforcement |
-| **Testing** | Custom Contract Test Runner (`npm run test:api`) | 37/37 Route-Handler Contract & Safety Tests |
-| **Deployment** | Vercel Production Hosting | Continuous deployment with server-side secrets |
+| **Framework** | Next.js 16.3.1 (App Router), React 19 | Full-stack server routes & SSR |
+| **Styling & UI** | Tailwind CSS v4, Lucide Icons | Responsive civic sky & indigo theme |
+| **AI & NLP** | Google Gemini 1.5 Flash, Sarvam AI (`saaras:v3`) | Drafting assistance & Multilingual STT/TTS |
+| **Type Safety** | TypeScript 5 | Strict interface & contract enforcement |
+| **Quality Suite**| Custom Contract Runner (`scripts/test-v2-api-contracts.ts`) | **333/333 Automated Route-Handler Tests** |
+| **Deployment** | Vercel Serverless Platform | Zero-downtime global hosting |
 
 ---
 
-## 6. Local Setup & Execution Instructions
+## 6. Local Setup & Running Instructions
 
 ### Prerequisites
 * Node.js 18.x or higher
 * npm 9.x or higher
 
-### Installation Steps
+### Steps
 
-1. **Clone the Repository**:
+1. **Clone Repository**:
    ```bash
    git clone https://github.com/ammuelsa17-ui/inforight-ai.git
    cd inforight-ai
@@ -99,31 +87,35 @@ flowchart TD
    ```
 
 3. **Configure Environment Variables**:
-   Create a `.env.local` file in the project root:
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key_here
-   ENABLE_DEMO_FAILURE=false
-   ```
-
-4. **Run Development Server**:
+   Copy `.env.example` to `.env.local`:
    ```bash
-   npm run dev
+   cp .env.example .env.local
    ```
-   Open `http://localhost:3000` in your browser.
+   Add optional provider keys (`GEMINI_API_KEY`, `SARVAM_API_KEY`). The platform operates with built-in deterministic fallbacks even if keys are omitted.
 
-5. **Run Automated API Contract Tests**:
-   ```bash
-   npm run test:api
-   ```
-
-6. **Run Code Quality Lint & Production Build**:
+4. **Execute Quality Suite**:
    ```bash
    npm run lint
+   npm run audit:i18n
+   npm run test:api
    npm run build
    ```
 
+5. **Start Development Server**:
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
 ---
 
-## 7. Institutional & Educational Disclaimer
+## 7. Known Limitations
 
-> **Disclaimer**: InfoRight AI is a research prototype designed to assist citizens in understanding rights and drafting applications. It does not provide legal advice or file applications automatically with public authorities. Citizens should verify authority details and statutory fees prior to submission.
+1. **Browser-Local Multi-Role Persistence**: Case data and photo evidence are stored locally in the browser (`localStorage` and `IndexedDB`). For the hackathon prototype, switching between Citizen and Officer roles simulates the complete workflow on a single device without shared cross-device cloud synchronization.
+2. **Voice Microphone Testing**: Automated test runner validates all 23 language mappings and fallback pipelines (333 passing tests); physical audio capture requires a live browser with microphone permission.
+
+---
+
+## 8. Disclaimer
+
+*InfoRight AI is an educational, civic, and legal literacy assistance tool. It generates draft applications and navigation guidance based on publicly available laws and government portals. It does not provide legal representation or create an attorney-client relationship. Citizens should independently verify local filing procedures with competent authorities.*
