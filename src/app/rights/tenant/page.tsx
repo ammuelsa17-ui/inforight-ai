@@ -2,175 +2,383 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { navigateRightsDispute } from "@/services/api";
-import { RightsNavigateResponse } from "@/types/api";
-import { ArrowLeft, Sparkles, AlertCircle, ExternalLink, Copy, Printer, Check, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Printer, Building, Scale, ExternalLink } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { ALL_STATES_AND_UTS } from "@/lib/location/location-context";
+import { planTenantAction, TenantActionPlan, TenantIssueType } from "@/lib/tenancy/tenancy-engine";
+import { generateRepresentationDocument, exportRepresentationHtml, RepresentationData } from "@/lib/templates/representation-generator";
+import { triggerPrintDocument } from "@/lib/pdf/print-export";
+import { WhyThisResultPanel } from "@/components/trust/WhyThisResultPanel";
+import { PlainLanguageExplainer } from "@/components/explainer/PlainLanguageExplainer";
 
 export default function TenantRightsPage() {
   const { t } = useLanguage();
-  const [description, setDescription] = useState(
-    "Vacated rental apartment in Chennai 3 weeks ago after full key handover and utility bill settlement. Landlord refuses to return ₹50,000 security deposit without repair bills."
+  const [selectedState, setSelectedState] = useState("Tamil Nadu");
+  const [district, setDistrict] = useState("Coimbatore");
+  const [pinCode, setPinCode] = useState("641002");
+  const [propertyType, setPropertyType] = useState<"RESIDENTIAL" | "COMMERCIAL" | "OTHER">("RESIDENTIAL");
+  const [issueType, setIssueType] = useState<TenantIssueType>("SECURITY_DEPOSIT");
+  const [monthlyRent] = useState<number>(15000);
+  const [securityDeposit, setSecurityDeposit] = useState<number>(45000);
+  const [issueDescription, setIssueDescription] = useState(
+    "Vacated rental premises 3 weeks ago after full key handover and utility clearance. Landlord refuses to return ₹45,000 security deposit without any written damage assessment."
   );
-  const [state, setState] = useState("Tamil Nadu");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<RightsNavigateResponse | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [agreementAvailable, setAgreementAvailable] = useState(true);
+  const [agreementRegistered, setAgreementRegistered] = useState(false);
+  const [handoverProofAvailable, setHandoverProofAvailable] = useState(true);
+  const [communicationsAvailable] = useState(true);
 
-  const handleNavigate = async (e: React.FormEvent) => {
+  const [tenantName] = useState("Citizen Tenant");
+  const [tenantAddress] = useState("R.S. Puram, Coimbatore, Tamil Nadu - 641002");
+
+  const [plan, setPlan] = useState<TenantActionPlan | null>(null);
+  const [representationDoc, setRepresentationDoc] = useState<RepresentationData | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handlePlanAction = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setResult(null);
 
-    try {
-      const res = await navigateRightsDispute({
-        category: "tenant",
-        issueType: "Security Deposit Withholding",
-        description,
-        state,
-      });
-      setResult(res);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to process tenant rights dispute.");
-    } finally {
-      setLoading(false);
-    }
+    const actionPlan = planTenantAction({
+      state: selectedState,
+      district: district || undefined,
+      pinCode: pinCode || undefined,
+      propertyType,
+      agreementAvailable,
+      agreementRegistered,
+      monthlyRent: Number(monthlyRent) || undefined,
+      securityDepositPaid: Number(securityDeposit) || undefined,
+      issueType,
+      issueDescription,
+      noticeReceived: false,
+      handoverProofAvailable,
+      communicationsAvailable,
+      tenantName,
+      tenantAddress,
+    });
+
+    const doc = generateRepresentationDocument({
+      documentType: "TENANT_REPRESENTATION",
+      problemDescription: issueDescription,
+      locality: district || selectedState,
+      state: selectedState,
+      applicantName: tenantName,
+      applicantAddress: tenantAddress,
+      amountClaimed: securityDeposit ? `₹${securityDeposit.toLocaleString("en-IN")}` : undefined,
+    });
+
+    setPlan(actionPlan);
+    setRepresentationDoc(doc);
+    setLoading(false);
   };
 
-  const handleCopy = () => {
-    if (result?.representationLetter) {
-      const text = `To,\n${result.representationLetter.recipientTitle}\n\nSubject: ${result.representationLetter.subject}\n\n${result.representationLetter.body}`;
-      navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+  const handlePrint = () => {
+    if (representationDoc) {
+      const html = exportRepresentationHtml(representationDoc);
+      triggerPrintDocument(html);
     }
   };
 
   return (
     <div className="w-full py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
+      {/* Header */}
       <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-4">
         <Link href="/rights" className="inline-flex items-center gap-2 text-sm text-[#526176] hover:text-[#102A56] font-medium">
           <ArrowLeft className="w-4 h-4" />
           <span>{t("common.backToHome")}</span>
         </Link>
         <span className="text-xs font-semibold text-[#D97706] uppercase tracking-wider px-3 py-1 bg-[#FEF3C7] rounded-full border border-[#FDE68A]">
-          {t("ask.stateLabel")}
+          {t("tenantEngine.badge")}
         </span>
       </div>
 
-      <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56]">{t("rights.tenantTitle")}</h1>
-        <p className="text-sm text-[#526176]">
-          {t("rights.tenantDesc")}
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56] tracking-tight">
+          {t("tenantEngine.title")}
+        </h1>
+        <p className="mt-2 text-sm text-[#526176]">
+          {t("tenantEngine.subtitle")}
         </p>
       </div>
 
-      {/* Form Input */}
-      <form onSubmit={handleNavigate} className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-6">
-        <div className="space-y-2">
-          <label className="block text-sm font-bold text-[#102A56]">
-            {t("ask.problemLabel")} <span className="text-red-500">*</span>
-          </label>
+      {/* Guided Tenant Interview */}
+      <form onSubmit={handlePlanAction} className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-sm space-y-6">
+        <h2 className="text-base font-bold text-[#102A56] flex items-center gap-2">
+          <Building className="w-5 h-5 text-amber-600" />
+          {t("tenantEngine.tellUsTitle")}
+        </h2>
+
+        {/* Location Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">{t("ask.stateLabel")} *</label>
+            <select
+              value={selectedState}
+              onChange={(e) => setSelectedState(e.target.value)}
+              className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-900"
+            >
+              {ALL_STATES_AND_UTS.map((s) => (
+                <option key={s.code} value={s.name}>
+                  {s.name} ({s.code})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">{t("ask.districtLabel")}</label>
+            <input
+              type="text"
+              value={district}
+              onChange={(e) => setDistrict(e.target.value)}
+              placeholder={t("tenantEngine.districtPlaceholder")}
+              className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">{t("ask.pinCodeLabel")}</label>
+            <input
+              type="text"
+              maxLength={6}
+              value={pinCode}
+              onChange={(e) => setPinCode(e.target.value)}
+              placeholder={t("tenantEngine.pinPlaceholder")}
+              className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 font-mono"
+            />
+          </div>
+        </div>
+
+        {/* Property & Issue Details */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">{t("tenantEngine.propertyTypeLabel")}</label>
+            <select
+              value={propertyType}
+              onChange={(e) => setPropertyType(e.target.value as "RESIDENTIAL" | "COMMERCIAL" | "OTHER")}
+              className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-900"
+            >
+              <option value="RESIDENTIAL">{t("tenantEngine.propResidential")}</option>
+              <option value="COMMERCIAL">{t("tenantEngine.propCommercial")}</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">{t("tenantEngine.issueCategoryLabel")}</label>
+            <select
+              value={issueType}
+              onChange={(e) => setIssueType(e.target.value as TenantIssueType)}
+              className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-900"
+            >
+              <option value="SECURITY_DEPOSIT">{t("tenantEngine.catDeposit")}</option>
+              <option value="EVICTION">{t("tenantEngine.catEviction")}</option>
+              <option value="RENT_INCREASE">{t("tenantEngine.catRentIncrease")}</option>
+              <option value="ESSENTIAL_SERVICES">{t("tenantEngine.catEssential")}</option>
+              <option value="MAINTENANCE">{t("tenantEngine.catMaintenance")}</option>
+              <option value="LOCKOUT">{t("tenantEngine.catLockout")}</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">{t("tenantEngine.depositHeldLabel")}</label>
+            <input
+              type="number"
+              value={securityDeposit}
+              onChange={(e) => setSecurityDeposit(Number(e.target.value))}
+              className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 font-mono"
+            />
+          </div>
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className="block text-xs font-bold text-slate-700 mb-1">{t("ask.problemDescLabel")} *</label>
           <textarea
             rows={3}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-3 bg-white border border-[#BCD7EE] rounded-xl text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
-            required
+            value={issueDescription}
+            onChange={(e) => setIssueDescription(e.target.value)}
+            className="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900"
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="block text-xs font-bold text-[#102A56]">{t("ask.stateLabel")}</label>
-          <input
-            type="text"
-            value={state}
-            onChange={(e) => setState(e.target.value)}
-            className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
-            required
-          />
+        {/* Checkbox Proofs */}
+        <div className="flex flex-wrap gap-4 text-xs font-medium text-slate-700">
+          <label className="inline-flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={agreementAvailable}
+              onChange={(e) => setAgreementAvailable(e.target.checked)}
+              className="rounded text-amber-600"
+            />
+            <span>{t("tenantEngine.chkAgreement")}</span>
+          </label>
+          <label className="inline-flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={agreementRegistered}
+              onChange={(e) => setAgreementRegistered(e.target.checked)}
+              className="rounded text-amber-600"
+            />
+            <span>{t("tenantEngine.chkRegistered")}</span>
+          </label>
+          <label className="inline-flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={handoverProofAvailable}
+              onChange={(e) => setHandoverProofAvailable(e.target.checked)}
+              className="rounded text-amber-600"
+            />
+            <span>{t("tenantEngine.chkHandover")}</span>
+          </label>
         </div>
-
-        {error && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{error}</span>
-          </div>
-        )}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full inline-flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-bold text-white bg-[#4F46E5] hover:bg-[#4338CA] transition-colors"
+          className="w-full p-3.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-all"
         >
-          <Sparkles className="w-5 h-5" />
-          <span>{loading ? "Navigating Tenant Rights..." : "Navigate Tenant Rights"}</span>
+          <Building className="w-4 h-4" />
+          <span>{t("tenantEngine.btnResolve")}</span>
         </button>
       </form>
 
-      {/* Result Display */}
-      {result && (
+      {/* Results View */}
+      {plan && (
         <div className="space-y-6">
-          {/* {t("ask.stateLabel")} Warning */}
-          {result.jurisdictionWarning && (
-            <div className="flex items-start gap-3 p-4 rounded-xl bg-[#FEF3C7] border border-[#FDE68A] text-[#92400E] text-sm">
-              <AlertTriangle className="w-5 h-5 text-[#D97706] shrink-0 mt-0.5" />
-              <div>
-                <h4 className="font-bold">{t("ask.stateLabel")} Warning</h4>
-                <p className="text-xs leading-relaxed">{result.jurisdictionWarning}</p>
-              </div>
+          {/* State Law Status Banner */}
+          <div className="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-2 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-amber-950 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-amber-600" />
+                {t("tenantEngine.stateLawTitle")}
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-200 text-amber-900">
+                {plan.stateRecord.verificationTier} VERIFIED
+              </span>
             </div>
-          )}
+            <div className="font-semibold text-amber-900 text-sm">{plan.applicableLaw.actTitle}</div>
+            <p className="text-slate-700">{plan.statutoryRule.summary}</p>
+            {plan.stateRecord.notes && (
+              <p className="text-[11px] text-amber-800 italic pt-1 border-t border-amber-200/60">
+                📌 {plan.stateRecord.notes}
+              </p>
+            )}
+          </div>
 
-          {/* Guidance Card */}
-          <div className="p-6 rounded-2xl bg-[#F4F9FF] border border-[#BCD7EE] space-y-4">
-            <h3 className="text-lg font-bold text-[#102A56]">{result.issueTitle}</h3>
-            <p className="text-sm text-[#172033] leading-relaxed">{result.summary}</p>
-            {result.escalationPathway && (
-              <div className="pt-2 border-t border-[#BCD7EE] flex flex-wrap gap-4 text-xs font-bold text-[#0369A1]">
-                <a href={result.escalationPathway.portalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:underline">
-                  <span>Escalation Authority: {result.escalationPathway.portalName}</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
+          {/* Authority Resolution Card */}
+          <div className="p-5 rounded-2xl bg-[#F8FAFC] border border-slate-200 space-y-2 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-slate-900 flex items-center gap-2">
+                <Building className="w-4 h-4 text-indigo-600" />
+                {t("tenantEngine.rentAuthTitle")}
+              </span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200">
+                {plan.authorityResolution.confidence} CONFIDENCE
+              </span>
+            </div>
+            <div className="font-semibold text-slate-800">{plan.authorityResolution.rentAuthorityName}</div>
+            <p className="text-slate-600">Appellate Forum: {plan.authorityResolution.rentCourtName}</p>
+            {plan.authorityResolution.registrationPortal && (
+              <div className="pt-1">
+                <a
+                  href={plan.authorityResolution.registrationPortal}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 font-bold text-indigo-600 hover:text-indigo-800"
+                >
+                  <span>{t("tenantEngine.regPortal")}</span>
+                  <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
             )}
           </div>
 
-          {/* Bureaucracy Translation Block */}
-          {result.bureaucracyTranslation && (
-            <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] space-y-4">
-              <h4 className="text-base font-bold text-[#102A56]">{t("common.statutoryDisputeNav")}</h4>
-              <p className="text-sm text-[#526176]">{result.bureaucracyTranslation.whatThisMeans}</p>
-              <div className="space-y-2 text-xs">
-                <strong className="text-[#102A56] block">{t("common.action")}</strong>
-                <p className="text-[#526176]">{result.bureaucracyTranslation.whatYouShouldDoNow}</p>
-              </div>
-            </div>
-          )}
+          {/* Action Steps */}
+          <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-sm space-y-4">
+            <h3 className="text-sm font-bold text-[#102A56] uppercase tracking-wider flex items-center gap-2">
+              <Scale className="w-4 h-4 text-amber-600" />
+              {t("tenantEngine.ladderTitle")}
+            </h3>
 
-          {/* Generated Representation Letter */}
-          {result.representationLetter && (
-            <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] space-y-4 no-print">
-              <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-3">
-                <h4 className="text-base font-bold text-[#102A56]">{t("preview.generatedTitle")}</h4>
-                <div className="flex gap-2">
-                  <button onClick={handleCopy} className="px-3 py-1.5 rounded-lg bg-white border border-[#BCD7EE] text-xs font-semibold text-[#102A56] inline-flex items-center gap-1">
-                    {copied ? <Check className="w-3.5 h-3.5 text-green-600" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copied ? "Copied!" : "Copy"}</span>
-                  </button>
-                  <button onClick={() => window.print()} className="px-3 py-1.5 rounded-lg bg-[#4F46E5] text-xs font-semibold text-white inline-flex items-center gap-1">
-                    <Printer className="w-3.5 h-3.5" />
-                    <span>{t("common.downloadPdf")}</span>
-                  </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {plan.actionSteps.map((step) => (
+                <div key={step.stepNumber} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-amber-950">
+                      Step {step.stepNumber}: {step.title}
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900">
+                      {step.timelineDays} Days
+                    </span>
+                  </div>
+                  <p className="text-slate-600">{step.description}</p>
                 </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Explainer & Why This Result */}
+          <PlainLanguageExplainer definitionKey="TNRRRLT_SEC_11" />
+          <WhyThisResultPanel
+            title={plan.applicableLaw.actTitle}
+            resultSummary={`Tenancy dispute resolved under ${plan.location.stateName} state tenancy legislation.`}
+            confidence={plan.confidence}
+            reasons={[
+              plan.statutoryRule.summary,
+              "Tenancy law is enacted and administered strictly at the State / Union Territory level.",
+              "Model Tenancy Act serves as a central framework and does not substitute for notified state enactments.",
+            ]}
+            officialSources={[
+              { id: plan.applicableLaw.sourceId, name: plan.applicableLaw.actTitle, url: plan.applicableLaw.sourceUrl || "https://www.indiacode.nic.in" },
+            ]}
+          />
+
+          {/* Generated Representation Notice */}
+          {representationDoc && (
+            <div className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-sm space-y-4">
+              <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-3 flex-wrap gap-2">
+                <div>
+                  <h4 className="text-sm font-bold text-[#102A56]">{representationDoc.title}</h4>
+                  <span className="text-[11px] text-slate-500">Statutory Notice Period: {representationDoc.responseTimelineDays} Days</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handlePrint}
+                  className="px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 shadow-2xs"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>{t("tenantEngine.printPdf")}</span>
+                </button>
               </div>
-              <div className="p-4 rounded-xl bg-[#F4F9FF] border border-[#BCD7EE] text-xs space-y-2 font-mono text-[#172033]">
-                <p>{t("preview.targetAuth")}</p>
-                <p className="font-bold">{result.representationLetter.recipientTitle}</p>
-                <p className="font-bold text-[#4F46E5]">Subject: {result.representationLetter.subject}</p>
-                <p className="whitespace-pre-line leading-relaxed pt-2">{result.representationLetter.body}</p>
+
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3 font-sans text-xs text-slate-900 leading-relaxed max-h-[300px] overflow-y-auto">
+                <div className="font-bold text-center uppercase tracking-wide text-[#102A56]">
+                  {representationDoc.title}
+                </div>
+                <div>
+                  <strong>{t("tenantEngine.toLabel")}</strong> {representationDoc.recipientTitle}, {representationDoc.recipientOrg} ({representationDoc.recipientAddress})
+                </div>
+                <div>
+                  <strong>{t("tenantEngine.subjectLabel")}</strong> {representationDoc.subject}
+                </div>
+                <div className="space-y-1">
+                  <strong>{t("tenantEngine.factsLabel")}</strong>
+                  {representationDoc.factsAndGrievance.map((f, i) => (
+                    <p key={i}>• {f}</p>
+                  ))}
+                </div>
+                <div className="space-y-1">
+                  <strong>{t("tenantEngine.statutoryBasisLabel")}</strong>
+                  {representationDoc.legalStatutoryBasis.map((b, i) => (
+                    <p key={i}>• {b}</p>
+                  ))}
+                </div>
+                <div className="space-y-1">
+                  <strong>{t("tenantEngine.reliefLabel")}</strong>
+                  {representationDoc.demandedRelief.map((r, i) => (
+                    <p key={i}>• {r}</p>
+                  ))}
+                </div>
               </div>
             </div>
           )}
