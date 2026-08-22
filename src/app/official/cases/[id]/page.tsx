@@ -3,21 +3,26 @@
 import React, { useState, useMemo, use } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
-import { useRole, Case } from "@/context/RoleContext";
+import { useRole } from "@/context/RoleContext";
 import {
   ArrowLeft,
-  Scale,
   Clock,
   ShieldCheck,
   FileText,
   Activity,
   CheckCircle,
-  Save
+  Save,
+  CheckCircle2,
+  MapPin,
+  Camera,
+  UserCheck
 } from "lucide-react";
-import { Card, AIResponseCard } from "@/components/Card";
-import { PrimaryButton } from "@/components/Button";
+import { Card } from "@/components/Card";
+import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { Toast, AlertBanner } from "@/components/Feedback";
-import { Input, TextArea } from "@/components/Input";
+import { OfficerRectificationModal } from "@/components/evidence/OfficerRectificationModal";
+import { BeforeAfterComparisonPanel } from "@/components/evidence/BeforeAfterComparisonPanel";
+import { triggerPrintDocument, exportRectificationEvidencePackHtml } from "@/lib/pdf/print-export";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -26,30 +31,25 @@ interface PageProps {
 export default function OfficialCaseDetailsPage({ params }: PageProps) {
   const { t } = useLanguage();
   const { id } = use(params);
-  const { cases, updateCaseStatus } = useRole();
+  const {
+    cases,
+    assignCaseToDepartment,
+    markCaseWorkInProgress,
+    submitOfficerRectification,
+    updateCaseStatus
+  } = useRole();
 
-  // Memoized case lookup
   const caseItem = useMemo(() => cases.find((c) => c.id === id) ?? null, [id, cases]);
 
-  // Editable fields for officials
-  const [status, setStatus] = useState<Case["status"]>(caseItem?.status ?? "Pending");
-  const [priority, setPriority] = useState<Case["priority"]>(caseItem?.priority ?? "Medium");
-  const [assignedOfficial, setAssignedOfficial] = useState(caseItem?.assignedOfficial ?? "");
-  const [internalNotes, setInternalNotes] = useState(caseItem?.internalNotes ?? "");
-  
   const [toastMsg, setToastMsg] = useState("");
-
-  // Removed stateful case lookup; using memoized `caseItem` instead.
-
-  // Sync derived fields when caseItem updates
-  // Sync derived fields when caseItem updates
-
+  const [isRectificationModalOpen, setIsRectificationModalOpen] = useState(false);
+  const [assignDept, setAssignDept] = useState("Engineering & Roads Department");
+  const [assignOfficer, setAssignOfficer] = useState("Assistant Executive Engineer");
 
   if (!caseItem) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center bg-white border border-borders rounded-lg max-w-xl mx-auto my-12">
         <h2 className="text-lg font-bold text-dark-text">{t("dashboard.emptyState")}</h2>
-        <p className="text-xs text-secondary-text mt-2">{t("dashboard.emptyState")}</p>
         <Link href="/official" className="mt-4 text-xs font-bold text-indigo-primary hover:underline">
           {t("common.backToHome")}
         </Link>
@@ -57,10 +57,54 @@ export default function OfficialCaseDetailsPage({ params }: PageProps) {
     );
   }
 
-  const handleSaveChanges = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateCaseStatus(caseItem.id, status, internalNotes, priority, assignedOfficial || undefined);
-    setToastMsg("Official record updated successfully!");
+  const latestRecord = caseItem.rectificationRecords?.[caseItem.rectificationRecords.length - 1];
+  const beforeEvidence = caseItem.civicEvidence?.find((e) => e.stage === "BEFORE_RECTIFICATION");
+  const afterEvidence = caseItem.civicEvidence?.find((e) => e.stage === "OFFICER_RECTIFICATION");
+
+  const handleAssign = () => {
+    assignCaseToDepartment(caseItem.id, assignDept, assignOfficer);
+    setToastMsg(`Case assigned to ${assignDept}!`);
+  };
+
+  const handleStartWork = () => {
+    markCaseWorkInProgress(caseItem.id, "Work crew dispatched to reported location.");
+    setToastMsg("Case status updated to IN_PROGRESS!");
+  };
+
+  const handleExportEvidencePack = () => {
+    const html = exportRectificationEvidencePackHtml({
+      caseId: caseItem.id,
+      issueDescription: caseItem.issue,
+      locationDetails: `${caseItem.locality}, ${caseItem.district}, ${caseItem.state}`,
+      submissionDate: new Date(caseItem.createdAt).toLocaleDateString(),
+      department: caseItem.assignment?.assignedDepartment || caseItem.localBodyName,
+      officerDesignation: caseItem.assignment?.assignedOfficerDesignation,
+      rectifiedDate: latestRecord ? new Date(latestRecord.rectifiedAt).toLocaleDateString() : "Pending",
+      officerActionNote: latestRecord?.officerActionNote || "Work in progress",
+      locationConsistency: latestRecord?.locationConsistency || "NOT_AVAILABLE",
+      distanceMeters: latestRecord?.distanceMeters,
+      citizenStatus: caseItem.status,
+      citizenComments: latestRecord?.citizenFeedback,
+      beforeEvidence: beforeEvidence
+        ? {
+            id: beforeEvidence.id,
+            description: beforeEvidence.description,
+            date: new Date(beforeEvidence.capturedAt).toLocaleDateString(),
+            locationText: beforeEvidence.location ? `${beforeEvidence.location.latitude.toFixed(5)}°, ${beforeEvidence.location.longitude.toFixed(5)}°` : undefined,
+            checksum: beforeEvidence.sha256Checksum,
+          }
+        : undefined,
+      afterEvidence: afterEvidence
+        ? {
+            id: afterEvidence.id,
+            description: afterEvidence.description,
+            date: new Date(afterEvidence.capturedAt).toLocaleDateString(),
+            locationText: afterEvidence.location ? `${afterEvidence.location.latitude.toFixed(5)}°, ${afterEvidence.location.longitude.toFixed(5)}°` : undefined,
+            checksum: afterEvidence.sha256Checksum,
+          }
+        : undefined,
+    });
+    triggerPrintDocument(html);
   };
 
   return (
@@ -68,240 +112,244 @@ export default function OfficialCaseDetailsPage({ params }: PageProps) {
       {toastMsg && <Toast type="success" message={toastMsg} onClose={() => setToastMsg("")} />}
 
       {/* Navigation Header */}
-      <div className="flex items-center gap-3 border-b border-borders pb-4">
-        <Link
-          href="/official"
-          className="p-2 rounded-lg text-secondary-text hover:text-dark-text hover:bg-slate-50 transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-        <div>
-          <span className="text-[10px] text-indigo-primary font-bold uppercase tracking-wider block">{t("official.badge")}</span>
-          <h1 className="text-xl font-bold tracking-tight text-dark-text sm:text-2xl uppercase">
-            Review Request {caseItem.id}
-          </h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-borders pb-4">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/official"
+            className="p-2 rounded-lg text-secondary-text hover:text-dark-text hover:bg-slate-50 transition-colors"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <div>
+            <span className="text-[10px] text-indigo-primary font-bold uppercase tracking-wider block">
+              Official Grievance Review &amp; Rectification
+            </span>
+            <h1 className="text-xl font-bold tracking-tight text-dark-text sm:text-2xl uppercase">
+              Case {caseItem.id}
+            </h1>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportEvidencePack}
+            className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs cursor-pointer"
+          >
+            Print Evidence Record
+          </button>
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+            {caseItem.status}
+          </span>
         </div>
       </div>
 
-      {/* Grid separating Official Decisions from AI-generated Information */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* LEFT COLUMN: OFFICIAL DECISIONS & ACTIONS (Authority Source) */}
-        <div className="lg:col-span-7 space-y-6">
-          
-          <div className="border-b border-borders pb-1.5">
-            <h2 className="text-xs font-bold text-dark-text uppercase tracking-wider">{t("official.title")}</h2>
-            <p className="text-[10.5px] text-secondary-text">{t("official.subtitle")}</p>
-          </div>
+      {/* Before / After Evidence Panel */}
+      {(beforeEvidence || afterEvidence) && (
+        <BeforeAfterComparisonPanel
+          beforeEvidence={beforeEvidence}
+          afterEvidence={afterEvidence}
+          locationConsistency={latestRecord?.locationConsistency}
+          distanceMeters={latestRecord?.distanceMeters}
+          accuracyToleranceMeters={latestRecord?.accuracyToleranceMeters}
+          officerActionNote={latestRecord?.officerActionNote}
+          department={caseItem.assignment?.assignedDepartment}
+          officerDesignation={caseItem.assignment?.assignedOfficerDesignation}
+        />
+      )}
 
-          {/* Citizen Issue Summary */}
-          <Card className="border-l-4 border-indigo-primary">
-            <div className="mb-4">
-              <span className="text-[10px] text-secondary-text font-bold uppercase tracking-wider block">{t("ask.applicantNameLabel")}</span>
-              <span className="text-sm font-bold text-dark-text">{caseItem.applicantName || "Anonymous Citizen"}</span>
-              <span className="text-xs text-secondary-text block leading-relaxed mt-0.5">{caseItem.applicantAddress || "Address confidential / Local browser"}</span>
+      {/* Grid: Official Actions vs Timeline */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="lg:col-span-7 space-y-6">
+          {/* Citizen Grievance Summary */}
+          <Card className="border-l-4 border-indigo-primary space-y-3">
+            <div>
+              <span className="text-[10px] text-secondary-text font-bold uppercase tracking-wider block">
+                {t("ask.applicantNameLabel")}
+              </span>
+              <span className="text-sm font-bold text-dark-text">
+                {caseItem.applicantName || "Anonymous Citizen"}
+              </span>
+              <span className="text-xs text-secondary-text block leading-relaxed mt-0.5">
+                {caseItem.applicantAddress || `${caseItem.locality}, ${caseItem.district}`}
+              </span>
             </div>
 
-            <div className="border-t border-borders pt-4 space-y-2">
-              <span className="text-[10px] text-secondary-text font-bold uppercase tracking-wider block">{t("ask.problemLabel")}</span>
+            <div className="border-t border-borders pt-3 space-y-1">
+              <span className="text-[10px] text-secondary-text font-bold uppercase tracking-wider block">
+                Reported Grievance
+              </span>
               <p className="text-xs text-dark-text leading-relaxed font-semibold">
                 &ldquo;{caseItem.issue}&rdquo;
               </p>
             </div>
-            
-            {caseItem.uploadedFiles && caseItem.uploadedFiles.length > 0 && (
-              <div className="border-t border-borders pt-4 mt-4">
-                <span className="text-[10px] text-secondary-text font-bold uppercase tracking-wider block mb-2">Attached Local Files ({caseItem.uploadedFiles.length})</span>
-                <div className="space-y-1.5">
-                  {caseItem.uploadedFiles.map((file, idx) => (
-                    <div key={idx} className="flex items-center gap-2 p-2 bg-slate-50 border border-borders rounded text-xs">
-                      <FileText className="h-4.5 w-4.5 text-indigo-primary shrink-0" />
-                      <span className="font-semibold text-dark-text">{file.name}</span>
-                      <span className="text-secondary-text ml-auto">{file.size}</span>
-                    </div>
-                  ))}
-                </div>
+
+            {caseItem.issueCoordinates && (
+              <div className="flex items-center gap-1.5 text-xs text-indigo-700 font-mono pt-1">
+                <MapPin className="w-3.5 h-3.5" />
+                <span>
+                  Incident Location: {caseItem.issueCoordinates.latitude.toFixed(5)}°, {caseItem.issueCoordinates.longitude.toFixed(5)}°
+                </span>
               </div>
             )}
           </Card>
 
-          {/* Official Action Controls */}
-          <Card className="bg-white border-borders">
-            <form onSubmit={handleSaveChanges} className="space-y-5">
-              <div className="border-b border-borders pb-2">
-                <span className="text-[10px] font-bold text-indigo-primary uppercase tracking-wide">{t("official.title")}</span>
-                <h3 className="text-xs font-bold text-dark-text uppercase tracking-wide mt-0.5">{t("common.edit")}</h3>
-              </div>
+          {/* Operational Workflow Steps */}
+          <Card className="bg-white border-borders space-y-4">
+            <div className="border-b border-borders pb-2">
+              <span className="text-[10px] font-bold text-indigo-primary uppercase tracking-wide">
+                Officer Actions
+              </span>
+              <h3 className="text-xs font-bold text-dark-text uppercase tracking-wide mt-0.5">
+                Execute Rectification Lifecycle
+              </h3>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-dark-text uppercase">{t("common.status")}</label>
-                  <select
-                    value={status}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatus(e.target.value as Case["status"]) }
-                    className="w-full px-3 py-2 rounded-lg border border-borders text-xs font-semibold text-dark-text bg-white focus:outline-none focus:border-indigo-primary cursor-pointer"
-                  >
-                    <option value="Pending">{t("common.status")}</option>
-                    <option value="In Progress">{t("common.status")}</option>
-                    <option value="Resolved">{t("common.status")}</option>
-                  </select>
+            {/* Stage 1: Assign Case */}
+            {caseItem.status === "SUBMITTED" && (
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                <span className="text-xs font-bold text-slate-800 block">
+                  1. Assign Competent Department &amp; Officer
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <input
+                    type="text"
+                    value={assignDept}
+                    onChange={(e) => setAssignDept(e.target.value)}
+                    placeholder="Department"
+                    className="p-2 bg-white border border-slate-300 rounded-lg"
+                  />
+                  <input
+                    type="text"
+                    value={assignOfficer}
+                    onChange={(e) => setAssignOfficer(e.target.value)}
+                    placeholder="Officer Designation"
+                    className="p-2 bg-white border border-slate-300 rounded-lg"
+                  />
                 </div>
+                <button
+                  type="button"
+                  onClick={handleAssign}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold hover:bg-indigo-700 cursor-pointer"
+                >
+                  Accept &amp; Assign Case
+                </button>
+              </div>
+            )}
 
-                <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-dark-text uppercase">{t("common.filter")}</label>
-                  <select
-                    value={priority}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPriority(e.target.value as Case["priority"]) }
-                    className="w-full px-3 py-2 rounded-lg border border-borders text-xs font-semibold text-dark-text bg-white focus:outline-none focus:border-indigo-primary cursor-pointer"
-                  >
-                    <option value="Low">{t("common.filter")}</option>
-                    <option value="Medium">{t("common.filter")}</option>
-                    <option value="High">{t("common.filter")}</option>
-                    <option value="Urgent">{t("common.filter")}</option>
-                  </select>
+            {/* Stage 2: Start Work */}
+            {caseItem.status === "ASSIGNED" && (
+              <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-200 space-y-3">
+                <div>
+                  <span className="text-xs font-bold text-indigo-950 block">
+                    2. Deploy Work Crew &amp; Mark In Progress
+                  </span>
+                  <p className="text-[11px] text-indigo-700 mt-0.5">
+                    Assigned to: {caseItem.assignment?.assignedDepartment} ({caseItem.assignment?.assignedOfficerDesignation})
+                  </p>
                 </div>
+                <button
+                  type="button"
+                  onClick={handleStartWork}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-xs font-bold hover:bg-indigo-700 cursor-pointer"
+                >
+                  Mark Work In Progress
+                </button>
               </div>
+            )}
 
-              <Input
-                label="Assigned Officer Name"
-                placeholder={t("ask.applicantNamePlaceholder")}
-                value={assignedOfficial}
-                onChange={(e) => setAssignedOfficial(e.target.value)}
-              />
-
-              <TextArea
-                label="Internal Audit & Case Progress Notes"
-                placeholder={t("ask.problemPlaceholder")}
-                value={internalNotes}
-                onChange={(e) => setInternalNotes(e.target.value)}
-                rows={3}
-              />
-
-              <div className="pt-2 flex justify-end">
-                <PrimaryButton type="submit" icon={Save}>
-                  {t("common.save")}
-                </PrimaryButton>
+            {/* Stage 3: Submit Rectification Proof */}
+            {(caseItem.status === "IN_PROGRESS" || caseItem.status === "REOPENED") && (
+              <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-300 space-y-3">
+                <div>
+                  <span className="text-xs font-bold text-emerald-950 block">
+                    3. Upload Proof of Work &amp; Mark Rectified
+                  </span>
+                  <p className="text-[11px] text-emerald-800 mt-0.5">
+                    Take an after-repair photo on site to generate a verifiable Before/After comparison for citizen review.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsRectificationModalOpen(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 shadow-xs cursor-pointer"
+                >
+                  <Camera className="w-4 h-4" />
+                  <span>Upload Rectification Evidence &amp; Mark Rectified</span>
+                </button>
               </div>
-            </form>
+            )}
+
+            {/* Stage 4: Awaiting Citizen Confirmation */}
+            {caseItem.status === "RECTIFIED_PENDING_CITIZEN_CONFIRMATION" && (
+              <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1">
+                <span className="font-bold block">Awaiting Citizen Confirmation</span>
+                <p>
+                  Proof of work has been submitted. The case will move to CLOSED once the citizen verifies resolution, or REOPENED if the citizen contests the repair.
+                </p>
+              </div>
+            )}
+
+            {/* Stage 5: Closed */}
+            {caseItem.status === "CLOSED" && (
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>
+                  Case successfully resolved and closed by citizen verification.
+                </span>
+              </div>
+            )}
           </Card>
+        </div>
 
-          {/* Timeline of events */}
-          <Card>
-            <span className="text-[10px] font-bold text-secondary-text uppercase tracking-wider block mb-4">{t("timelineEngine.title")}</span>
-            <div className="space-y-4 text-xs font-semibold text-secondary-text">
-              <div className="flex gap-3">
-                <CheckCircle className="h-4.5 w-4.5 text-indigo-primary shrink-0" />
-                <div>
-                  <span className="text-dark-text block">{t("timelineEngine.subtitle")}</span>
-                  <span className="text-[10px] block mt-0.5">{new Date(caseItem.createdAt).toLocaleString()}</span>
-                </div>
-              </div>
-              
-              <div className="flex gap-3">
-                <Clock className="h-4.5 w-4.5 text-indigo-primary shrink-0" />
-                <div>
-                  <span className="text-dark-text block">{t("official.title")}</span>
-                  <span className="text-[10px] block mt-0.5">{t("official.subtitle")}</span>
-                </div>
-              </div>
+        {/* RIGHT COLUMN: Audit Trail & Immutable Lifecycle History */}
+        <div className="lg:col-span-5 space-y-6">
+          <Card className="space-y-4">
+            <span className="text-[10px] font-bold text-secondary-text uppercase tracking-wider block">
+              Audit Trail &amp; Lifecycle Timeline
+            </span>
 
-              {caseItem.internalNotes && (
-                <div className="flex gap-3">
-                  <Activity className="h-4.5 w-4.5 text-indigo-primary shrink-0" />
-                  <div>
-                    <span className="text-dark-text block">{t("official.title")}</span>
-                    <p className="text-[10px] text-secondary-text leading-tight mt-1">{caseItem.internalNotes}</p>
+            <div className="space-y-3 text-xs">
+              {caseItem.history && caseItem.history.length > 0 ? (
+                caseItem.history.map((evt, idx) => (
+                  <div key={evt.eventId || idx} className="flex gap-3 pb-3 border-b border-slate-100 last:border-0 last:pb-0">
+                    <div className="p-1.5 rounded-full bg-indigo-50 text-indigo-600 h-fit mt-0.5">
+                      <Activity className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <span className="font-bold text-slate-800 block">{evt.action}</span>
+                      <div className="flex items-center gap-2 text-[10px] text-slate-500 font-medium">
+                        <span>{new Date(evt.timestamp).toLocaleString()}</span>
+                        <span>•</span>
+                        <span>{evt.actorTitle || evt.actorType}</span>
+                        {evt.cycleNumber && <span>• Cycle {evt.cycleNumber}</span>}
+                      </div>
+                      {evt.notes && (
+                        <p className="text-[11px] text-slate-600 italic mt-1">&ldquo;{evt.notes}&rdquo;</p>
+                      )}
+                    </div>
                   </div>
-                </div>
+                ))
+              ) : (
+                <p className="text-xs text-slate-500">No events recorded in history yet.</p>
               )}
             </div>
           </Card>
         </div>
-
-        {/* RIGHT COLUMN: AI-ASSISTED CIVIC INTELLIGENCE (Strict Visual Distinction) */}
-        <div className="lg:col-span-5 space-y-6">
-          
-          <div className="border-b border-borders pb-1.5">
-            <h2 className="text-xs font-bold text-sky-blue uppercase tracking-wider">{t("preview.generatedTitle")}</h2>
-            <p className="text-[10.5px] text-secondary-text">{t("preview.generatedSubtitle")}</p>
-          </div>
-
-          <AlertBanner
-            type="info"
-            message="AI-Generated Reference Guidance"
-            description="The card parameters below are generated by generative modules to assist the officer. They hold no legal authority and must be verified before formal municipal decisions are cleared."
-          />
-
-          {caseItem.aiResponse ? (
-            <div className="border border-sky-blue/20 rounded-lg overflow-hidden bg-sky-light-bg/25">
-              
-              {/* Classification */}
-              <div className="p-4 border-b border-sky-blue/10 bg-sky-light-bg/50 space-y-2">
-                <div className="flex justify-between items-center flex-wrap gap-2">
-                  <span className="text-[9px] font-bold text-indigo-primary uppercase tracking-wider block">{t("rights.badge")}</span>
-                  <span className="bg-sky-blue/10 text-indigo-primary px-2 py-0.5 rounded text-[9.5px] font-bold">
-                    {t("rights.badge")}
-                  </span>
-                </div>
-                <p className="text-xs text-secondary-text leading-relaxed">
-                  {t("rights.badge")}
-                </p>
-              </div>
-
-              {/* Subject Draft */}
-              <div className="p-4 border-b border-sky-blue/10 space-y-2.5">
-                <span className="text-[9px] font-bold text-secondary-text uppercase block">{t("preview.subjectLabel")}</span>
-                <p className="text-xs font-bold text-dark-text leading-normal">
-                  {caseItem.aiResponse.subject}
-                </p>
-              </div>
-
-              {/* Questions Draft */}
-              <div className="p-4 border-b border-sky-blue/10 space-y-3">
-                <span className="text-[9px] font-bold text-secondary-text uppercase block">{t("preview.bgContextLabel")}</span>
-                <ol className="list-decimal pl-4 space-y-2.5 text-xs font-medium text-dark-text/90">
-                  {caseItem.aiResponse.questions.map((q, idx) => (
-                    <li key={idx} className="leading-relaxed">{q}</li>
-                  ))}
-                </ol>
-              </div>
-
-              {/* Suggested citation list */}
-              <div className="p-4 space-y-3.5">
-                <span className="text-[9px] font-bold text-secondary-text uppercase block">{t("sources.title")}</span>
-                <div className="space-y-1.5">
-                  {caseItem.aiResponse.citationIds.map((cId) => (
-                    <div key={cId} className="flex items-center justify-between p-2 rounded bg-white border border-sky-blue/10 text-[11px] font-bold">
-                      <span>{cId}</span>
-                      <span className="text-[9.5px] text-indigo-primary font-bold flex items-center gap-0.5">
-                        <ShieldCheck className="h-3 w-3" /> {t("sources.verifiedBadge")}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-white border border-borders rounded-lg p-6 text-center text-xs text-secondary-text">
-              {t("dashboard.emptyState")}
-            </div>
-          )}
-
-          {/* AI Suggested Legal Provisions */}
-          <AIResponseCard title={t("sources.title")} variant="indigo" icon={Scale}>
-            <div className="space-y-3 text-xs leading-normal">
-              <div>
-                <span className="font-bold text-dark-text block">{t("common.legalDisclaimerTitle")}</span>
-                <p className="text-secondary-text mt-0.5">{t("common.legalDisclaimerBody")}</p>
-              </div>
-              <div>
-                <span className="font-bold text-dark-text block">{t("common.legalDisclaimerTitle")}</span>
-                <p className="text-secondary-text mt-0.5">{t("common.legalDisclaimerBody")}</p>
-              </div>
-            </div>
-          </AIResponseCard>
-        </div>
       </div>
+
+      {/* Officer Rectification Modal */}
+      {isRectificationModalOpen && (
+        <OfficerRectificationModal
+          caseId={caseItem.id}
+          issueDescription={caseItem.issue}
+          department={caseItem.assignment?.assignedDepartment || "Engineering & Roads Department"}
+          onClose={() => setIsRectificationModalOpen(false)}
+          onSubmit={async (proof) => {
+            await submitOfficerRectification(caseItem.id, proof);
+            setToastMsg("Proof of work submitted! Awaiting citizen verification.");
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -48,9 +48,9 @@ function OfficialDashboardContent() {
 
   // Compute stat counts
   const totalRequests = cases.length;
-  const pendingCount = cases.filter((c) => c.status === "Pending").length;
-  const inProgressCount = cases.filter((c) => c.status === "In Progress").length;
-  const resolvedCount = cases.filter((c) => c.status === "Resolved").length;
+  const pendingCount = cases.filter((c) => c.status === "SUBMITTED" || c.status === "ASSIGNED").length;
+  const inProgressCount = cases.filter((c) => c.status === "IN_PROGRESS" || c.status === "RECTIFIED_PENDING_CITIZEN_CONFIRMATION" || c.status === "REOPENED").length;
+  const resolvedCount = cases.filter((c) => c.status === "CLOSED").length;
   const urgentCount = cases.filter((c) => c.priority === "Urgent").length;
 
   // Filter cases based on search and selected filter parameters
@@ -62,7 +62,17 @@ function OfficialDashboardContent() {
       c.applicantName?.toLowerCase().includes(searchQuery.toLowerCase());
 
     // Status filter
-    const matchesStatus = statusFilter === "all" ? true : c.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all"
+        ? true
+        : statusFilter === "Pending"
+        ? c.status === "SUBMITTED" || c.status === "ASSIGNED"
+        : statusFilter === "In Progress"
+        ? c.status === "IN_PROGRESS" || c.status === "RECTIFIED_PENDING_CITIZEN_CONFIRMATION" || c.status === "REOPENED"
+        : statusFilter === "Resolved"
+        ? c.status === "CLOSED"
+        : c.status === statusFilter;
+
     const matchesPriority = priorityFilter === "all" ? true : c.priority === priorityFilter;
 
     return matchesSearch && matchesStatus && matchesPriority;
