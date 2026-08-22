@@ -4,7 +4,8 @@ import React, { useState, useRef, useMemo } from "react";
 import Link from "next/link";
 import { generateRtiApplication } from "@/services/api";
 import { GenerateRtiResponse } from "@/types/api";
-import GeneratedPreview from "@/components/rti/GeneratedPreview";
+import GeneratedPreview, { ApplicantLocalDetails } from "@/components/rti/GeneratedPreview";
+import VoiceInputButton from "@/components/voice/VoiceInputButton";
 import RtiFeeCalculator from "@/components/RtiFeeCalculator";
 import RtiStatutoryTimeline from "@/components/RtiStatutoryTimeline";
 import EvidenceOrganizer from "@/components/EvidenceOrganizer";
@@ -514,6 +515,15 @@ export default function AskPage() {
                     <span>{t("ask.btnStartVoice")}</span>
                   </button>
                 )}
+
+                <VoiceInputButton
+                  onTranscriptConfirmed={(transcript) => {
+                    setIssue(transcript);
+                    setIssueInputSource("voice");
+                  }}
+                  fieldLabel="Civic Problem Description"
+                  defaultLanguageId="ta"
+                />
 
                 {isTranscribing && (
                   <span className="text-[11px] text-slate-500 font-medium">{t("ask.transcribingText")}</span>

@@ -44,6 +44,12 @@ export default function Navbar() {
             <Link href="/schemes" className="hover:text-[#4F46E5] transition-colors">
               {t("nav.welfareSchemes")}
             </Link>
+            <Link href="/locator" className="hover:text-[#4F46E5] transition-colors">
+              Locator
+            </Link>
+            <Link href="/dashboard" className="hover:text-[#4F46E5] transition-colors">
+              Tracker
+            </Link>
             <Link href="/sources" className="hover:text-[#4F46E5] transition-colors">
               {t("nav.officialSources")}
             </Link>
@@ -104,11 +110,32 @@ export default function Navbar() {
             {t("nav.rightsNavigator")}
           </Link>
           <Link
+            href="/forms"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
+          >
+            Forms
+          </Link>
+          <Link
             href="/schemes"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
             {t("nav.welfareSchemes")}
+          </Link>
+          <Link
+            href="/locator"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
+          >
+            Authority Locator
+          </Link>
+          <Link
+            href="/dashboard"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
+          >
+            Statutory Tracker
           </Link>
           <Link
             href="/sources"
