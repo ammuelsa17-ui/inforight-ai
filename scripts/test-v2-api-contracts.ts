@@ -1751,6 +1751,28 @@ async function runRouteHandlerContractTests() {
       resourcesContent.includes("181 / 112"),
       "Women Helpline is correctly identified as 181 / 112"
     );
+
+    // 8. Forensic Language Quality & Zero Core English Leakage
+    const { teLocale } = await import("../src/i18n/locales/te");
+    const { urLocale } = await import("../src/i18n/locales/ur");
+    const { taLocale } = await import("../src/i18n/locales/ta");
+
+    assert(
+      teLocale.common.submit !== "Submit" && teLocale.common.submit.length > 0,
+      "Telugu common.submit is natively localized"
+    );
+    assert(
+      teLocale.ask.streetLayer !== "Street" && teLocale.ask.satelliteLayer !== "Satellite Imagery",
+      "Telugu map layers are natively localized"
+    );
+    assert(
+      urLocale.common.submit !== "Submit" && urLocale.common.submit.length > 0,
+      "Urdu common.submit is natively localized"
+    );
+    assert(
+      taLocale.common.submit !== "Submit" && taLocale.common.submit.length > 0,
+      "Tamil common.submit is natively localized"
+    );
   }
 
   console.log("\n=================================================================");
