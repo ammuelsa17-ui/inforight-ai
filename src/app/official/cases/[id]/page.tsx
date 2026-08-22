@@ -23,6 +23,7 @@ import { Toast, AlertBanner } from "@/components/Feedback";
 import { OfficerRectificationModal } from "@/components/evidence/OfficerRectificationModal";
 import { BeforeAfterComparisonPanel } from "@/components/evidence/BeforeAfterComparisonPanel";
 import { triggerPrintDocument, exportRectificationEvidencePackHtml } from "@/lib/pdf/print-export";
+import { JourneyProgress } from "@/components/tracker/JourneyProgress";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -142,6 +143,9 @@ export default function OfficialCaseDetailsPage({ params }: PageProps) {
           </span>
         </div>
       </div>
+
+      {/* Two-Sided Civic Resolution Progress */}
+      <JourneyProgress stage={caseItem.status} reopenCount={caseItem.rectificationRecords?.length || 0} />
 
       {/* Before / After Evidence Panel */}
       {(beforeEvidence || afterEvidence) && (

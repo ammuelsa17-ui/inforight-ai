@@ -9,6 +9,7 @@ import { Copy, Printer, ArrowLeft, CheckCircle2, AlertTriangle, Activity } from 
 import { BeforeAfterComparisonPanel } from "@/components/evidence/BeforeAfterComparisonPanel";
 import { CitizenConfirmationModal } from "@/components/evidence/CitizenConfirmationModal";
 import { triggerPrintDocument, exportRectificationEvidencePackHtml } from "@/lib/pdf/print-export";
+import { JourneyProgress } from "@/components/tracker/JourneyProgress";
 
 export default function CitizenCasePage() {
   const { t } = useLanguage();
@@ -105,6 +106,9 @@ export default function CitizenCasePage() {
           </span>
         </div>
       </div>
+
+      {/* Visual Journey Progress Bar */}
+      <JourneyProgress stage={selectedCase.status} reopenCount={selectedCase.rectificationRecords?.length || 0} />
 
       {/* Citizen Rectification Action Banner */}
       {selectedCase.status === "RECTIFIED_PENDING_CITIZEN_CONFIRMATION" && (
