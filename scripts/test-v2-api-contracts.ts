@@ -1419,6 +1419,128 @@ async function runRouteHandlerContractTests() {
     assert(htmlReport.includes("SHA-256"), "Report displays tamper-detection SHA-256 checksums");
   }
 
+  // =========================================================================
+  // SECTION 18: Real-Time Government Data & Authority Resolution Layer Tests
+  // =========================================================================
+  {
+    console.log("\n--- SECTION 18: Real-Time Government Data & Authority Resolution Tests ---");
+
+    const { isApprovedOfficialHost } = await import("@/lib/government-data/security");
+    const { PostalLocationProvider } = await import("@/lib/government-data/adapters/postal-location");
+    const { getDistrictsForStateRealtime } = await import("@/lib/government-data/adapters/districts");
+    const { resolveLocalBody } = await import("@/lib/government-data/adapters/local-bodies");
+    const { resolveRtiAuthority } = await import("@/lib/government-data/adapters/rti-authority");
+    const { getConsumerDirectoryRecord } = await import("@/lib/government-data/adapters/consumer-directory");
+    const { resolveLabourOffice } = await import("@/lib/government-data/adapters/labour-directory");
+    const { discoverGovernmentSchemes } = await import("@/lib/government-data/adapters/schemes");
+    const { getVersionedRule } = await import("@/lib/government-data/versioned-rules");
+
+    // 1. Security & Official Host Allowlist
+    assert(isApprovedOfficialHost("https://api.postalpincode.in/pincode/641002") === true, "India Post API is approved");
+    assert(isApprovedOfficialHost("https://edaakhil.nic.in") === true, "eDaakhil portal is approved");
+    assert(isApprovedOfficialHost("https://rtionline.gov.in") === true, "RTI Online portal is approved");
+    assert(isApprovedOfficialHost("https://evil-site.com") === false, "Arbitrary non-gov host is strictly blocked");
+    assert(isApprovedOfficialHost("http://localhost:3000") === false, "Localhost SSRF attempt is strictly blocked");
+
+    // 2. Postal Location Provider & Fallback
+    const postalProvider = new PostalLocationProvider();
+    const mockPostalJson = [
+      {
+        Status: "Success",
+        PostOffice: [
+          {
+            Name: "R.S.Puram Head Post Office",
+            BranchType: "Head Post Office",
+            DeliveryStatus: "Delivery",
+            Circle: "Tamil Nadu",
+            District: "Coimbatore",
+            Division: "Coimbatore",
+            Region: "Coimbatore",
+            State: "Tamil Nadu",
+            Pincode: "641002"
+          }
+        ]
+      }
+    ];
+
+    const normalizedLocation = postalProvider.normalizeRawResponse("641002", mockPostalJson);
+    assert(normalizedLocation.state === "Tamil Nadu", "Derived State is Tamil Nadu");
+    assert(normalizedLocation.district === "Coimbatore", "Derived District is Coimbatore");
+    assert(normalizedLocation.localityCandidates.includes("R.S.Puram Head Post Office"), "Localities include RS Puram HPO");
+    assert(normalizedLocation.provenance.resolutionMode === "LIVE", "Provenance records resolutionMode LIVE");
+
+    const fallbackLoc = await postalProvider.getFallback("641002");
+    assert(fallbackLoc?.confidence === "HIGH", "Fallback yields HIGH confidence for verified static PIN");
+
+    // 3. District Data Provider
+    const districtsTN = await getDistrictsForStateRealtime("Tamil Nadu");
+    assert(districtsTN.districts.includes("Coimbatore"), "Tamil Nadu districts include Coimbatore");
+    assert(districtsTN.totalCount >= 38, "Tamil Nadu total district count >= 38");
+
+    // 4. Local Body Resolver
+    const localBodyCoimbatore = await resolveLocalBody({ state: "Tamil Nadu", district: "Coimbatore", pinCode: "641002" });
+    assert(localBodyCoimbatore.name.includes("Coimbatore City Municipal Corporation"), "Resolved CCMC local body");
+    assert(localBodyCoimbatore.type === "MUNICIPAL_CORPORATION", "Local body categorized as MUNICIPAL_CORPORATION");
+
+    const localBodyBengaluru = await resolveLocalBody({ state: "Karnataka", district: "Bengaluru Urban" });
+    assert(localBodyBengaluru.name.includes("BBMP"), "Bengaluru resolves to BBMP");
+
+    // 5. RTI Authority Resolver
+    const rtiAuthCentral = await resolveRtiAuthority({
+      subject: "Passport delay inquiry",
+      state: "Delhi",
+      district: "New Delhi",
+      isCentralBody: true
+    });
+    assert(rtiAuthCentral.level === "CENTRAL", "Passport inquiry routes to CENTRAL RTI level");
+    assert(rtiAuthCentral.pioDesignation === "Central Public Information Officer (CPIO)", "Designation is CPIO");
+    assert(rtiAuthCentral.filingPortalUrl === "https://rtionline.gov.in", "Central filing portal is rtionline.gov.in");
+
+    // 6. Consumer Directory Adapter
+    const consumerOffice = getConsumerDirectoryRecord(
+      {
+        level: "DISTRICT_COMMISSION",
+        levelName: "District Consumer Disputes Redressal Commission",
+        territorialBasis: "District territorial limits",
+        ruleApplied: "Section 34, CPA 2019",
+        sourceIds: ["SRC-CONS-2A-CENTRAL"],
+        confidence: "HIGH",
+        missingFacts: [],
+        officialPortalUrl: "https://edaakhil.nic.in",
+        officialPortalName: "eDaakhil"
+      },
+      "Tamil Nadu",
+      "Coimbatore"
+    );
+    assert(consumerOffice.commissionName.includes("District Consumer Disputes Redressal Commission"), "Directory provides DCDRC record");
+    assert(consumerOffice.nchHelpline.includes("1915"), "Includes official NCH 1915 helpline");
+
+    // 7. Workplace Labour Directory
+    const labourStateOffice = resolveLabourOffice("Tamil Nadu", "Coimbatore", false);
+    assert(labourStateOffice.sphere === "STATE_SPHERE", "Private factory dispute routes to STATE_SPHERE");
+    assert(labourStateOffice.officialPortal === "https://shramsuvidha.gov.in", "Official portal is shramsuvidha.gov.in");
+
+    const labourCentralOffice = resolveLabourOffice("Maharashtra", "Mumbai", true);
+    assert(labourCentralOffice.sphere === "CENTRAL_SPHERE", "Bank/Railway dispute routes to CENTRAL_SPHERE");
+    assert(labourCentralOffice.officialPortal === "https://clc.gov.in", "Official portal is clc.gov.in");
+
+    // 8. Scheme Live Discovery Guard
+    const discoveredSchemes = await discoverGovernmentSchemes("Tamil Nadu", "farmer");
+    assert(discoveredSchemes.length > 0, "Discovered schemes returned");
+    assert(discoveredSchemes[0]?.eligibilityStatus === "FULLY_STRUCTURED_RULES", "Scheme has structured eligibility status");
+
+    // 9. Versioned Legal Rules
+    const rtiDaysRule = getVersionedRule("RTI_RESPONSE_DAYS");
+    assert(rtiDaysRule?.value === 30, "RTI statutory response days is 30");
+    assert(Boolean(rtiDaysRule?.statutoryBasis.includes("Section 7(1)")), "Statutory basis is Section 7(1)");
+
+    const dcdrcLimitRule = getVersionedRule("DISTRICT_COMMISSION_MAX_INR");
+    assert(dcdrcLimitRule?.value === 5000000, "DCDRC pecuniary limit is ₹50,00,000");
+
+    const tnDepositRule = getVersionedRule("TENANT_DEPOSIT_MAX_MONTHS", "TAMIL_NADU");
+    assert(tnDepositRule?.value === 3, "Tamil Nadu tenant deposit cap is 3 months");
+  }
+
   console.log("\n=================================================================");
   console.log(`   Route-Handler Contract Tests Completed: ${passed} Passed, ${failed} Failed`);
   console.log("=================================================================\n");
