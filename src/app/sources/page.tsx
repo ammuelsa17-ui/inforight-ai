@@ -5,31 +5,33 @@ import Link from "next/link";
 import { OFFICIAL_SOURCES_REGISTRY } from "@/data/source-registry";
 import { ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
 
 export default function SourcesPage() {
   const { t } = useLanguage();
   const sourcesList = Object.values(OFFICIAL_SOURCES_REGISTRY);
 
   return (
-    <div className="w-full py-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-8">
+    <PageContainer size="default">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <Link href="/" className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#4F46E5] hover:text-[#4338CA]">
+      <div className="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-700 hover:text-indigo-900 transition-colors"
+        >
           <ArrowLeft className="w-4 h-4" />
           <span>{t("common.backToHome")}</span>
         </Link>
-        <span className="text-xs font-semibold text-[#0369A1] uppercase tracking-wider px-3 py-1 bg-[#E0F2FE] rounded-full border border-[#7DD3FC] flex items-center gap-1">
-          <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
-          {t("sources.badge")}
+        <span className="text-xs font-semibold text-sky-800 uppercase tracking-wider px-3 py-1 bg-sky-50 rounded-full border border-sky-200 flex items-center gap-1">
+          <ShieldCheck className="w-4 h-4 text-sky-600" />
+          <span>{t("sources.badge")}</span>
         </span>
       </div>
 
-      <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56]">{t("sources.title")}</h1>
-        <p className="text-sm text-[#526176]">
-          {t("sources.subtitle")}
-        </p>
-      </div>
+      <PageHeader
+        title={t("sources.title")}
+        description={t("sources.subtitle")}
+      />
 
       {/* Sources Table Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -79,6 +81,6 @@ export default function SourcesPage() {
           </div>
         ))}
       </div>
-    </div>
+    </PageContainer>
   );
 }
