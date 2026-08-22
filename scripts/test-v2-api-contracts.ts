@@ -1783,6 +1783,23 @@ async function runRouteHandlerContractTests() {
       !nonAssameseScript.test(asStr),
       "Assamese locale bundle is pure Assamese script with 0 Hindi/Gurmukhi/Gujarati contamination"
     );
+
+    // 10. Closed-Loop Evidence, Appeal & Tracker Localization
+    assert(
+      teLocale.evidence.addPhotoTitle !== "Attach Photo Evidence (Before Rectification)" &&
+      teLocale.evidence.takePhotoBtn !== "Take Photo",
+      "Telugu closed-loop evidence capture is natively localized"
+    );
+    assert(
+      asLocale.evidence.addPhotoTitle !== "Attach Photo Evidence (Before Rectification)" &&
+      asLocale.evidence.takePhotoBtn !== "Take Photo",
+      "Assamese closed-loop evidence capture is natively localized"
+    );
+    assert(
+      teLocale.appeal.title !== "Section 19(1) First Appeal Generator" &&
+      asLocale.appeal.title !== "Section 19(1) First Appeal Generator",
+      "First Appeal generator is localized across Telugu and Assamese"
+    );
   }
 
   console.log("\n=================================================================");
