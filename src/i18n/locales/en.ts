@@ -381,6 +381,20 @@ export const enLocale: UITranslationSchema = {
     "catOther": "Other Document",
     "previewFileTitle": "Preview Local File",
     "removeFileTitle": "Remove File"
+  ,
+    "clientSideVerified": "Client-Side Verified • Zero AI Leak",
+    "supportedFormatsHelp": "Supported formats: JPEG, PNG, WebP (Max 10MB). Photos are stored securely in your browser.",
+    "errOnlyImagesAllowed": "Only JPEG, PNG, or WebP images are allowed.",
+    "errFileTooLarge": "File size exceeds 10MB limit.",
+    "errProcessImage": "Could not process image file.",
+    "errGeoNotSupported": "Geolocation is not supported by your browser.",
+    "errGeoPermissionDenied": "Location permission denied. You can still submit photo evidence without GPS.",
+    "errGeoUnavailable": "Position information is unavailable from device.",
+    "errGeoTimeout": "Location request timed out. Please try again.",
+    "errGeoFailed": "Could not acquire location.",
+    "acquiringGps": "Acquiring GPS...",
+    "removeLocationBtn": "Remove",
+    "removePhotoBtn": "Remove photo"
   },
   "appeal": {
     "title": "Section 19(1) First Appeal Generator",

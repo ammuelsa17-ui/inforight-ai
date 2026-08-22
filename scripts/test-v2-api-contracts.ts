@@ -1800,6 +1800,26 @@ async function runRouteHandlerContractTests() {
       asLocale.appeal.title !== "Section 19(1) First Appeal Generator",
       "First Appeal generator is localized across Telugu and Assamese"
     );
+
+    // 11. Real Validator Negative Proofs
+    const { extractCoreTranslationKeys } = await import("./extract-core-keys");
+    const { validateSingleLocale } = await import("./audit-locales-quality");
+    const coreKeys = extractCoreTranslationKeys();
+
+    const fakeTeSubmit = JSON.parse(JSON.stringify(teLocale));
+    fakeTeSubmit.common.submit = "Submit";
+    const resTeSubmit = validateSingleLocale("te.ts", fakeTeSubmit, coreKeys);
+    assert(!resTeSubmit.valid && resTeSubmit.englishLeak > 0, "Real validator rejects English duplicate in Telugu");
+
+    const fakeTeDev = JSON.parse(JSON.stringify(teLocale));
+    fakeTeDev.common.submit = "जमा करें";
+    const resTeDev = validateSingleLocale("te.ts", fakeTeDev, coreKeys);
+    assert(!resTeDev.valid && resTeDev.wrongScript > 0, "Real validator rejects wrong script in Telugu");
+
+    const fakeAsDev = JSON.parse(JSON.stringify(asLocale));
+    fakeAsDev.common.submit = "जमा करें";
+    const resAsDev = validateSingleLocale("as.ts", fakeAsDev, coreKeys);
+    assert(!resAsDev.valid && resAsDev.forbidden > 0, "Real validator rejects forbidden Devanagari script in Assamese");
   }
 
   console.log("\n=================================================================");
