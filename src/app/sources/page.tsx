@@ -36,8 +36,8 @@ export default function SourcesPage() {
       {/* Sources Table Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sourcesList.map((source) => (
-          <div key={source.id} className="p-5 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-3 text-xs">
-            <div className="flex items-start justify-between gap-2 border-b border-[#BCD7EE] pb-2">
+          <div key={source.id} className="p-5 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-3 text-xs min-w-0 break-words">
+            <div className="flex items-start justify-between gap-2 border-b border-[#BCD7EE] pb-2 flex-wrap">
               <span className="px-2.5 py-0.5 rounded bg-[#E0F2FE] text-[#0284C7] font-bold text-[10px] uppercase tracking-wider">
                 {source.category.toUpperCase()} • {source.id}
               </span>

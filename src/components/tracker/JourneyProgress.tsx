@@ -56,11 +56,11 @@ export function JourneyProgress({ stage, className = "", reopenCount = 0 }: Jour
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         {steps.map((s, idx) => (
           <div
             key={idx}
-            className={`p-2.5 rounded-xl border flex flex-col justify-between transition-all ${
+            className={`p-2.5 rounded-xl border flex flex-col justify-between transition-all min-w-0 ${
               s.current
                 ? s.alert
                   ? "bg-rose-50 border-rose-300 text-rose-950 ring-1 ring-rose-400"
@@ -70,8 +70,8 @@ export function JourneyProgress({ stage, className = "", reopenCount = 0 }: Jour
                 : "bg-white border-slate-200 text-slate-400 opacity-60"
             }`}
           >
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-bold">{s.label}</span>
+            <div className="flex items-center justify-between mb-1 min-w-0">
+              <span className="text-xs font-bold truncate">{s.label}</span>
               {s.done && !s.alert && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />}
               {s.current && !s.done && !s.alert && <Clock className="w-3.5 h-3.5 text-indigo-600 animate-pulse shrink-0" />}
               {s.alert && <AlertCircle className="w-3.5 h-3.5 text-rose-600 shrink-0" />}
