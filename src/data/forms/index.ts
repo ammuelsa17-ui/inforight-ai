@@ -45,7 +45,7 @@ export function getFormsByDomain(domain: MasterDomain): OfficialFormDefinition[]
  */
 export function isFieldActive(
   field: FormFieldDefinition,
-  currentAnswers: Record<string, any>
+  currentAnswers: Record<string, unknown>
 ): boolean {
   if (!field.conditional) return true;
   const parentValue = currentAnswers[field.conditional.dependsOnFieldId];
@@ -75,7 +75,7 @@ export function isFieldActive(
  */
 export function validateFormField(
   field: FormFieldDefinition,
-  value: any
+  value: unknown
 ): { isValid: boolean; errorMessage?: string } {
   if (field.required && (value === undefined || value === null || value === "")) {
     return { isValid: false, errorMessage: `This field is required: ${field.official_label}` };
@@ -115,7 +115,7 @@ export function validateFormField(
  */
 export function getNextConversationalQuestion(
   form: OfficialFormDefinition,
-  currentAnswers: Record<string, any>
+  currentAnswers: Record<string, unknown>
 ): FormFieldDefinition | null {
   for (const field of form.fields) {
     if (!isFieldActive(field, currentAnswers)) continue;
@@ -132,7 +132,7 @@ export function getNextConversationalQuestion(
  */
 export function renderFinalFormOutput(
   form: OfficialFormDefinition,
-  sessionAnswers: Record<string, any>,
+  sessionAnswers: Record<string, unknown>,
   uploadedDocIds: string[] = []
 ): FormGeneratedOutput {
   const mappedFieldValues = form.fields

@@ -34,7 +34,7 @@ export interface FormFieldValidationRule {
 export interface FormConditionalRule {
   dependsOnFieldId: string;
   operator: "EQUALS" | "NOT_EQUALS" | "GREATER_THAN" | "IN_LIST" | "IS_TRUE" | "IS_FALSE";
-  expectedValue: any;
+  expectedValue: unknown;
 }
 
 export interface FormFieldDefinition {
@@ -101,7 +101,7 @@ export interface FormFillingSessionState {
   formId: string;
   startedAt: string;
   completedAt?: string;
-  answers: Record<string, any>; // field_id -> citizen answer
+  answers: Record<string, unknown>; // field_id -> citizen answer
   uploadedDocs: Record<string, string>; // doc_id -> fileName
   validationErrors: Record<string, string>; // field_id -> error message
   isReadyForReview: boolean;

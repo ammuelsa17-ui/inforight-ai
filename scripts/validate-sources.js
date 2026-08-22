@@ -3,6 +3,7 @@
  * Runs in pure Node.js to verify all provenance, jurisdiction, forms, and live routing pipelines.
  */
 
+/* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require("fs");
 const path = require("path");
 
