@@ -9,6 +9,7 @@ export const APPROVED_GOVERNMENT_HOSTS: ReadonlyArray<string> = [
   "api.postalpincode.in",
   "data.gov.in",
   "www.indiapost.gov.in",
+  "nominatim.openstreetmap.org",
   
   // RTI Portals
   "rtionline.gov.in",

@@ -79,6 +79,9 @@ export function LocationMap({
     return null;
   });
 
+  const [baseLayer, setBaseLayer] = useState<"street" | "satellite">("street");
+  const tileLayerRef = useRef<any>(null);
+
   // Initialize Leaflet Map
   useEffect(() => {
     async function initMap() {
@@ -107,10 +110,12 @@ export function LocationMap({
           attributionControl: true,
         });
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        const streetTile = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: "&copy; OpenStreetMap contributors",
           maxZoom: 19,
         }).addTo(map);
+
+        tileLayerRef.current = streetTile;
 
         if (interactive && onLocationSelect) {
           map.on("click", (e: any) => {
@@ -134,6 +139,38 @@ export function LocationMap({
       }
     };
   }, []);
+
+  // Switch Base Layer (Street vs Satellite Imagery)
+  useEffect(() => {
+    async function switchLayer() {
+      if (!mapInstanceRef.current) return;
+      const L = (await import("leaflet")).default;
+
+      if (tileLayerRef.current) {
+        mapInstanceRef.current.removeLayer(tileLayerRef.current);
+      }
+
+      if (baseLayer === "satellite") {
+        // USGS / ESRI World Imagery (Public domain / open attribution)
+        const satTile = L.tileLayer(
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          {
+            attribution: "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+            maxZoom: 19,
+          }
+        ).addTo(mapInstanceRef.current);
+        tileLayerRef.current = satTile;
+      } else {
+        const streetTile = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap contributors",
+          maxZoom: 19,
+        }).addTo(mapInstanceRef.current);
+        tileLayerRef.current = streetTile;
+      }
+    }
+
+    switchLayer();
+  }, [baseLayer]);
 
   // Update center and marker when PIN changes
   useEffect(() => {
@@ -258,15 +295,39 @@ export function LocationMap({
       {/* Map Control Actions */}
       {interactive && (
         <div className="flex items-center justify-between gap-2 flex-wrap text-xs">
-          <button
-            type="button"
-            onClick={handleUseCurrentLocation}
-            disabled={geoLoading}
-            className="px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold rounded-lg hover:bg-indigo-100 transition-colors flex items-center gap-1.5 disabled:opacity-50"
-          >
-            <Navigation className="w-3.5 h-3.5 text-indigo-600" />
-            <span>{geoLoading ? t("ask.detectingGps") : t("ask.useCurrentLocation")}</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleUseCurrentLocation}
+              disabled={geoLoading}
+              className="px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold rounded-lg hover:bg-indigo-100 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            >
+              <Navigation className="w-3.5 h-3.5 text-indigo-600" />
+              <span>{geoLoading ? t("ask.detectingGps") : t("ask.useCurrentLocation")}</span>
+            </button>
+
+            {/* Layer Switcher (Street / Satellite Imagery) */}
+            <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50">
+              <button
+                type="button"
+                onClick={() => setBaseLayer("street")}
+                className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all ${
+                  baseLayer === "street" ? "bg-white text-indigo-900 shadow-xs border border-slate-200/80" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                {t("ask.streetLayer")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setBaseLayer("satellite")}
+                className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-all ${
+                  baseLayer === "satellite" ? "bg-white text-indigo-900 shadow-xs border border-slate-200/80" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                {t("ask.satelliteLayer")}
+              </button>
+            </div>
+          </div>
 
           {showLocationStatus && (
             <span

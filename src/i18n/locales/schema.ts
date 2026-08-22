@@ -69,6 +69,21 @@ export interface UITranslationSchema {
     disclaimerText: string;
   };
   ask: {
+    statusVerified: string;
+    statusSuggested: string;
+    statusCitizenConfirmed: string;
+    statusVerificationRequired: string;
+    stateUtLabel: string;
+    postalSourcePrefix: string;
+    adminGroundingPrefix: string;
+    streetLayer: string;
+    satelliteLayer: string;
+    adminDetailsToggle: string;
+    talukLabel: string;
+    blockLabel: string;
+    villageLabel: string;
+    multipleLocalitiesNotice: string;
+    selectLocalityPrompt: string;
     pinNotMappedLabel: string;
     pinNotMappedHelp: string;
     pinMappedHelp: string;
