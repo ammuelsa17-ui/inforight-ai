@@ -127,17 +127,20 @@ export interface DetailedWelfareSchemeRecord {
 export interface UserEligibilityProfile {
   age?: number;
   gender?: "MALE" | "FEMALE" | "TRANSGENDER" | "OTHER";
-  state_ut: string;
+  state_ut?: string;
   district?: string;
   rural_urban?: "RURAL" | "URBAN";
   annual_family_income?: number;
+  annual_income?: number;
   community?: "SC" | "ST" | "OBC" | "MBC" | "DNC" | "GENERAL" | "EWS";
   is_minority?: boolean;
   is_pwd?: boolean;
+  has_disability?: boolean;
   disability_percentage?: number;
   has_disability_certificate?: boolean;
   education_level?: string;
   current_student?: boolean;
+  is_student?: boolean;
   institution_type?: "GOVERNMENT" | "GOVERNMENT_AIDED" | "PRIVATE";
   occupation_or_vocation?: string;
   is_farmer?: boolean;
@@ -147,6 +150,7 @@ export interface UserEligibilityProfile {
   is_bpl?: boolean;
   marital_status?: "UNMARRIED" | "MARRIED" | "WIDOW" | "DIVORCED_DESERTED";
   is_pregnant_or_lactating?: boolean;
+  studied_tn_govt_school_class_6_12?: boolean;
 }
 
 export interface SchemeEvaluationResult {

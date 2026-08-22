@@ -5,6 +5,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import FallbackBanner from "./FallbackBanner";
 import TrustPanel, { SourceCardInfo } from "./TrustPanel";
 import DocumentActions from "./DocumentActions";
+import ReadAloudButton from "@/components/voice/ReadAloudButton";
 import { CheckCircle2, AlertCircle, FileText, MapPin, Globe, Volume2, Loader2 } from "lucide-react";
 import { useRole } from "@/context/RoleContext";
 import { BharatLanguageCode } from "@/lib/language/types";
@@ -334,14 +335,17 @@ Address: ${applicantDetails?.address || "[Applicant Address]"}`;
             {t("preview.generatedSubtitle")}
           </p>
         </div>
-        <DocumentActions
-          isEditing={isEditing}
-          onToggleEdit={() => setIsEditing(!isEditing)}
-          onCopy={() => navigator.clipboard.writeText(fullTextToCopy)}
-          onSaveToDashboard={handleSaveToDashboard}
-          onDownloadPdf={handleDownloadPdf}
-          isSaved={isSaved}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <ReadAloudButton textToRead={fullTextToCopy} />
+          <DocumentActions
+            isEditing={isEditing}
+            onToggleEdit={() => setIsEditing(!isEditing)}
+            onCopy={() => navigator.clipboard.writeText(fullTextToCopy)}
+            onSaveToDashboard={handleSaveToDashboard}
+            onDownloadPdf={handleDownloadPdf}
+            isSaved={isSaved}
+          />
+        </div>
       </div>
 
       {/* Printable Document Container */}

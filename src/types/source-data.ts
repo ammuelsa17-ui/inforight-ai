@@ -218,6 +218,11 @@ export interface StatutoryRulesCriteria {
   required_documents?: string[];
   escalation_route?: string[];
   prohibited_actions?: string[];
+  min_age?: number;
+  max_age?: number;
+  annual_income_limit?: number;
+  benefit_amount_or_details?: string;
+  target_beneficiary_group?: string;
 }
 
 export interface VerifiedSourceRecord {

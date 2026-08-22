@@ -1,348 +1,693 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { matchWelfareSchemes } from "@/services/api";
-import { SchemeMatchResponse, SchemeMatchRequest } from "@/types/api";
-import { SchemeMatchEvaluation } from "@/lib/schemes/eligibility-engine";
-import { ArrowLeft, Sparkles, AlertCircle, ExternalLink, CheckCircle2, XCircle, HelpCircle, Info, ShieldCheck } from "lucide-react";
-import { useLanguage } from "@/context/LanguageContext";
+import { UserEligibilityProfile } from "@/types/scheme-navigator";
+import {
+  evaluateAllWelfareSchemes,
+  EvaluatedSchemeOutput
+} from "@/lib/schemes/eligibility-engine";
+import SchemeCard from "@/components/schemes/SchemeCard";
+import SchemeComparisonModal from "@/components/schemes/SchemeComparisonModal";
+import {
+  Sparkles,
+  Search,
+  SlidersHorizontal,
+  RotateCcw,
+  ShieldCheck,
+  Building,
+  CheckCircle2,
+  HelpCircle,
+  AlertCircle,
+  Scale,
+  X,
+  Layers,
+  GraduationCap,
+  Users,
+  Heart,
+  Briefcase,
+  ChevronDown,
+  ChevronUp,
+  Info
+} from "lucide-react";
+
+const INDIAN_STATES_AND_UTS = [
+  "National",
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi",
+  "Jammu and Kashmir",
+  "Ladakh",
+  "Lakshadweep",
+  "Puducherry"
+];
 
 export default function SchemesPage() {
-  const { t } = useLanguage();
-  const [state, setState] = useState("Tamil Nadu");
-  const [age, setAge] = useState<number>(20);
-  const [annualIncome, setAnnualIncome] = useState<number>(150000);
-  const [occupation, setOccupation] = useState<"student" | "farmer" | "salaried" | "self_employed" | "unemployed" | "senior_citizen">("student");
-  const [isStudent, setIsStudent] = useState<boolean>(true);
-  const [areaType, setAreaType] = useState<"urban" | "rural">("urban");
-  const [socialCategory, setSocialCategory] = useState<string>("SC");
-  const [hasDisability, setHasDisability] = useState<boolean>(false);
-  const [gender, setGender] = useState<string>("female");
+  const profileStorageKey = "inforight_scheme_profile";
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<(SchemeMatchResponse & { evaluations?: SchemeMatchEvaluation[] }) | null>(null);
+  // User Profile State
+  const [profile, setProfile] = useState<UserEligibilityProfile>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem(profileStorageKey);
+        if (saved) return JSON.parse(saved);
+      } catch (err) {
+        console.warn("Failed to load local scheme profile:", err);
+      }
+    }
+    return {
+      state_ut: "Tamil Nadu",
+      age: 20,
+      annual_family_income: 180000,
+      current_student: true,
+      education_level: "UG",
+      community: "MBC",
+      rural_urban: "URBAN"
+    };
+  });
 
-  const handleMatch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setResult(null);
+  const [showExtendedQuestions, setShowExtendedQuestions] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [levelFilter, setLevelFilter] = useState<string>("ALL");
+  const [targetGroupFilter, setTargetGroupFilter] = useState<string>("ALL");
+  const [benefitTypeFilter, setBenefitTypeFilter] = useState<string>("ALL");
 
-    try {
-      const res = await matchWelfareSchemes({
-        state,
-        age: Number(age),
-        annualIncome: Number(annualIncome),
-        occupation,
-        isStudent,
-        areaType,
-        socialCategory,
-        hasDisability,
-        gender
-      } as unknown as SchemeMatchRequest);
-      setResult(res);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to match welfare schemes.");
-    } finally {
-      setLoading(false);
+  // Comparison State
+  const [selectedSchemeIds, setSelectedSchemeIds] = useState<string[]>([]);
+  const [isComparisonOpen, setIsComparisonOpen] = useState(false);
+
+  // Auto-save profile to localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(profileStorageKey, JSON.stringify(profile));
+      } catch (err) {
+        console.warn("Failed to persist scheme profile:", err);
+      }
+    }
+  }, [profile]);
+
+  // Real-time deterministic evaluation of all 91 schemes
+  const allEvaluatedSchemes = useMemo(() => {
+    return evaluateAllWelfareSchemes(profile);
+  }, [profile]);
+
+  // Statistics Summary
+  const eligibleCount = allEvaluatedSchemes.filter((s) => s.evaluationState === "ELIGIBLE").length;
+  const potentiallyEligibleCount = allEvaluatedSchemes.filter(
+    (s) => s.evaluationState === "POTENTIALLY_ELIGIBLE"
+  ).length;
+
+  // Filtered scheme output
+  const filteredSchemes = useMemo(() => {
+    return allEvaluatedSchemes.filter((scheme) => {
+      // 1. Search Query
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const matchesQuery =
+          scheme.title.toLowerCase().includes(q) ||
+          scheme.summary.toLowerCase().includes(q) ||
+          scheme.ministryOrDept.toLowerCase().includes(q) ||
+          scheme.stateUt.toLowerCase().includes(q) ||
+          scheme.benefitType.toLowerCase().includes(q);
+        if (!matchesQuery) return false;
+      }
+
+      // 2. Status Filter
+      if (statusFilter !== "ALL" && scheme.evaluationState !== statusFilter) {
+        return false;
+      }
+
+      // 3. Government Level Filter
+      if (levelFilter === "CENTRAL" && scheme.governmentLevel !== "CENTRAL") return false;
+      if (levelFilter === "STATE" && scheme.governmentLevel === "CENTRAL") return false;
+
+      // 4. Benefit Type Filter
+      if (benefitTypeFilter !== "ALL" && scheme.benefitType !== benefitTypeFilter) {
+        return false;
+      }
+
+      // 5. Target Group Filter
+      if (targetGroupFilter !== "ALL") {
+        const text = (scheme.title + " " + scheme.summary + " " + scheme.subdomain).toLowerCase();
+        if (targetGroupFilter === "STUDENTS" && !text.includes("student") && !text.includes("scholarship")) return false;
+        if (targetGroupFilter === "FARMERS" && !text.includes("farmer") && !text.includes("kisan") && !text.includes("agriculture")) return false;
+        if (targetGroupFilter === "WOMEN" && !text.includes("women") && !text.includes("girl") && !text.includes("maternity") && !text.includes("widow")) return false;
+        if (targetGroupFilter === "PWD" && !text.includes("disability") && !text.includes("divyang") && !text.includes("pwd")) return false;
+        if (targetGroupFilter === "SENIORS" && !text.includes("senior") && !text.includes("old age") && !text.includes("elderly") && !text.includes("vaya")) return false;
+        if (targetGroupFilter === "WORKERS" && !text.includes("worker") && !text.includes("shram") && !text.includes("labour") && !text.includes("vendor")) return false;
+      }
+
+      return true;
+    });
+  }, [allEvaluatedSchemes, searchQuery, statusFilter, levelFilter, benefitTypeFilter, targetGroupFilter]);
+
+  // Comparison Handlers
+  const handleToggleComparison = (schemeId: string) => {
+    setSelectedSchemeIds((prev) => {
+      if (prev.includes(schemeId)) {
+        return prev.filter((id) => id !== schemeId);
+      }
+      if (prev.length >= 4) {
+        alert("You can compare up to 4 schemes at a time.");
+        return prev;
+      }
+      return [...prev, schemeId];
+    });
+  };
+
+  const handleClearProfile = () => {
+    if (window.confirm("Are you sure you want to reset your eligibility profile?")) {
+      const defaultProfile: UserEligibilityProfile = {
+        state_ut: "Tamil Nadu",
+        age: undefined,
+        annual_family_income: undefined,
+        current_student: undefined,
+        community: undefined
+      };
+      setProfile(defaultProfile);
+      if (typeof window !== "undefined") {
+        localStorage.removeItem(profileStorageKey);
+      }
     }
   };
 
+  const selectedSchemesForModal = useMemo(() => {
+    return allEvaluatedSchemes.filter((s) => selectedSchemeIds.includes(s.id));
+  }, [allEvaluatedSchemes, selectedSchemeIds]);
+
   return (
-    <div className="w-full py-8 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#BCD7EE] pb-4">
-        <Link href="/" className="inline-flex items-center gap-2 text-sm text-[#526176] hover:text-[#102A56] font-medium">
-          <ArrowLeft className="w-4 h-4" />
-          <span>{t("common.backToHome")}</span>
-        </Link>
-        <span className="text-xs font-semibold text-[#0F9D76] uppercase tracking-wider px-3 py-1 bg-[#E6F4EA] rounded-full border border-[#A8DADC]">
-          {t("schemes.badge")}
-        </span>
-      </div>
-
-      <div className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#102A56]">{t("schemes.title")}</h1>
-        <p className="text-sm text-[#526176]">
-          {t("schemes.subtitle")}
-        </p>
-      </div>
-
-      {/* Questionnaire Form */}
-      <form onSubmit={handleMatch} className="p-6 rounded-2xl bg-white border border-[#BCD7EE] shadow-xs space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.stateLabel")}</label>
-            <input
-              type="text"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
-              required
-            />
+    <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Page Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>Welfare Discovery &amp; Eligibility Engine</span>
           </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Welfare Schemes Discovery &amp; Eligibility Reader
+          </h1>
+          <p className="text-sm text-slate-600 mt-1.5 max-w-3xl">
+            Evaluate your citizen profile deterministically against 91 verified Central, State, and UT welfare schemes.
+            Compare non-repayable grants, scholarships, and social security pensions with strict rule-based transparency.
+          </p>
+        </div>
 
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.ageLabel")}</label>
-            <input
-              type="number"
-              min={0}
-              max={120}
-              value={age}
-              onChange={(e) => setAge(Number(e.target.value))}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
-              required
-            />
-          </div>
+        {/* Profile Questionnaire Card */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm mb-8">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-sm">
+                1
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-900">Your Eligibility Profile</h2>
+                <span className="text-xs text-slate-500">
+                  Update your parameters to re-evaluate eligible benefits in real-time.
+                </span>
+              </div>
+            </div>
 
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.incomeLabel")}</label>
-            <input
-              type="number"
-              min={0}
-              value={annualIncome}
-              onChange={(e) => setAnnualIncome(Number(e.target.value))}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.occupationLabel")}</label>
-            <select
-              value={occupation}
-              onChange={(e) => setOccupation(e.target.value as "student" | "farmer" | "salaried" | "self_employed" | "unemployed" | "senior_citizen")}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
+            <button
+              onClick={handleClearProfile}
+              className="text-xs text-slate-500 hover:text-rose-600 px-3 py-1.5 rounded-lg border border-slate-200 hover:border-rose-200 transition-colors inline-flex items-center gap-1 font-medium"
             >
-              <option value="student">{t("schemes.occStudent")}</option>
-              <option value="farmer">{t("schemes.occFarmer")}</option>
-              <option value="self_employed">{t("schemes.occSelfEmployed")}</option>
-              <option value="salaried">{t("schemes.occSalaried")}</option>
-              <option value="unemployed">{t("schemes.occUnemployed")}</option>
-              <option value="senior_citizen">{t("schemes.occSenior")}</option>
-            </select>
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset Profile</span>
+            </button>
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.socialCategoryLabel")}</label>
-            <select
-              value={socialCategory}
-              onChange={(e) => setSocialCategory(e.target.value)}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
-            >
-              <option value="SC">SC (Scheduled Caste)</option>
-              <option value="ST">ST (Scheduled Tribe)</option>
-              <option value="OBC">OBC (Other Backward Classes)</option>
-              <option value="GENERAL">General Category</option>
-            </select>
+          {/* Primary Profile Inputs */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            {/* 1. State / UT */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                State / Union Territory
+              </label>
+              <select
+                value={profile.state_ut}
+                onChange={(e) => setProfile((p) => ({ ...p, state_ut: e.target.value }))}
+                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white font-medium text-slate-900"
+              >
+                {INDIAN_STATES_AND_UTS.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 2. Age */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Age (in Years)
+              </label>
+              <input
+                type="number"
+                min={0}
+                max={120}
+                value={profile.age ?? ""}
+                onChange={(e) =>
+                  setProfile((p) => ({
+                    ...p,
+                    age: e.target.value === "" ? undefined : Number(e.target.value)
+                  }))
+                }
+                placeholder="e.g. 19"
+                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white font-medium text-slate-900"
+              />
+            </div>
+
+            {/* 3. Annual Family Income */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Annual Family Income (₹)
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">
+                  ₹
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={5000}
+                  value={profile.annual_family_income ?? ""}
+                  onChange={(e) =>
+                    setProfile((p) => ({
+                      ...p,
+                      annual_family_income:
+                        e.target.value === "" ? undefined : Number(e.target.value)
+                    }))
+                  }
+                  placeholder="e.g. 180000"
+                  className="w-full pl-7 pr-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white font-medium text-slate-900 font-mono"
+                />
+              </div>
+            </div>
+
+            {/* 4. Social Community / Category */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                Community / Category
+              </label>
+              <select
+                value={profile.community ?? ""}
+                onChange={(e) =>
+                  setProfile((p) => ({
+                    ...p,
+                    community: e.target.value ? (e.target.value as any) : undefined
+                  }))
+                }
+                className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white font-medium text-slate-900"
+              >
+                <option value="">Select Category (Optional)</option>
+                <option value="GENERAL">General (Open Category)</option>
+                <option value="EWS">Economically Weaker Section (EWS)</option>
+                <option value="OBC">Other Backward Classes (OBC)</option>
+                <option value="BC">Backward Classes (BC)</option>
+                <option value="MBC">Most Backward Classes (MBC)</option>
+                <option value="DNC">Denotified Communities (DNC)</option>
+                <option value="SC">Scheduled Castes (SC)</option>
+                <option value="ST">Scheduled Tribes (ST)</option>
+              </select>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.genderLabel")}</label>
-            <select
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
+          {/* Quick Toggle Chips */}
+          <div className="flex flex-wrap items-center gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() =>
+                setProfile((p) => ({ ...p, current_student: !p.current_student }))
+              }
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                profile.current_student
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-300 shadow-xs"
+                  : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+              }`}
             >
-              <option value="female">Female</option>
-              <option value="male">Male</option>
-              <option value="other">Other</option>
-            </select>
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>{profile.current_student ? "✓ Active Student" : "+ Active Student"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setProfile((p) => ({ ...p, is_farmer: !p.is_farmer }))}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                profile.is_farmer
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-300 shadow-xs"
+                  : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+              }`}
+            >
+              <span>{profile.is_farmer ? "✓ Farmer / Cultivator" : "+ Farmer / Cultivator"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setProfile((p) => ({ ...p, is_pwd: !p.is_pwd }))}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                profile.is_pwd
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-300 shadow-xs"
+                  : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+              }`}
+            >
+              <span>{profile.is_pwd ? "✓ PwD (Divyangjan)" : "+ PwD (Divyangjan)"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                setProfile((p) => ({
+                  ...p,
+                  gender: p.gender === "FEMALE" ? undefined : "FEMALE"
+                }))
+              }
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                profile.gender === "FEMALE"
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-300 shadow-xs"
+                  : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100"
+              }`}
+            >
+              <span>{profile.gender === "FEMALE" ? "✓ Female Beneficiary" : "+ Female Beneficiary"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowExtendedQuestions(!showExtendedQuestions)}
+              className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 ml-auto flex items-center gap-1 py-1.5"
+            >
+              <span>{showExtendedQuestions ? "Fewer Options" : "More Specific Criteria"}</span>
+              {showExtendedQuestions ? (
+                <ChevronUp className="w-3.5 h-3.5" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5" />
+              )}
+            </button>
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.areaLabel")}</label>
-            <select
-              value={areaType}
-              onChange={(e) => setAreaType(e.target.value as "urban" | "rural")}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
-            >
-              <option value="urban">{t("schemes.areaUrban")}</option>
-              <option value="rural">{t("schemes.areaRural")}</option>
-            </select>
+          {/* Extended Conditional Criteria */}
+          {showExtendedQuestions && (
+            <div className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs animate-in fade-in">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Disability Benchmark Percentage (%)
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={profile.disability_percentage ?? ""}
+                  onChange={(e) =>
+                    setProfile((p) => ({
+                      ...p,
+                      disability_percentage:
+                        e.target.value === "" ? undefined : Number(e.target.value),
+                      is_pwd: true
+                    }))
+                  }
+                  placeholder="e.g. 40 (Benchmark >= 40%)"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Education Level
+                </label>
+                <select
+                  value={profile.education_level ?? ""}
+                  onChange={(e) =>
+                    setProfile((p) => ({ ...p, education_level: e.target.value || undefined }))
+                  }
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                >
+                  <option value="">Select Level</option>
+                  <option value="PRE_MATRIC">Pre-Matric (Class 1-10)</option>
+                  <option value="POST_MATRIC">Post-Matric (Class 11-12)</option>
+                  <option value="DIPLOMA">Diploma / ITI</option>
+                  <option value="UG">Undergraduate (UG / Degree)</option>
+                  <option value="PG">Postgraduate (PG / Masters)</option>
+                  <option value="DOCTORATE">Doctorate (Ph.D.)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">
+                  Marital Status
+                </label>
+                <select
+                  value={profile.marital_status ?? ""}
+                  onChange={(e) =>
+                    setProfile((p) => ({
+                      ...p,
+                      marital_status: e.target.value ? (e.target.value as any) : undefined
+                    }))
+                  }
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
+                >
+                  <option value="">Select Marital Status</option>
+                  <option value="UNMARRIED">Unmarried</option>
+                  <option value="MARRIED">Married</option>
+                  <option value="WIDOW">Widow</option>
+                  <option value="DIVORCED_DESERTED">Deserted / Divorced</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Statistics & Filter Controls Bar */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 mb-6 shadow-sm space-y-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* Search Box */}
+            <div className="relative w-full md:w-80">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search scheme name, ministry, keyword..."
+                className="w-full pl-10 pr-4 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-slate-50"
+              />
+            </div>
+
+            {/* Status Tabs */}
+            <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 text-xs font-semibold">
+              <button
+                onClick={() => setStatusFilter("ALL")}
+                className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
+                  statusFilter === "ALL"
+                    ? "bg-slate-900 text-white shadow-xs"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                All Schemes ({allEvaluatedSchemes.length})
+              </button>
+
+              <button
+                onClick={() => setStatusFilter("ELIGIBLE")}
+                className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors flex items-center gap-1 ${
+                  statusFilter === "ELIGIBLE"
+                    ? "bg-emerald-600 text-white shadow-xs"
+                    : "bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
+                }`}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Eligible ({eligibleCount})</span>
+              </button>
+
+              <button
+                onClick={() => setStatusFilter("POTENTIALLY_ELIGIBLE")}
+                className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors flex items-center gap-1 ${
+                  statusFilter === "POTENTIALLY_ELIGIBLE"
+                    ? "bg-amber-600 text-white shadow-xs"
+                    : "bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
+                }`}
+              >
+                <HelpCircle className="w-3.5 h-3.5" />
+                <span>Potentially Eligible ({potentiallyEligibleCount})</span>
+              </button>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#102A56]">{t("schemes.studentStatusLabel")}</label>
-            <select
-              value={isStudent ? "yes" : "no"}
-              onChange={(e) => setIsStudent(e.target.value === "yes")}
-              className="w-full p-2.5 bg-white border border-[#BCD7EE] rounded-lg text-sm text-[#172033] focus:outline-none focus:border-[#4F46E5]"
-            >
-              <option value="yes">{t("schemes.studentYes")}</option>
-              <option value="no">{t("schemes.studentNo")}</option>
-            </select>
+          {/* Secondary Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs">
+            <span className="text-slate-400 font-bold uppercase text-[10px]">Filter by:</span>
+
+            {/* Target Groups */}
+            {[
+              { id: "ALL", label: "All Groups" },
+              { id: "STUDENTS", label: "Students" },
+              { id: "FARMERS", label: "Farmers" },
+              { id: "WOMEN", label: "Women & Girls" },
+              { id: "PWD", label: "PwD" },
+              { id: "SENIORS", label: "Senior Citizens" },
+              { id: "WORKERS", label: "Workers" }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setTargetGroupFilter(tab.id)}
+                className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
+                  targetGroupFilter === tab.id
+                    ? "bg-indigo-600 text-white"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+
+            {/* Benefit Types */}
+            <div className="h-4 w-px bg-slate-200 mx-1 hidden sm:block"></div>
+
+            {[
+              { id: "ALL", label: "All Types" },
+              { id: "SCHOLARSHIP", label: "Scholarships" },
+              { id: "GRANT", label: "Direct Grants / DBT" },
+              { id: "PENSION", label: "Pensions" },
+              { id: "LOAN", label: "Loans & Credit" },
+              { id: "INSURANCE", label: "Insurance" }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setBenefitTypeFilter(tab.id)}
+                className={`px-2.5 py-1 rounded-md font-medium transition-colors ${
+                  benefitTypeFilter === tab.id
+                    ? "bg-slate-800 text-white"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div className="pt-2">
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50"
-          >
-            {loading ? (
-              <span>{t("schemes.matching")}</span>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4" />
-                <span>{t("schemes.matchBtn")}</span>
-              </>
-            )}
-          </button>
-        </div>
-      </form>
-
-      {/* Error State */}
-      {error && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-2">
-          <AlertCircle className="w-5 h-5 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
-
-      {/* Results Display */}
-      {result && (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-[#102A56]">
-              {t("schemes.resultsTitle")} ({result.totalMatched})
-            </h2>
-            {result.totalNeedsInfo !== undefined && result.totalNeedsInfo > 0 && (
-              <span className="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full border border-amber-300">
-                {result.totalNeedsInfo} Need More Info
-              </span>
-            )}
+        {/* Schemes Output Grid */}
+        {filteredSchemes.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {filteredSchemes.map((scheme) => (
+              <SchemeCard
+                key={scheme.id}
+                scheme={scheme}
+                isSelectedForComparison={selectedSchemeIds.includes(scheme.id)}
+                onToggleComparison={handleToggleComparison}
+                canSelectMore={selectedSchemeIds.length < 4}
+              />
+            ))}
           </div>
+        ) : (
+          <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center my-8">
+            <AlertCircle className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+            <h3 className="text-base font-bold text-slate-800 mb-1">
+              No Schemes Matched Your Current Filters
+            </h3>
+            <p className="text-xs text-slate-500 max-w-md mx-auto mb-4">
+              Try adjusting your income, student status, or community filters to view eligible welfare schemes.
+            </p>
+            <button
+              onClick={() => {
+                setStatusFilter("ALL");
+                setTargetGroupFilter("ALL");
+                setBenefitTypeFilter("ALL");
+                setSearchQuery("");
+              }}
+              className="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors"
+            >
+              Reset Filters
+            </button>
+          </div>
+        )}
 
-          {result.evaluations && result.evaluations.length > 0 ? (
-            <div className="space-y-4">
-              {result.evaluations.map((evalItem) => (
-                <div
-                  key={evalItem.schemeId}
-                  className={`p-5 rounded-2xl bg-white border shadow-xs space-y-4 ${
-                    evalItem.status === "ELIGIBLE"
-                      ? "border-emerald-300 ring-1 ring-emerald-300"
-                      : evalItem.status === "NEEDS_INFORMATION"
-                      ? "border-amber-300"
-                      : "border-slate-200 opacity-80 bg-slate-50/50"
+        {/* Floating Comparison Action Bar */}
+        {selectedSchemeIds.length > 0 && (
+          <div className="fixed bottom-6 inset-x-0 z-40 px-4">
+            <div className="max-w-xl mx-auto bg-slate-900 text-white rounded-2xl shadow-2xl p-4 border border-slate-800 flex items-center justify-between gap-4 animate-in slide-in-from-bottom-6">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-sm">
+                  {selectedSchemeIds.length}
+                </div>
+                <div>
+                  <span className="text-xs font-bold block">
+                    {selectedSchemeIds.length} Scheme{selectedSchemeIds.length > 1 ? "s" : ""} Selected
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    Select 2 to 4 schemes to compare side-by-side
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setSelectedSchemeIds([])}
+                  className="text-xs text-slate-400 hover:text-white px-2.5 py-1.5 transition-colors"
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={() => setIsComparisonOpen(true)}
+                  disabled={selectedSchemeIds.length < 2}
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                    selectedSchemeIds.length >= 2
+                      ? "bg-indigo-600 text-white hover:bg-indigo-500 shadow-md"
+                      : "bg-slate-800 text-slate-500 cursor-not-allowed"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
-                    <div>
-                      <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold uppercase tracking-wider">
-                        {evalItem.categoryTag}
-                      </span>
-                      <h3 className="text-lg font-bold text-[#102A56] mt-1">{evalItem.schemeName}</h3>
-                    </div>
-                    <div>
-                      {evalItem.status === "ELIGIBLE" && (
-                        <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold flex items-center gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          {t("schemes.eligibleBadge")}
-                        </span>
-                      )}
-                      {evalItem.status === "NEEDS_INFORMATION" && (
-                        <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-xs font-bold flex items-center gap-1">
-                          <HelpCircle className="w-3.5 h-3.5" />
-                          {t("schemes.needsInfoBadge")}
-                        </span>
-                      )}
-                      {evalItem.status === "NOT_ELIGIBLE" && (
-                        <span className="px-3 py-1 rounded-full bg-slate-200 text-slate-700 border border-slate-300 text-xs font-bold flex items-center gap-1">
-                          <XCircle className="w-3.5 h-3.5" />
-                          {t("schemes.notEligibleBadge")}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Conditions Breakdown */}
-                  <div className="space-y-2 text-xs">
-                    {evalItem.satisfiedConditions.length > 0 && (
-                      <div className="space-y-1">
-                        <strong className="text-emerald-800 font-bold block">{t("schemes.satisfiedCriteriaLabel")}</strong>
-                        <ul className="space-y-1">
-                          {evalItem.satisfiedConditions.map((cond, idx) => (
-                            <li key={idx} className="flex items-start gap-1.5 text-emerald-900">
-                              <span className="font-bold text-emerald-600">✓</span> {cond}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {evalItem.failedConditions.length > 0 && (
-                      <div className="space-y-1">
-                        <strong className="text-red-800 font-bold block">{t("schemes.failedCriteriaLabel")}</strong>
-                        <ul className="space-y-1">
-                          {evalItem.failedConditions.map((cond, idx) => (
-                            <li key={idx} className="flex items-start gap-1.5 text-red-900">
-                              <span className="font-bold text-red-600">✗</span> {cond}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {evalItem.missingFields.length > 0 && (
-                      <div className="space-y-1">
-                        <strong className="text-amber-900 font-bold block">{t("schemes.missingDataLabel")}</strong>
-                        <ul className="space-y-1">
-                          {evalItem.missingFields.map((field, idx) => (
-                            <li key={idx} className="flex items-start gap-1.5 text-amber-900">
-                              <span className="font-bold text-amber-600">?</span> {field}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Required Documents */}
-                  <div className="space-y-1.5 text-xs pt-3 border-t border-slate-100">
-                    <strong className="text-[#102A56] block">{t("schemes.reqDocs")}</strong>
-                    <div className="flex flex-wrap gap-1.5">
-                      {evalItem.requiredDocuments.map((doc, idx) => (
-                        <span key={idx} className="px-2.5 py-1 rounded-md bg-[#F4F9FF] border border-[#BCD7EE] text-[#526176]">
-                          {doc}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Action Link & Grounded Citation */}
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs flex-wrap gap-2">
-                    <div className="flex items-center gap-1.5 text-slate-500">
-                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>{t("schemes.sourceIdLabel")} <strong className="font-mono text-slate-700">{evalItem.officialSourceId}</strong></span>
-                      <span className="text-slate-300">•</span>
-                      <span>Verified: {evalItem.lastVerified}</span>
-                    </div>
-                    <a
-                      href={evalItem.officialUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 font-bold text-[#4F46E5] hover:underline"
-                    >
-                      <span>{t("schemes.applyPortal")}</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  </div>
-                </div>
-              ))}
+                  <Scale className="w-3.5 h-3.5" />
+                  <span>Compare Matrix</span>
+                </button>
+              </div>
             </div>
-          ) : null}
-
-          {/* Department Disclaimer */}
-          <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-xs flex items-start gap-2">
-            <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-            <p className="leading-relaxed">{result.disclaimer}</p>
           </div>
+        )}
+
+        {/* Mandatory Department Disclaimer Banner */}
+        <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-600 flex items-start gap-2.5 mb-8">
+          <Info className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+          <p className="leading-relaxed">
+            <strong>Statutory Disclaimer:</strong> Eligibility evaluations are generated based strictly on official Ministry guidelines, gazette notifications, and myScheme data. InfoRight AI does not sanction benefits or guarantee application acceptance. Final eligibility and disbursement are subject to statutory scrutiny by the respective administering department.
+          </p>
         </div>
-      )}
+
+        {/* Comparison Modal */}
+        <SchemeComparisonModal
+          isOpen={isComparisonOpen}
+          onClose={() => setIsComparisonOpen(false)}
+          selectedSchemes={selectedSchemesForModal}
+          onRemoveScheme={(id) => setSelectedSchemeIds((prev) => prev.filter((sId) => sId !== id))}
+        />
+      </div>
     </div>
   );
 }
