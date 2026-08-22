@@ -1773,6 +1773,16 @@ async function runRouteHandlerContractTests() {
       taLocale.common.submit !== "Submit" && taLocale.common.submit.length > 0,
       "Tamil common.submit is natively localized"
     );
+
+    // 9. Forensic Script Purity & Zero Hindi/Gurmukhi Leakage in Assamese
+    const { asLocale } = await import("../src/i18n/locales/as");
+    const asStr = JSON.stringify(asLocale);
+    // Disallow Devanagari letters (U+0904-U+0939), Gurmukhi (U+0A00-U+0A7F), Gujarati (U+0A80-U+0AFF)
+    const nonAssameseScript = /[\u0904-\u0939\u0A00-\u0A7F\u0A80-\u0AFF]/;
+    assert(
+      !nonAssameseScript.test(asStr),
+      "Assamese locale bundle is pure Assamese script with 0 Hindi/Gurmukhi/Gujarati contamination"
+    );
   }
 
   console.log("\n=================================================================");
