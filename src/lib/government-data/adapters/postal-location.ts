@@ -168,7 +168,7 @@ export class PostalLocationProvider implements GovernmentDataProvider<string, Re
         confidence: "HIGH",
         provenance: {
           sourceId: "SRC-STATIC-PIN-REGISTRY",
-          issuingAuthority: "InfoRight Verified Statutory PIN Registry",
+          issuingAuthority: "InfoRight Verified Static Location Registry",
           officialUrl: "https://www.ccmc.gov.in",
           retrievedAt: new Date().toISOString(),
           lastVerified: "2026-08-15",

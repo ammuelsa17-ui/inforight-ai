@@ -1500,7 +1500,7 @@ async function runRouteHandlerContractTests() {
     assert(rtiAuthCentral.pioDesignation === "Central Public Information Officer (CPIO)", "Designation is CPIO");
     assert(rtiAuthCentral.filingPortalUrl === "https://rtionline.gov.in", "Central filing portal is rtionline.gov.in");
 
-    // 6. Consumer Directory Adapter
+    // 6. Consumer Directory Adapter & e-Jagriti Primary Platform Transition
     const consumerOffice = getConsumerDirectoryRecord(
       {
         level: "DISTRICT_COMMISSION",
@@ -1510,14 +1510,19 @@ async function runRouteHandlerContractTests() {
         sourceIds: ["SRC-CONS-2A-CENTRAL"],
         confidence: "HIGH",
         missingFacts: [],
-        officialPortalUrl: "https://edaakhil.nic.in",
-        officialPortalName: "eDaakhil"
+        officialPortalUrl: "https://e-jagriti.gov.in/",
+        officialPortalName: "e-Jagriti"
       },
       "Tamil Nadu",
       "Coimbatore"
     );
     assert(consumerOffice.commissionName.includes("District Consumer Disputes Redressal Commission"), "Directory provides DCDRC record");
     assert(consumerOffice.nchHelpline.includes("1915"), "Includes official NCH 1915 helpline");
+    assert(consumerOffice.portalUrl === "https://e-jagriti.gov.in/", "Primary filing portal is e-Jagriti");
+    assert(consumerOffice.eJagritiFilingUrl === "https://e-jagriti.gov.in/", "eJagritiFilingUrl matches official platform");
+    assert(consumerOffice.platformStatus === "CURRENT_OFFICIAL_PLATFORM", "e-Jagriti classified as CURRENT_OFFICIAL_PLATFORM");
+    assert(consumerOffice.legacyEdaakhilUrl === "https://edaakhil.nic.in", "eDaakhil retained as legacy subsumed reference URL");
+    assert(consumerOffice.transitionNote.includes("subsumed into e-Jagriti effective 1 January 2025"), "Transition notice documents 1 Jan 2025 subsuming of e-Daakhil");
 
     // 7. Workplace Labour Directory
     const labourStateOffice = resolveLabourOffice("Tamil Nadu", "Coimbatore", false);

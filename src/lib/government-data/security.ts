@@ -17,7 +17,9 @@ export const APPROVED_GOVERNMENT_HOSTS: ReadonlyArray<string> = [
   "mahadhikar.maharashtra.gov.in",
   "rtionline.karnataka.gov.in",
 
-  // Consumer Affairs & Commission Portals
+  // Consumer Affairs & Commission Portals (e-Jagriti is the primary platform since Jan 1, 2025; eDaakhil is legacy subsumed)
+  "e-jagriti.gov.in",
+  "www.e-jagriti.gov.in",
   "edaakhil.nic.in",
   "consumerhelpline.gov.in",
   "ncdrc.nic.in",
