@@ -15,7 +15,10 @@ export const sdLocale: UITranslationSchema = {
     "myCases": "مےرے ماملے ائور ٹرےکر",
     "rightsSchemes": "ادھِکار اےوں یوجنااےں",
     "officialWorkspace": "آدھِکارِک کاریکشےتر",
-    "officialRoleDemo": "آدھِکارِک کاریکشےتر (بھومِکا ڈےمو)"
+    "officialRoleDemo": "آدھِکارِک کاریکشےتر (بھومِکا ڈےمو)",
+    "officialTooltip": "سرڪاري آفيسر جو جائزو وٺڻ وارو ڪم ڏيکاريو",
+    "openMenu": "نيويگيشن مينيو کوليو",
+    "closeMenu": "نيويگيشن مينيو بند ڪريو"
   },
   "common": {
     "backToHome": "خاص صفحي ڏانهن واپس وڃو",
@@ -388,7 +391,8 @@ export const sdLocale: UITranslationSchema = {
     "stopAria": "پڈھنا بںد کرےں",
     "toggleFontTitle": "فॉنٹ آکار ٹॉگل کرےں (چھوٹا / سامانی / بڈا)",
     "toggleContrastTitle": "اُچچ کںٹراسٹ موڈ ٹॉگل کرےں",
-    "toggleContrastAria": "اُچچ کںٹراسٹ ٹॉگل کرےں"
+    "toggleContrastAria": "اُچچ کںٹراسٹ ٹॉگل کرےں",
+    "defaultSpeechText": "InfoRight AI ۾ ڀلي ڪري آيا. ميونسپل روڊ جي شڪايتن کي تصديق ٿيل سرڪاري ذريعن سان رڪارڊ تي ٻڌل RTI درخواستن ۾ تبديل ڪريو."
   },
   "evidence": {
     "addPhotoTitle": "ساکشی فوٹو جوڈےں",

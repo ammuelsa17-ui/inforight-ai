@@ -15,7 +15,10 @@ export const knLocale: UITranslationSchema = {
     "myCases": "ಮೇರೇ ಮಾಮಲೇ ಔರ ಟ್ರೈಕರ",
     "rightsSchemes": "ಅಧಿಕಾರ ಏವಂ ಯೋಜನಾಏಂ",
     "officialWorkspace": "ಆಧಿಕಾರಿಕ ಕಾರ್ಯಕ್ಷೇತ್ರ",
-    "officialRoleDemo": "ಆಧಿಕಾರಿಕ ಕಾರ್ಯಕ್ಷೇತ್ರ (ಭೂಮಿಕಾ ಡೇಮೋ)"
+    "officialRoleDemo": "ಆಧಿಕಾರಿಕ ಕಾರ್ಯಕ್ಷೇತ್ರ (ಭೂಮಿಕಾ ಡೇಮೋ)",
+    "officialTooltip": "ಸರ್ಕಾರಿ ಅಧಿಕಾರಿ ಪರಿಶೀಲನೆ ಕಾರ್ಯಪ್ರವಾಹವನ್ನು ಪ್ರದರ್ಶಿಸಿ",
+    "openMenu": "ನ್ಯಾವಿಗೇಷನ್ ಮೆನುವನ್ನು ತೆರೆಯಿರಿ",
+    "closeMenu": "ನ್ಯಾವಿಗೇಷನ್ ಮೆನುವನ್ನು ಮುಚ್ಚಿರಿ"
   },
   "common": {
     "backToHome": "ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ",
@@ -388,7 +391,8 @@ export const knLocale: UITranslationSchema = {
     "stopAria": "ಓದುವುದನ್ನು ಕೊನೆಗೊಳಿಸಿ",
     "toggleFontTitle": "ಅಕ್ಷರ ಗಾತ್ರ ಬದಲಾಯಿಸಿ (A- / A / A+)",
     "toggleContrastTitle": "ಹೆಚ್ಚಿನ ಕಾಂಟ್ರಾಸ್ಟ್ ಶೈಲಿ ಬದಲಾಯಿಸಿ",
-    "toggleContrastAria": "ಹೆಚ್ಚಿನ ಕಾంట್ರಾಸ್ಟ್ ಶೈಲಿ ಬದಲಾಯಿಸಿ"
+    "toggleContrastAria": "ಹೆಚ್ಚಿನ ಕಾంట್ರಾಸ್ಟ್ ಶೈಲಿ ಬದಲಾಯಿಸಿ",
+    "defaultSpeechText": "InfoRight AI ಗೆ ಸುಸ್ವಾಗತ. ಪರಿಶೀಲಿಸಿದ ಅಧಿಕೃತ ಮೂಲಗಳೊಂದಿಗೆ ಪುರಸಭೆಯ ರಸ್ತೆ ದೂರುಗಳನ್ನು ದಾಖಲೆ-ಆಧಾರಿತ RTI ಅರ್ಜಿಗಳಾಗಿ ಪರಿವರ್ತಿಸಿ."
   },
   "evidence": {
     "addPhotoTitle": "ಫೋಟೋ ಸಾಕ್ಷ್ಯವನ್ನು ಲಗತ್ತಿಸಿ (ದುರಸ್ತಿಗೂ ಮುನ್ನ)",

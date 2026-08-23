@@ -15,7 +15,10 @@ export const satLocale: UITranslationSchema = {
     "myCases": "ᱢᱮᱨᱮ ᱢᱟᱢᱞᱮ ᱳᱨ ᱴᱨᱮᱠᱨ",
     "rightsSchemes": "ᱚᱫᱷᱤᱠᱟᱨ ᱮᱣᱝ ᱭᱳᱡᱱᱟᱮᱝ",
     "officialWorkspace": "ᱟᱫᱷᱤᱠᱟᱨᱤᱠ ᱠᱟᱨᱭᱠᱥᱮᱛᱨ",
-    "officialRoleDemo": "ᱟᱫᱷᱤᱠᱟᱨᱤᱠ ᱠᱟᱨᱭᱠᱥᱮᱛᱨ (ᱵᱷᱩᱢᱤᱠᱟ ᱰᱮᱢᱳ)"
+    "officialRoleDemo": "ᱟᱫᱷᱤᱠᱟᱨᱤᱠ ᱠᱟᱨᱭᱠᱥᱮᱛᱨ (ᱵᱷᱩᱢᱤᱠᱟ ᱰᱮᱢᱳ)",
+    "officialTooltip": "ᱥᱚᱨᱠᱟᱨᱤ ᱟᱹᱢᱟᱹᱞᱤᱭᱟᱹ ᱧᱮᱞ ᱵᱤᱰᱟᱹᱣ ᱠᱟᱹᱢᱤᱦᱚᱨᱟ ᱩᱫᱩᱜ ᱢᱮ",
+    "openMenu": "ᱱᱮᱵᱷᱤᱜᱮᱥᱚᱱ ᱢᱮᱱᱩ ᱡᱷᱤᱡᱽ ᱢᱮ",
+    "closeMenu": "ᱱᱮᱵᱷᱤᱜᱮᱥᱚᱱ ᱢᱮᱱᱩ ᱵᱚᱸᱫᱽ ᱢᱮ"
   },
   "common": {
     "backToHome": "ᱢᱩᱬᱩᱛ ᱥᱟᱠᱟᱢ ᱛᱮ ᱨᱩᱣᱟᱹᱲᱚᱜ",
@@ -388,7 +391,8 @@ export const satLocale: UITranslationSchema = {
     "stopAria": "ᱯᱰᱷᱱᱟ ᱵᱝᱫ ᱠᱨᱮᱝ",
     "toggleFontTitle": "ᱯᱷॉᱱᱴ ᱟᱠᱟᱨ ᱴॉᱜᱞ ᱠᱨᱮᱝ (ᱪᱷᱳᱴᱟ / ᱥᱟᱢᱟᱱᱭ / ᱵᱰᱟ)",
     "toggleContrastTitle": "ᱩᱪᱪ ᱠᱝᱴᱨᱟᱥᱴ ᱢᱳᱰ ᱴॉᱜᱞ ᱠᱨᱮᱝ",
-    "toggleContrastAria": "ᱩᱪᱪ ᱠᱝᱴᱨᱟᱥᱴ ᱴॉᱜᱞ ᱠᱨᱮᱝ"
+    "toggleContrastAria": "ᱩᱪᱪ ᱠᱝᱴᱨᱟᱥᱴ ᱴॉᱜᱞ ᱠᱨᱮᱝ",
+    "defaultSpeechText": "InfoRight AI ᱨᱮ ᱥᱟᱹᱜᱩᱱ ᱫᱟᱨᱟᱢ᱾ ᱢᱤᱣᱱᱤᱥᱤᱯᱟᱞ ᱰᱟᱦᱟᱨ ᱮᱴᱠᱮᱴᱚᱬᱮ ᱠᱚᱫᱚ ᱥᱟᱹᱨᱤ ᱟᱠᱟᱱ ᱥᱚᱨᱠᱟᱨᱤ ᱯᱷᱮᱰᱟᱛ ᱥᱟᱶ ᱨᱮᱠᱚᱨᱰ-ᱟᱫᱷᱟᱨᱤᱛ RTI ᱟᱨᱡᱤ ᱨᱮ ᱵᱚᱫᱚᱞ ᱢᱮ᱾"
   },
   "evidence": {
     "addPhotoTitle": "ᱥᱟᱠᱥᱭ ᱯᱷᱳᱴᱳ ᱡᱳᱰᱮᱝ",

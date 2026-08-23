@@ -15,7 +15,10 @@ export const mlLocale: UITranslationSchema = {
     "myCases": "മേരേ മാമലേ ഔര ട്രൈകര",
     "rightsSchemes": "അധികാര ഏവം യോജനാഏം",
     "officialWorkspace": "ആധികാരിക കാര്യക്ഷേത്ര",
-    "officialRoleDemo": "ആധികാരിക കാര്യക്ഷേത്ര (ഭൂമികാ ഡേമോ)"
+    "officialRoleDemo": "ആധികാരിക കാര്യക്ഷേത്ര (ഭൂമികാ ഡേമോ)",
+    "officialTooltip": "സർക്കാർ ഉദ്യോഗസ്ഥ അവലോകന വർക്ക്ഫ്ലോ പ്രകടിപ്പിക്കുക",
+    "openMenu": "നാവിഗേഷൻ മെനു തുറക്കുക",
+    "closeMenu": "നാവിഗേഷൻ മെനു അടയ്ക്കുക"
   },
   "common": {
     "backToHome": "ഹോമിലേക്ക് മടങ്ങുക",
@@ -388,7 +391,8 @@ export const mlLocale: UITranslationSchema = {
     "stopAria": "പഢ഼നാ ബംദ കരേം",
     "toggleFontTitle": "ഫ഼൉ന്ട ആകാര ട൉ഗല കരേം (ഛോടാ / സാമാന്യ / ബഡ഼ാ)",
     "toggleContrastTitle": "ഉച്ച കംട്രാസ്ട മോഡ ട൉ഗല കരേം",
-    "toggleContrastAria": "ഉച്ച കംട്രാസ്ട ട൉ഗല കരേം"
+    "toggleContrastAria": "ഉച്ച കംട്രാസ്ട ട൉ഗല കരേം",
+    "defaultSpeechText": "InfoRight AI-ലേക്ക് സ്വാഗതം. മുനിസിപ്പൽ റോഡ് പരാതികളെ സ്ഥിരീകരിച്ച ഔദ്യോഗിക ഉറവിടങ്ങൾ ഉള്ള രേഖാധിഷ്ഠിത RTI അപേക്ഷകളാക്കി മാറ്റുക."
   },
   "evidence": {
     "addPhotoTitle": "സാക്ഷ്യ ഫോടോ ജോഡ഼േം",

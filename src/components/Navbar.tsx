@@ -42,7 +42,7 @@ export default function Navbar() {
             <Link
               href="/official"
               className="text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 px-2.5 py-1 rounded-md border border-slate-300 transition-colors whitespace-nowrap font-medium shrink-0"
-              title="Demonstrate government officer review workflow"
+              title={t("nav.officialTooltip")}
             >
               {t("nav.officialWorkspace")}
             </Link>
@@ -50,7 +50,7 @@ export default function Navbar() {
 
           {/* Action CTA & Tools for Full Desktop (2xl+) */}
           <div className="hidden 2xl:flex items-center gap-3 shrink-0 ml-auto pl-4">
-            <AccessibilityToolbar textToRead="Welcome to InfoRight AI. Convert municipal road complaints into clear record-based RTI applications with verified official sources." />
+            <AccessibilityToolbar textToRead={t("accessibility.defaultSpeechText")} />
             <LanguageSelector />
             <Link
               href="/ask"
@@ -73,7 +73,7 @@ export default function Navbar() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg text-[#526176] hover:text-[#102A56] hover:bg-[#E0F2FE] transition-colors"
-              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-label={mobileMenuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -85,7 +85,7 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="2xl:hidden border-b border-[#BCD7EE] bg-white px-4 py-4 space-y-3 shadow-lg">
           <div className="pb-2 border-b border-[#BCD7EE]">
-            <AccessibilityToolbar textToRead="Welcome to InfoRight AI. Convert municipal road complaints into clear record-based RTI applications with verified official sources." />
+            <AccessibilityToolbar textToRead={t("accessibility.defaultSpeechText")} />
           </div>
           <Link
             href="/ask"

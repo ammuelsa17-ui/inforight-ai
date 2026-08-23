@@ -15,7 +15,10 @@ export const saLocale: UITranslationSchema = {
     "myCases": "मेरे मामले और ट्रैकर",
     "rightsSchemes": "अधिकार एवं योजनाएं",
     "officialWorkspace": "आधिकारिक कार्यक्षेत्र",
-    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)"
+    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)",
+    "officialTooltip": "शासकीय-अधिकारिणः पुनरावलोकन-कार्यप्रवाहं प्रदर्शयन्तु",
+    "openMenu": "सञ्चारसूचिम् उद्घाटयन्तु",
+    "closeMenu": "सञ्चारसूचिं स्थगयन्तु"
   },
   "common": {
     "backToHome": "मुख्यपृष्ठं प्रति गच्छतु",
@@ -388,7 +391,8 @@ export const saLocale: UITranslationSchema = {
     "stopAria": "पढ़ना बंद करें",
     "toggleFontTitle": "फ़ॉन्ट आकार टॉगल करें (छोटा / सामान्य / बड़ा)",
     "toggleContrastTitle": "उच्च कंट्रास्ट मोड टॉगल करें",
-    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें"
+    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें",
+    "defaultSpeechText": "InfoRight AI मध्ये भवतां स्वागतम्। नगरमार्गसम्बद्धनिवेदनानि प्रमाणीकृतशासकीयस्रोतः सह अभिलेखाधारित-RTI-आवेदनरूपेण परिवर्तयन्तु।"
   },
   "evidence": {
     "addPhotoTitle": "साक्ष्य फोटो जोड़ें",

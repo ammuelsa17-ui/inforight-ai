@@ -15,7 +15,10 @@ export const doiLocale: UITranslationSchema = {
     "myCases": "मेरे मामले और ट्रैकर",
     "rightsSchemes": "अधिकार एवं योजनाएं",
     "officialWorkspace": "आधिकारिक कार्यक्षेत्र",
-    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)"
+    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)",
+    "officialTooltip": "सरकारी अफसर समीक्षा कम्म-काज दस्सो",
+    "openMenu": "नेविगेशन मेनू खोल्लो",
+    "closeMenu": "नेविगेशन मेनू बंद करो"
   },
   "common": {
     "backToHome": "मुख्य पृष्ठ पर वापस जाओ",
@@ -388,7 +391,8 @@ export const doiLocale: UITranslationSchema = {
     "stopAria": "पढ़ना बंद करें",
     "toggleFontTitle": "फ़ॉन्ट आकार टॉगल करें (छोटा / सामान्य / बड़ा)",
     "toggleContrastTitle": "उच्च कंट्रास्ट मोड टॉगल करें",
-    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें"
+    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें",
+    "defaultSpeechText": "InfoRight AI च तुंदा सुआगत ऐ। नगरपालिका सडक दियां शिकायतें गी प्रमाणित सरकारी स्त्रोत कन्नै रिकार्ड-आधारित RTI अर्जियां च बदलो।"
   },
   "evidence": {
     "addPhotoTitle": "साक्ष्य फोटो जोड़ें",

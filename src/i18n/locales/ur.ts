@@ -15,7 +15,10 @@ export const urLocale: UITranslationSchema = {
     "myCases": "مےرے ماملے ائور ٹرےکر",
     "rightsSchemes": "ادھِکار اےوں یوجنااےں",
     "officialWorkspace": "آدھِکارِک کاریکشےتر",
-    "officialRoleDemo": "آدھِکارِک کاریکشےتر (بھومِکا ڈےمو)"
+    "officialRoleDemo": "آدھِکارِک کاریکشےتر (بھومِکا ڈےمو)",
+    "officialTooltip": "سرکاری افسر کے جائزے کا ورک فلو دکھائیں",
+    "openMenu": "نیویگیشن مینو کھولیں",
+    "closeMenu": "نیویگیشن مینو بند کریں"
   },
   "common": {
     "backToHome": "مرکزی صفحہ پر واپس جائیں",
@@ -388,7 +391,8 @@ export const urLocale: UITranslationSchema = {
     "stopAria": "پڈھنا بںد کرےں",
     "toggleFontTitle": "فॉنٹ آکار ٹॉگل کرےں (چھوٹا / سامانی / بڈا)",
     "toggleContrastTitle": "اُچچ کںٹراسٹ موڈ ٹॉگل کرےں",
-    "toggleContrastAria": "اُچچ کںٹراسٹ ٹॉگل کرےں"
+    "toggleContrastAria": "اُچچ کںٹراسٹ ٹॉگل کرےں",
+    "defaultSpeechText": "InfoRight AI میں خوش آمدید۔ میونسپل سڑک کی شکایات کو تصدیق شدہ سرکاری ذرائع کے ساتھ ریکارڈ پر مبنی RTI درخواستوں میں تبدیل کریں۔"
   },
   "evidence": {
     "addPhotoTitle": "تصویری ثبوت منسلک کریں (مرمت سے پہلے)",
