@@ -14,6 +14,9 @@ export interface UITranslationSchema {
     rightsSchemes: string;
     officialWorkspace: string;
     officialRoleDemo: string;
+    officialTooltip: string;
+    openMenu: string;
+    closeMenu: string;
   };
   common: {
     backToHome: string;
@@ -387,6 +390,7 @@ export interface UITranslationSchema {
     toggleFontTitle: string;
     toggleContrastTitle: string;
     toggleContrastAria: string;
+    defaultSpeechText: string;
   };
   evidence: {
     addPhotoTitle: string;

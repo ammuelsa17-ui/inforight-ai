@@ -15,7 +15,10 @@ export const paLocale: UITranslationSchema = {
     "myCases": "ਮੇਰੇ ਮਾਮਲੇ ਔਰ ਟ੍ਰੈਕਰ",
     "rightsSchemes": "ਅਧਿਕਾਰ ਏਵਂ ਯੋਜਨਾਏਂ",
     "officialWorkspace": "ਆਧਿਕਾਰਿਕ ਕਾਰ੍ਯਕ੍਷ੇਤ੍ਰ",
-    "officialRoleDemo": "ਆਧਿਕਾਰਿਕ ਕਾਰ੍ਯਕ੍਷ੇਤ੍ਰ (ਭੂਮਿਕਾ ਡੇਮੋ)"
+    "officialRoleDemo": "ਆਧਿਕਾਰਿਕ ਕਾਰ੍ਯਕ੍਷ੇਤ੍ਰ (ਭੂਮਿਕਾ ਡੇਮੋ)",
+    "officialTooltip": "ਸਰਕਾਰੀ ਅਧਿਕਾਰੀ ਸਮੀਖਿਆ ਵਰਕਫਲੋ ਦਾ ਪ੍ਰਦਰਸ਼ਨ ਕਰੋ",
+    "openMenu": "ਨੇਵੀਗੇਸ਼ਨ ਮੀਨੂ ਖੋਲ੍ਹੋ",
+    "closeMenu": "ਨੇਵੀਗੇਸ਼ਨ ਮੀਨੂ ਬੰਦ ਕਰੋ"
   },
   "common": {
     "backToHome": "ਮੁੱਖ ਪੰਨੇ 'ਤੇ ਵਾਪਸ ਜਾਓ",
@@ -388,7 +391,8 @@ export const paLocale: UITranslationSchema = {
     "stopAria": "ਪਢ਼ਨਾ ਬਂਦ ਕਰੇਂ",
     "toggleFontTitle": "ਫ਼੉ਨ੍ਟ ਆਕਾਰ ਟ੉ਗਲ ਕਰੇਂ (ਛੋਟਾ / ਸਾਮਾਨ੍ਯ / ਬਡ਼ਾ)",
     "toggleContrastTitle": "ਉਚ੍ਚ ਕਂਟ੍ਰਾਸ੍ਟ ਮੋਡ ਟ੉ਗਲ ਕਰੇਂ",
-    "toggleContrastAria": "ਉਚ੍ਚ ਕਂਟ੍ਰਾਸ੍ਟ ਟ੉ਗਲ ਕਰੇਂ"
+    "toggleContrastAria": "ਉਚ੍ਚ ਕਂਟ੍ਰਾਸ੍ਟ ਟ੉ਗਲ ਕਰੇਂ",
+    "defaultSpeechText": "InfoRight AI ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ। ਨਗਰਪਾਲਿਕਾ ਸੜਕ ਸੰਬੰਧੀ ਸ਼ਿਕਾਇਤਾਂ ਨੂੰ ਪ੍ਰਮਾਣਿਤ ਅਧਿਕਾਰਤ ਸਰੋਤਾਂ ਨਾਲ ਰਿਕਾਰਡ-ਆਧਾਰਿਤ RTI ਅਰਜ਼ੀਆਂ ਵਿੱਚ ਬਦਲੋ।"
   },
   "evidence": {
     "addPhotoTitle": "ਸਾਕ੍਷੍ਯ ਫੋਟੋ ਜੋਡ਼ੇਂ",

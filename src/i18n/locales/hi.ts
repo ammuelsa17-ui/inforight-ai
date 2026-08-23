@@ -15,7 +15,10 @@ export const hiLocale: UITranslationSchema = {
     "myCases": "मेरे मामले और ट्रैकर",
     "rightsSchemes": "अधिकार एवं योजनाएं",
     "officialWorkspace": "आधिकारिक कार्यक्षेत्र",
-    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)"
+    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)",
+    "officialTooltip": "सरकारी अधिकारी समीक्षा कार्यप्रवाह प्रदर्शित करें",
+    "openMenu": "नेविगेशन मेनू खोलें",
+    "closeMenu": "नेविगेशन मेनू बंद करें"
   },
   "common": {
     "backToHome": "मुख्य पृष्ठ पर वापस जाएं",
@@ -388,7 +391,8 @@ export const hiLocale: UITranslationSchema = {
     "stopAria": "पढ़ना बंद करें",
     "toggleFontTitle": "फ़ॉन्ट आकार टॉगल करें (छोटा / सामान्य / बड़ा)",
     "toggleContrastTitle": "उच्च कंट्रास्ट मोड टॉगल करें",
-    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें"
+    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें",
+    "defaultSpeechText": "InfoRight AI में आपका स्वागत है। नगरपालिका सड़क शिकायतों को सत्यापित आधिकारिक स्रोतों के साथ रिकॉर्ड-आधारित आरटीआई आवेदनों में बदलें।"
   },
   "evidence": {
     "addPhotoTitle": "साक्ष्य फोटो जोड़ें",

@@ -15,7 +15,10 @@ export const mrLocale: UITranslationSchema = {
     "myCases": "मेरे मामले और ट्रैकर",
     "rightsSchemes": "अधिकार एवं योजनाएं",
     "officialWorkspace": "आधिकारिक कार्यक्षेत्र",
-    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)"
+    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)",
+    "officialTooltip": "शासकीय अधिकारी पुनरावलोकन कार्यप्रवाह प्रदर्शित करा",
+    "openMenu": "नेव्हिगेशन मेनू उघडा",
+    "closeMenu": "नेव्हिगेशन मेनू बंद करा"
   },
   "common": {
     "backToHome": "मुख्यपृष्ठावर परत जा",
@@ -388,7 +391,8 @@ export const mrLocale: UITranslationSchema = {
     "stopAria": "पढ़ना बंद करें",
     "toggleFontTitle": "फ़ॉन्ट आकार टॉगल करें (छोटा / सामान्य / बड़ा)",
     "toggleContrastTitle": "उच्च कंट्रास्ट मोड टॉगल करें",
-    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें"
+    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें",
+    "defaultSpeechText": "InfoRight AI मध्ये आपले स्वागत आहे. नगरपालिका रस्त्यांच्या तक्रारींचे सत्यापित अधिकृत स्त्रोतांसह नोंद-आधारित माहिती अधिकार अर्जात रूपांतर करा."
   },
   "evidence": {
     "addPhotoTitle": "साक्ष्य फोटो जोड़ें",

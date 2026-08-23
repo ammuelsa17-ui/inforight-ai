@@ -19,7 +19,7 @@ export default function LanguageSelector() {
         aria-label={t("nav.selectLanguage")}
       >
         {ALL_BHARAT_LANGUAGES.map((lang) => (
-          <option key={lang.code} value={lang.code} className="truncate">
+          <option key={lang.code} value={lang.code}>
             {lang.nativeName} ({lang.name})
           </option>
         ))}

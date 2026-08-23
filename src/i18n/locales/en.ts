@@ -15,7 +15,10 @@ export const enLocale: UITranslationSchema = {
     "myCases": "My Cases & Tracker",
     "rightsSchemes": "Rights & Schemes",
     "officialWorkspace": "Official Workspace",
-    "officialRoleDemo": "Official Workspace (Role Demo)"
+    "officialRoleDemo": "Official Workspace (Role Demo)",
+    "officialTooltip": "Demonstrate government officer review workflow",
+    "openMenu": "Open navigation menu",
+    "closeMenu": "Close navigation menu"
   },
   "common": {
     "backToHome": "Back to Home",
@@ -388,7 +391,8 @@ export const enLocale: UITranslationSchema = {
     "stopAria": "Stop read aloud",
     "toggleFontTitle": "Toggle Font Size (A- / A / A+)",
     "toggleContrastTitle": "Toggle High Contrast Mode",
-    "toggleContrastAria": "Toggle high contrast mode"
+    "toggleContrastAria": "Toggle high contrast mode",
+    "defaultSpeechText": "Welcome to InfoRight AI. Convert municipal road complaints into clear record-based RTI applications with verified official sources."
   },
   "evidence": {
     "addPhotoTitle": "Attach Photo Evidence (Before Rectification)",

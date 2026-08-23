@@ -15,7 +15,10 @@ export const asLocale: UITranslationSchema = {
     "myCases": "মোৰ গোচৰ আৰু ট্ৰেকাৰ",
     "rightsSchemes": "অধিকাৰ আৰু আঁচনি",
     "officialWorkspace": "চৰকাৰী কাৰ্যালয় কাৰ্যক্ষেত্ৰ",
-    "officialRoleDemo": "চৰকাৰী কাৰ্যালয় কাৰ্যক্ষেত্ৰ (ভূমিকা প্ৰদৰ্শন)"
+    "officialRoleDemo": "চৰকাৰী কাৰ্যালয় কাৰ্যক্ষেত্ৰ (ভূমিকা প্ৰদৰ্শন)",
+    "officialTooltip": "চৰকাৰী বিষয়াৰ পৰ্যালোচনা কাৰ্য্যপ্ৰণালী প্ৰদৰ্শন কৰক",
+    "openMenu": "নেভিগেচন মেনু খোলক",
+    "closeMenu": "নেভিগেচন মেনু বন্ধ কৰক"
   },
   "common": {
     "backToHome": "মুখ্য পৃষ্ঠালৈ উভতি যাওক",
@@ -388,7 +391,8 @@ export const asLocale: UITranslationSchema = {
     "stopAria": "পঢ়া বন্ধ কৰক",
     "toggleFontTitle": "ফন্ট আকাৰ পৰিবৰ্তন কৰক",
     "toggleContrastTitle": "উচ্চ কনট্ৰাষ্ট টগল কৰক",
-    "toggleContrastAria": "উচ্চ কনট্ৰাষ্ট মোড সলনি কৰক"
+    "toggleContrastAria": "উচ্চ কনট্ৰাষ্ট মোড সলনি কৰক",
+    "defaultSpeechText": "InfoRight AI লৈ স্বাগতম। পৌৰনিগমৰ পথৰ অভিযোগসমূহ প্ৰমাণিত চৰকাৰী উৎসৰ সৈতে ৰেকৰ্ড-ভিত্তিক RTI আবেদনলৈ ৰূপান্তৰ কৰক।"
   },
   "evidence": {
     "addPhotoTitle": "ফটো প্ৰমাণ সংলগ্ন কৰক (মেৰামতিৰ পূৰ্বে)",

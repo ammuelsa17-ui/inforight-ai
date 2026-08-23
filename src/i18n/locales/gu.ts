@@ -15,7 +15,10 @@ export const guLocale: UITranslationSchema = {
     "myCases": "મેરે મામલે ઔર ટ્રૈકર",
     "rightsSchemes": "અધિકાર એવં યોજનાએં",
     "officialWorkspace": "આધિકારિક કાર્યક્ષેત્ર",
-    "officialRoleDemo": "આધિકારિક કાર્યક્ષેત્ર (ભૂમિકા ડેમો)"
+    "officialRoleDemo": "આધિકારિક કાર્યક્ષેત્ર (ભૂમિકા ડેમો)",
+    "officialTooltip": "સરકારી અધિકારી સમીક્ષા કાર્યપ્રવાહ દર્શાવો",
+    "openMenu": "નેવિગેશન મેનુ ખોલો",
+    "closeMenu": "નેવિગેશન મેનુ બંધ કરો"
   },
   "common": {
     "backToHome": "મુખ્ય પૃષ્ઠ પર પાછા જાઓ",
@@ -388,7 +391,8 @@ export const guLocale: UITranslationSchema = {
     "stopAria": "પઢ઼ના બંદ કરેં",
     "toggleFontTitle": "ફ઼ૉન્ટ આકાર ટૉગલ કરેં (છોટા / સામાન્ય / બડ઼ા)",
     "toggleContrastTitle": "ઉચ્ચ કંટ્રાસ્ટ મોડ ટૉગલ કરેં",
-    "toggleContrastAria": "ઉચ્ચ કંટ્રાસ્ટ ટૉગલ કરેં"
+    "toggleContrastAria": "ઉચ્ચ કંટ્રાસ્ટ ટૉગલ કરેં",
+    "defaultSpeechText": "InfoRight AI માં આપનું સ્વાગત છે. નગરપાલિકાના રસ્તાની ફરિયાદોને ચકાસાયેલ અધિકૃત સ્ત્રોતો સાથે રેકોર્ડ-આધારિત RTI અરજીઓમાં રૂપાંતરિત કરો."
   },
   "evidence": {
     "addPhotoTitle": "સાક્ષ્ય ફોટો જોડ઼ેં",

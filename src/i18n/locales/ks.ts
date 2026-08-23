@@ -15,7 +15,10 @@ export const ksLocale: UITranslationSchema = {
     "myCases": "مےرے ماملے ائور ٹرےکر",
     "rightsSchemes": "ادھِکار اےوں یوجنااےں",
     "officialWorkspace": "آدھِکارِک کاریکشےتر",
-    "officialRoleDemo": "آدھِکارِک کاریکشےتر (بھومِکا ڈےمو)"
+    "officialRoleDemo": "آدھِکارِک کاریکشےتر (بھومِکا ڈےمو)",
+    "officialTooltip": "سرکٲرؠ افسر سنٛد جائزہ ورک فلو ہٲویو",
+    "openMenu": "نیویگیشن مینو کھولیو",
+    "closeMenu": "نیویگیشن مینو بنٛد کریو"
   },
   "common": {
     "backToHome": "اہم صفحس کن واپس گژھیو",
@@ -388,7 +391,8 @@ export const ksLocale: UITranslationSchema = {
     "stopAria": "پڈھنا بںد کرےں",
     "toggleFontTitle": "فॉنٹ آکار ٹॉگل کرےں (چھوٹا / سامانی / بڈا)",
     "toggleContrastTitle": "اُچچ کںٹراسٹ موڈ ٹॉگل کرےں",
-    "toggleContrastAria": "اُچچ کںٹراسٹ ٹॉگل کرےں"
+    "toggleContrastAria": "اُچچ کںٹراسٹ ٹॉگل کرےں",
+    "defaultSpeechText": "InfoRight AI مَنٛز خوش آمدید۔ میونسپل سڑک ہنٛزن شکایتن تصدیق شُدہ سرکٲرؠ ذرائعن سعت ریکارڈ بنیاد RTI درخاستن مَنٛز بدلاویو۔"
   },
   "evidence": {
     "addPhotoTitle": "ساکشی فوٹو جوڈےں",

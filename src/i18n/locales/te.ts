@@ -15,7 +15,10 @@ export const teLocale: UITranslationSchema = {
     "myCases": "నా కేసులు & ట్రాకర్",
     "rightsSchemes": "హక్కులు & పథకాలు",
     "officialWorkspace": "అధికారిక కార్యస్థలం",
-    "officialRoleDemo": "అధికారిక కార్యస్థలం (పాత్ర డెమో)"
+    "officialRoleDemo": "అధికారిక కార్యస్థలం (పాత్ర డెమో)",
+    "officialTooltip": "ప్రభుత్వ అధికారి సమీక్ష వర్క్‌ఫ్లోను ప్రదర్శించండి",
+    "openMenu": "నావిగేషన్ మెనుని తెరవండి",
+    "closeMenu": "నావిగేషన్ మెనుని మూసివేయండి"
   },
   "common": {
     "backToHome": "హోమ్‌కు తిరిగి వెళ్ళు",
@@ -388,7 +391,8 @@ export const teLocale: UITranslationSchema = {
     "stopAria": "చదవడం ఆపివేయండి",
     "toggleFontTitle": "ఫాంట్ పరిమాణాన్ని మార్చండి",
     "toggleContrastTitle": "హై కాంట్రాస్ట్‌ను టోగుల్ చేయండి",
-    "toggleContrastAria": "హై కాంట్రాస్ట్ మోడ్ మార్చండి"
+    "toggleContrastAria": "హై కాంట్రాస్ట్ మోడ్ మార్చండి",
+    "defaultSpeechText": "InfoRight AI కి స్వాగతం. ధృవీకరించబడిన అధికారిక వనరులతో మునిసిపల్ రహదారి ఫిర్యాదులను రికార్డ్-ఆధారిత RTI దరఖాస్తులుగా మార్చండి."
   },
   "evidence": {
     "addPhotoTitle": "ఫోటో సాక్ష్యాన్ని జత చేయండి (మరమ్మతుకు ముందు)",

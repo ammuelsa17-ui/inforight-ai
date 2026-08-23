@@ -15,7 +15,10 @@ export const brxLocale: UITranslationSchema = {
     "myCases": "मेरे मामले और ट्रैकर",
     "rightsSchemes": "अधिकार एवं योजनाएं",
     "officialWorkspace": "आधिकारिक कार्यक्षेत्र",
-    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)"
+    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)",
+    "officialTooltip": "सोरखारि बिबानगोनांनि बिजिरनाय खामानि दिन्थि",
+    "openMenu": "नेभिगेसन मेनुखौ खेव",
+    "closeMenu": "नेभिगेसन मेनुखौ बन्द खालाम"
   },
   "common": {
     "backToHome": "गाहाइ नखर'आव फैफिन",
@@ -388,7 +391,8 @@ export const brxLocale: UITranslationSchema = {
     "stopAria": "पढ़ना बंद करें",
     "toggleFontTitle": "फ़ॉन्ट आकार टॉगल करें (छोटा / सामान्य / बड़ा)",
     "toggleContrastTitle": "उच्च कंट्रास्ट मोड टॉगल करें",
-    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें"
+    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें",
+    "defaultSpeechText": "InfoRight AI आव बरायबाय। म्युनिसिपालिटि लामानि अजतफोरखौ रोखा सोरखारि फुंखाफोरजों लोगोसे रेकर्ड-गुदि RTI आरजिआव सोलाय।"
   },
   "evidence": {
     "addPhotoTitle": "साक्ष्य फोटो जोड़ें",

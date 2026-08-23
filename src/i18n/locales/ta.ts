@@ -15,7 +15,10 @@ export const taLocale: UITranslationSchema = {
     "myCases": "என் வழக்குகள் & கண்காணிப்பு",
     "rightsSchemes": "உரிமைகள் & நலத்திட்டங்கள்",
     "officialWorkspace": "அதிகாரப்பூர்வ பணியிடம்",
-    "officialRoleDemo": "அதிகாரப்பூர்வ பணியிடம் (செயல்முறை விளக்கம்)"
+    "officialRoleDemo": "அதிகாரப்பூர்வ பணியிடம் (செயல்முறை விளக்கம்)",
+    "officialTooltip": "அரசு அதிகாரி மதிப்பாய்வு பணிப்பாய்வை விளக்குக",
+    "openMenu": "வழிசெலுத்தல் மெனுவைத் திறக்கவும்",
+    "closeMenu": "வழிசெலுத்தல் மெனுவை மூடவும்"
   },
   "common": {
     "backToHome": "முகப்பிற்குத் திரும்பு",
@@ -388,7 +391,8 @@ export const taLocale: UITranslationSchema = {
     "stopAria": "வாசிப்பதை முடி",
     "toggleFontTitle": "எழுத்து அளவை மாற்று (A- / A / A+)",
     "toggleContrastTitle": "அதிக கான்ட்ராஸ்ட் நிலையை மாற்று",
-    "toggleContrastAria": "அதிக கான்ட்ராஸ்ட் நிலையை மாற்று"
+    "toggleContrastAria": "அதிக கான்ட்ராஸ்ட் நிலையை மாற்று",
+    "defaultSpeechText": "InfoRight AI-க்கு வரவேற்கிறோம். நகராட்சி சாலைப் புகார்களை சரிபார்க்கப்பட்ட அதிகாரப்பூர்வ ஆதாரங்களுடன் பதிவு அடிப்படையிலான தகவல் அறியும் உரிமை விண்ணப்பங்களாக மாற்றவும்."
   },
   "evidence": {
     "addPhotoTitle": "புகைப்பட ஆதாரம் இணைக்கவும் (சீரமைப்புக்கு முன்)",

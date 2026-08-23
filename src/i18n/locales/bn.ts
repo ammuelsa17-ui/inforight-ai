@@ -15,7 +15,10 @@ export const bnLocale: UITranslationSchema = {
     "myCases": "মেরে মামলে ঔর ট্রৈকর",
     "rightsSchemes": "অধিকার এ঵ং যোজনাএং",
     "officialWorkspace": "আধিকারিক কার্যক্ষেত্র",
-    "officialRoleDemo": "আধিকারিক কার্যক্ষেত্র (ভূমিকা ডেমো)"
+    "officialRoleDemo": "আধিকারিক কার্যক্ষেত্র (ভূমিকা ডেমো)",
+    "officialTooltip": "সরকারি কর্মকর্তার পর্যালোচনা কর্মপ্রবাহ প্রদর্শন করুন",
+    "openMenu": "নেভিগেশন মেনু খুলুন",
+    "closeMenu": "নেভিগেশন মেনু বন্ধ করুন"
   },
   "common": {
     "backToHome": "মূলপৃষ্ঠায় ফিরে যান",
@@ -388,7 +391,8 @@ export const bnLocale: UITranslationSchema = {
     "stopAria": "পঢ়না বংদ করেং",
     "toggleFontTitle": "ফ়৉ন্ট আকার ট৉গল করেং (ছোটা / সামান্য / বড়া)",
     "toggleContrastTitle": "উচ্চ কংট্রাস্ট মোড ট৉গল করেং",
-    "toggleContrastAria": "উচ্চ কংট্রাস্ট ট৉গল করেং"
+    "toggleContrastAria": "উচ্চ কংট্রাস্ট ট৉গল করেং",
+    "defaultSpeechText": "InfoRight AI-তে স্বাগতম। পৌরসভা রাস্তার অভিযোগগুলিকে যাচাইকৃত অফিসিয়াল সূত্র সহ রেকর্ড-ভিত্তিক RTI আবেদনে রূপান্তর করুন।"
   },
   "evidence": {
     "addPhotoTitle": "সাক্ষ্য ফোটো জোড়েং",

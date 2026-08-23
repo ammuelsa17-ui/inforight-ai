@@ -15,7 +15,10 @@ export const odLocale: UITranslationSchema = {
     "myCases": "ମେରେ ମାମଲେ ଔର ଟ୍ରୈକର",
     "rightsSchemes": "ଅଧିକାର ଏଵଂ ଯୋଜନାଏଂ",
     "officialWorkspace": "ଆଧିକାରିକ କାର୍ଯକ୍ଷେତ୍ର",
-    "officialRoleDemo": "ଆଧିକାରିକ କାର୍ଯକ୍ଷେତ୍ର (ଭୂମିକା ଡେମୋ)"
+    "officialRoleDemo": "ଆଧିକାରିକ କାର୍ଯକ୍ଷେତ୍ର (ଭୂମିକା ଡେମୋ)",
+    "officialTooltip": "ସରକାରୀ ଅଧିକାରୀ ସମୀକ୍ଷା କାର୍ଯ୍ୟପ୍ରଣାଳୀ ପ୍ରଦର୍ଶନ କରନ୍ତୁ",
+    "openMenu": "ନାଭିଗେସନ୍ ମେନୁ ଖୋଲନ୍ତୁ",
+    "closeMenu": "ନାଭିଗେସନ୍ ମେନୁ ବନ୍ଦ କରନ୍ତୁ"
   },
   "common": {
     "backToHome": "ମୁଖ୍ୟ ପୃଷ୍ଠାକୁ ଫେରନ୍ତୁ",
@@ -388,7 +391,8 @@ export const odLocale: UITranslationSchema = {
     "stopAria": "ପଢ଼ନା ବଂଦ କରେଂ",
     "toggleFontTitle": "ଫ଼୉ନ୍ଟ ଆକାର ଟ୉ଗଲ କରେଂ (ଛୋଟା / ସାମାନ୍ଯ / ବଡ଼ା)",
     "toggleContrastTitle": "ଉଚ୍ଚ କଂଟ୍ରାସ୍ଟ ମୋଡ ଟ୉ଗଲ କରେଂ",
-    "toggleContrastAria": "ଉଚ୍ଚ କଂଟ୍ରାସ୍ଟ ଟ୉ଗଲ କରେଂ"
+    "toggleContrastAria": "ଉଚ୍ଚ କଂଟ୍ରାସ୍ଟ ଟ୉ଗଲ କରେଂ",
+    "defaultSpeechText": "InfoRight AI କୁ ସ୍ୱାଗତ। ପୌରପାଳିକା ରାସ୍ତା ଅଭିଯୋଗକୁ ଯାଞ୍ଚ ହୋଇଥିବା ସରକାରୀ ଉତ୍ସ ସହିତ ରେକର୍ଡ-ଆଧାରିତ RTI ଆବେଦନରେ ପରିଣତ କରନ୍ତୁ।"
   },
   "evidence": {
     "addPhotoTitle": "ସାକ୍ଷ୍ଯ ଫୋଟୋ ଜୋଡ଼େଂ",

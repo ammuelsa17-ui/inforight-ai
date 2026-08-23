@@ -15,7 +15,10 @@ export const neLocale: UITranslationSchema = {
     "myCases": "मेरे मामले और ट्रैकर",
     "rightsSchemes": "अधिकार एवं योजनाएं",
     "officialWorkspace": "आधिकारिक कार्यक्षेत्र",
-    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)"
+    "officialRoleDemo": "आधिकारिक कार्यक्षेत्र (भूमिका डेमो)",
+    "officialTooltip": "सरकारी अधिकारी समीक्षा कार्यप्रवाह प्रदर्शन गर्नुहोस्",
+    "openMenu": "नेभिगेसन मेनु खोल्नुहोस्",
+    "closeMenu": "नेभिगेसन मेनु बन्द गर्नुहोस्"
   },
   "common": {
     "backToHome": "गृह पृष्ठमा फर्कनुहोस्",
@@ -388,7 +391,8 @@ export const neLocale: UITranslationSchema = {
     "stopAria": "पढ़ना बंद करें",
     "toggleFontTitle": "फ़ॉन्ट आकार टॉगल करें (छोटा / सामान्य / बड़ा)",
     "toggleContrastTitle": "उच्च कंट्रास्ट मोड टॉगल करें",
-    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें"
+    "toggleContrastAria": "उच्च कंट्रास्ट टॉगल करें",
+    "defaultSpeechText": "InfoRight AI मा स्वागत छ। नगरपालिका सडक गुनासोहरूलाई प्रमाणित आधिकारिक स्रोतहरूसहित अभिलेख-आधारित RTI आवेदनहरूमा रूपान्तरण गर्नुहोस्।"
   },
   "evidence": {
     "addPhotoTitle": "साक्ष्य फोटो जोड़ें",
