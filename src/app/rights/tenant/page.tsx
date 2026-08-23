@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Printer, Building, Scale, ExternalLink } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { ALL_STATES_AND_UTS } from "@/lib/location/location-context";
+import { ALL_STATES_AND_UTS, getDistrictsForState, isDistrictInState } from "@/lib/location/location-context";
 import { planTenantAction, TenantActionPlan, TenantIssueType } from "@/lib/tenancy/tenancy-engine";
 import { generateRepresentationDocument, exportRepresentationHtml, RepresentationData } from "@/lib/templates/representation-generator";
 import { triggerPrintDocument } from "@/lib/pdf/print-export";
@@ -19,6 +19,17 @@ export default function TenantRightsPage() {
   const [selectedState, setSelectedState] = useState("Tamil Nadu");
   const [district, setDistrict] = useState("Coimbatore");
   const [pinCode, setPinCode] = useState("641002");
+
+  const availableDistricts = React.useMemo(() => {
+    return getDistrictsForState(selectedState);
+  }, [selectedState]);
+
+  const handleStateChange = (nextState: string) => {
+    setSelectedState(nextState);
+    if (!isDistrictInState(nextState, district)) {
+      setDistrict("");
+    }
+  };
   const [propertyType, setPropertyType] = useState<"RESIDENTIAL" | "COMMERCIAL" | "OTHER">("RESIDENTIAL");
   const [issueType, setIssueType] = useState<TenantIssueType>("SECURITY_DEPOSIT");
   const [monthlyRent] = useState<number>(15000);
@@ -105,7 +116,7 @@ export default function TenantRightsPage() {
             <label className="block text-xs font-bold text-slate-700 mb-1">{t("ask.stateLabel")} *</label>
             <select
               value={selectedState}
-              onChange={(e) => setSelectedState(e.target.value)}
+              onChange={(e) => handleStateChange(e.target.value)}
               className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-900"
             >
               {ALL_STATES_AND_UTS.map((s) => (
@@ -118,13 +129,18 @@ export default function TenantRightsPage() {
 
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1">{t("ask.districtLabel")}</label>
-            <input
-              type="text"
+            <select
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
-              placeholder={t("tenantEngine.districtPlaceholder")}
-              className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900"
-            />
+              className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-900"
+            >
+              <option value="">{t("tenantEngine.districtPlaceholder")}</option>
+              {availableDistricts.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>

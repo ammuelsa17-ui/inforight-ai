@@ -38,7 +38,7 @@ import { CivicFormFiller } from "@/components/forms/CivicFormFiller";
 import { WhyThisResultPanel } from "@/components/trust/WhyThisResultPanel";
 import { PlainLanguageExplainer } from "@/components/explainer/PlainLanguageExplainer";
 import { SubmissionTracker } from "@/components/tracker/SubmissionTracker";
-import { ALL_STATES_AND_UTS } from "@/lib/location/location-context";
+import { ALL_STATES_AND_UTS, getDistrictsForState, isDistrictInState } from "@/lib/location/location-context";
 import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
 import PageBackNav from "@/components/PageBackNav";
 import { LocationMap } from "@/components/location/LocationMap";
@@ -146,6 +146,28 @@ export default function AskPage() {
   }, [issue, pinCode, state, district]);
 
   const [adminResolution, setAdminResolution] = useState<NormalizedLocationResolution | null>(null);
+
+  const availableDistricts = useMemo(() => {
+    return getDistrictsForState(state);
+  }, [state]);
+
+  const handleStateChange = (nextState: string) => {
+    setState(nextState);
+    // If current district is not in new state's districts, reset district
+    if (!isDistrictInState(nextState, district)) {
+      setDistrict("");
+    }
+    // If manual state change diverges from PIN-resolved state, clear stale PIN-derived context
+    if (pinResolution && pinResolution.state && pinResolution.state !== nextState) {
+      setPinCode("");
+      setPinResolution(null);
+      setAdminResolution(null);
+      setMapCoords(null);
+      setLocalBodyName("");
+      setLocality("");
+      setWard("");
+    }
+  };
 
   const handlePinChange = (val: string) => {
     setPinCode(val);
@@ -268,6 +290,18 @@ export default function AskPage() {
     if (e) e.preventDefault();
     if (!issue.trim()) {
       setError(t("ask.describeProblemRequired"));
+      return;
+    }
+
+    // Location Conflict Guard Check
+    if (district && !isDistrictInState(state, district)) {
+      setError(`Selected State (${state}) and District (${district}) do not match. Please confirm your location.`);
+      return;
+    }
+
+    // If PIN is entered (6 digits) and resolved state does not match selected state
+    if (pinResolution && pinResolution.resolved && pinResolution.state && pinResolution.state !== state) {
+      setError(`Selected State/District does not match the entered PIN (${pinCode} — ${pinResolution.state}). Please confirm your location.`);
       return;
     }
 
@@ -451,8 +485,8 @@ export default function AskPage() {
                 <label className="block text-[11px] font-bold text-slate-700 mb-1">{t("ask.stateLabel")}</label>
                 <select
                   value={state}
-                  onChange={(e) => setState(e.target.value)}
-                  className="w-full p-2 bg-[#F4F9FF] border border-[#BCD7EE] font-semibold text-xs rounded-lg text-slate-900"
+                  onChange={(e) => handleStateChange(e.target.value)}
+                  className="w-full p-2 bg-[#F4F9FF] border border-[#BCD7EE] font-semibold text-xs rounded-lg text-slate-900 focus:outline-none focus:border-[#4F46E5]"
                 >
                   {ALL_STATES_AND_UTS.map((s) => (
                     <option key={s.code} value={s.name}>
@@ -464,13 +498,18 @@ export default function AskPage() {
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-700 mb-1">{t("ask.districtLabel")}</label>
-                <input
-                  type="text"
+                <select
                   value={district}
                   onChange={(e) => setDistrict(e.target.value)}
-                  placeholder={t("consumerEngine.districtPlaceholder")}
-                  className="w-full p-2 bg-[#F4F9FF] border border-[#BCD7EE] text-xs rounded-lg text-slate-900"
-                />
+                  className="w-full p-2 bg-[#F4F9FF] border border-[#BCD7EE] font-medium text-xs rounded-lg text-slate-900 focus:outline-none focus:border-[#4F46E5]"
+                >
+                  <option value="">{t("consumerEngine.districtPlaceholder")}</option>
+                  {availableDistricts.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
