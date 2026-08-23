@@ -352,7 +352,7 @@ export default function AskPage() {
         <button
           type="button"
           onClick={() => setFlowMode("planner")}
-          className={`flex-1 py-2 rounded-lg transition-all text-center ${
+          className={`flex-1 min-h-10 px-3 py-2 rounded-lg transition-all text-center whitespace-normal break-words ${
             flowMode === "planner"
               ? "bg-white text-indigo-950 shadow-xs border border-slate-200"
               : "text-slate-600 hover:text-slate-900"
@@ -363,7 +363,7 @@ export default function AskPage() {
         <button
           type="button"
           onClick={() => setFlowMode("guided")}
-          className={`flex-1 py-2 rounded-lg transition-all text-center ${
+          className={`flex-1 min-h-10 px-3 py-2 rounded-lg transition-all text-center whitespace-normal break-words ${
             flowMode === "guided"
               ? "bg-white text-indigo-950 shadow-xs border border-slate-200"
               : "text-slate-600 hover:text-slate-900"
@@ -382,7 +382,7 @@ export default function AskPage() {
         <div className="space-y-6">
           {/* Quick Scenario Selectors */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-[#526176] uppercase tracking-wider">
+            <label className="text-xs font-bold text-[#526176] uppercase tracking-wider whitespace-normal break-words">
               {t("ask.quickScenariosLabel")}
             </label>
             <div className="flex flex-wrap gap-2">
@@ -391,7 +391,7 @@ export default function AskPage() {
                   key={idx}
                   type="button"
                   onClick={() => applyScenario(sc)}
-                  className="px-3 py-1.5 rounded-lg bg-white border border-[#BCD7EE] text-xs font-semibold text-[#102A56] hover:bg-[#F4F9FF] hover:border-[#4F46E5] transition-colors shadow-xs"
+                  className="px-3 py-1.5 min-h-8 rounded-lg bg-white border border-[#BCD7EE] text-xs font-semibold text-[#102A56] hover:bg-[#F4F9FF] hover:border-[#4F46E5] transition-colors shadow-xs whitespace-normal break-words text-center"
                 >
                   {t(sc.labelKey)}
                 </button>
@@ -627,10 +627,10 @@ export default function AskPage() {
                   type="button"
                   onClick={() => handleGenerate()}
                   disabled={loading}
-                  className="w-full p-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-all"
+                  className="w-full min-h-12 p-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-all whitespace-normal break-words text-center"
                 >
-                  <FileText className="w-4 h-4" />
-                  <span>{loading ? "Preparing Verified Legal Document..." : t("ask.generateDocBtn")}</span>
+                  <FileText className="w-4 h-4 shrink-0" />
+                  <span className="min-w-0">{loading ? "Preparing Verified Legal Document..." : t("ask.generateDocBtn")}</span>
                 </button>
               </div>
             </div>

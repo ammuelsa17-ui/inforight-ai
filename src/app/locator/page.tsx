@@ -219,15 +219,15 @@ export default function LocatorPage() {
                   key={tab.id}
                   type="button"
                   onClick={() => setDomain(tab.id as MasterDomain)}
-                  className={`p-3 rounded-xl border text-left text-xs transition-all flex flex-col justify-between ${
+                  className={`p-3 min-h-16 rounded-xl border text-left text-xs transition-all flex flex-col justify-between whitespace-normal break-words ${
                     domain === tab.id
                       ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
                       : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
                   }`}
                 >
-                  <span className="font-bold text-xs block mb-0.5">{tab.label}</span>
+                  <span className="font-bold text-xs block mb-0.5 whitespace-normal break-words">{tab.label}</span>
                   <span
-                    className={`text-[10px] ${
+                    className={`text-[10px] whitespace-normal break-words ${
                       domain === tab.id ? "text-indigo-100" : "text-slate-400"
                     }`}
                   >
@@ -265,7 +265,7 @@ export default function LocatorPage() {
                   <button
                     key={s.id}
                     type="button"
-                    onClick={() => setRtiSphere(s.id as any)}
+                    onClick={() => setRtiSphere(s.id as "CENTRAL_PUBLIC_AUTHORITY" | "STATE_PUBLIC_AUTHORITY" | "LOCAL_CIVIC_BODY")}
                     className={`p-2.5 rounded-lg border text-left transition-all ${
                       rtiSphere === s.id
                         ? "bg-indigo-50 border-indigo-400 text-indigo-950 font-bold shadow-xs"
@@ -295,7 +295,7 @@ export default function LocatorPage() {
                     <button
                       key={t.id}
                       type="button"
-                      onClick={() => setWorkplaceIssueType(t.id as any)}
+                      onClick={() => setWorkplaceIssueType(t.id as "WAGES" | "TERMINATION_DISPUTE" | "GRATUITY" | "GENERAL")}
                       className={`px-3 py-1.5 rounded-lg border font-semibold text-xs ${
                         workplaceIssueType === t.id
                           ? "bg-indigo-600 text-white border-indigo-600"

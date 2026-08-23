@@ -93,12 +93,12 @@ export default function DocumentPreviewModal({
       <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         {/* Modal Top Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+          <div className="flex items-center gap-3 min-w-0 flex-1 pr-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
               <FileText className="w-5 h-5" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span
                   className={`text-[11px] font-bold uppercase tracking-wide px-2.5 py-0.5 rounded-full border ${
                     isOfficial
@@ -112,7 +112,7 @@ export default function DocumentPreviewModal({
                   {document.formCode || document.formId}
                 </span>
               </div>
-              <h3 className="text-base font-bold text-slate-900 truncate max-w-md sm:max-w-xl mt-0.5">
+              <h3 className="text-base font-bold text-slate-900 whitespace-normal break-words mt-0.5">
                 {document.title}
               </h3>
             </div>
@@ -120,7 +120,7 @@ export default function DocumentPreviewModal({
           <button
             onClick={onClose}
             aria-label="Close modal"
-            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors shrink-0"
           >
             <X className="w-5 h-5" />
           </button>

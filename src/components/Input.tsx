@@ -25,7 +25,7 @@ export const Input: React.FC<InputProps> = ({
   return (
     <div className="w-full space-y-1.5">
       {label && (
-        <label htmlFor={inputId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider">
+        <label htmlFor={inputId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider whitespace-normal break-words">
           {label}
         </label>
       )}
@@ -40,12 +40,12 @@ export const Input: React.FC<InputProps> = ({
         {...props}
       />
       {error ? (
-        <p className="text-xs text-[#EF4444] flex items-center gap-1 font-medium mt-1">
+        <p className="text-xs text-[#EF4444] flex items-center gap-1 font-medium mt-1 whitespace-normal break-words">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-          {error}
+          <span>{error}</span>
         </p>
       ) : helperText ? (
-        <p className="text-xs text-[#526176] mt-1">{helperText}</p>
+        <p className="text-xs text-[#526176] mt-1 whitespace-normal break-words">{helperText}</p>
       ) : null}
     </div>
   );
@@ -72,7 +72,7 @@ export const Textarea: React.FC<TextareaProps> = ({
   return (
     <div className="w-full space-y-1.5">
       {label && (
-        <label htmlFor={textareaId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider">
+        <label htmlFor={textareaId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider whitespace-normal break-words">
           {label}
         </label>
       )}
@@ -87,12 +87,12 @@ export const Textarea: React.FC<TextareaProps> = ({
         {...props}
       />
       {error ? (
-        <p className="text-xs text-[#EF4444] flex items-center gap-1 font-medium mt-1">
+        <p className="text-xs text-[#EF4444] flex items-center gap-1 font-medium mt-1 whitespace-normal break-words">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-          {error}
+          <span>{error}</span>
         </p>
       ) : helperText ? (
-        <p className="text-xs text-[#526176] mt-1">{helperText}</p>
+        <p className="text-xs text-[#526176] mt-1 whitespace-normal break-words">{helperText}</p>
       ) : null}
     </div>
   );
@@ -112,7 +112,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
 }) => {
   return (
     <div className="relative w-full">
-      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
+      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8] shrink-0" />
       <input
         type="search"
         placeholder={placeholder}
@@ -147,7 +147,7 @@ export const Select: React.FC<SelectProps> = ({
   return (
     <div className="w-full space-y-1.5">
       {label && (
-        <label htmlFor={selectId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider">
+        <label htmlFor={selectId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider whitespace-normal break-words">
           {label}
         </label>
       )}
@@ -167,9 +167,9 @@ export const Select: React.FC<SelectProps> = ({
         ))}
       </select>
       {error && (
-        <p className="text-xs text-[#EF4444] flex items-center gap-1 font-medium mt-1">
+        <p className="text-xs text-[#EF4444] flex items-center gap-1 font-medium mt-1 whitespace-normal break-words">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-          {error}
+          <span>{error}</span>
         </p>
       )}
     </div>

@@ -60,14 +60,14 @@ export const StatCard: React.FC<StatCardProps> = ({
   const style = getColorClasses();
 
   return (
-    <div className={`bg-white border border-borders rounded-lg p-5 shadow-2xs flex items-center justify-between ${style.border}`}>
-      <div className="space-y-1">
-        <span className="text-[11px] font-bold text-secondary-text uppercase tracking-wider block">{title}</span>
-        <span className="text-2xl font-bold text-dark-text tracking-tight block">{value}</span>
-        {description && <span className="text-xs text-secondary-text block">{description}</span>}
+    <div className={`bg-white border border-borders rounded-lg p-5 shadow-2xs flex items-center justify-between gap-3 ${style.border}`}>
+      <div className="space-y-1 min-w-0 flex-1">
+        <span className="text-[11px] font-bold text-secondary-text uppercase tracking-wider block whitespace-normal break-words">{title}</span>
+        <span className="text-2xl font-bold text-dark-text tracking-tight block whitespace-normal break-words">{value}</span>
+        {description && <span className="text-xs text-secondary-text block whitespace-normal break-words">{description}</span>}
       </div>
       {Icon && (
-        <div className={`p-3 rounded-lg ${style.bg}`}>
+        <div className={`p-3 rounded-lg shrink-0 ${style.bg}`}>
           <Icon className={`h-6 w-6 ${style.icon}`} />
         </div>
       )}
@@ -92,20 +92,20 @@ export const RightsCard: React.FC<RightsCardProps> = ({
 }) => {
   const { t } = useLanguage();
   return (
-    <div className="bg-white border border-borders rounded-lg p-5 shadow-2xs hover:border-indigo-primary/30 transition-all flex flex-col justify-between group">
+    <div className="bg-white border border-borders rounded-lg p-5 shadow-2xs hover:border-indigo-primary/30 transition-all flex flex-col justify-between group h-auto">
       <div>
-        <div className="bg-indigo-primary/5 text-indigo-primary p-2.5 rounded-lg w-fit mb-4 group-hover:bg-indigo-primary/10 transition-colors">
+        <div className="bg-indigo-primary/5 text-indigo-primary p-2.5 rounded-lg w-fit mb-4 group-hover:bg-indigo-primary/10 transition-colors shrink-0">
           <Icon className="h-6 w-6 text-indigo-primary" />
         </div>
-        <h3 className="text-base font-bold text-dark-text tracking-tight mb-2">{title}</h3>
-        <p className="text-sm text-secondary-text leading-relaxed line-clamp-3 mb-4">{description}</p>
+        <h3 className="text-base font-bold text-dark-text tracking-tight mb-2 whitespace-normal break-words">{title}</h3>
+        <p className="text-sm text-secondary-text leading-relaxed mb-4 whitespace-normal break-words">{description}</p>
       </div>
       <Link
         href={exploreUrl}
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-primary hover:text-indigo-primary/80 transition-colors mt-2"
+        className="inline-flex min-h-9 items-center gap-1.5 text-sm font-semibold text-indigo-primary hover:text-indigo-primary/80 transition-colors mt-2 whitespace-normal break-words"
       >
         <span>{t("common.learnMore")}</span>
-        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+        <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
       </Link>
     </div>
   );
@@ -177,17 +177,17 @@ export const AIResponseCard: React.FC<AIResponseCardProps> = ({
     <div className={`bg-white border rounded-lg overflow-hidden shadow-2xs ${style.border}`}>
       <div className={`px-4.5 py-3.5 border-b border-inherit flex items-center gap-3 ${style.headerBg}`}>
         {Icon ? (
-          <div className={`p-1.5 rounded ${style.iconBg}`}>
+          <div className={`p-1.5 rounded shrink-0 ${style.iconBg}`}>
             <Icon className={`h-4.5 w-4.5 ${style.iconColor}`} />
           </div>
         ) : (
-          <div className={`p-1.5 rounded ${style.iconBg}`}>
+          <div className={`p-1.5 rounded shrink-0 ${style.iconBg}`}>
             <HelpCircle className={`h-4.5 w-4.5 ${style.iconColor}`} />
           </div>
         )}
-        <h4 className={`text-sm font-bold tracking-wide uppercase ${style.headerText}`}>{title}</h4>
+        <h4 className={`text-sm font-bold tracking-wide uppercase min-w-0 flex-1 whitespace-normal break-words ${style.headerText}`}>{title}</h4>
       </div>
-      <div className="p-5 text-sm text-dark-text leading-relaxed bg-white">
+      <div className="p-5 text-sm text-dark-text leading-relaxed bg-white whitespace-normal break-words">
         {children}
       </div>
     </div>

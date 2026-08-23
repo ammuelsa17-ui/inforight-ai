@@ -42,7 +42,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = ""
 
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wider ${getStatusClasses()} ${className}`}
+      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-bold border uppercase tracking-wider text-center whitespace-normal break-words ${getStatusClasses()} ${className}`}
     >
       {status}
     </span>
@@ -98,14 +98,14 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({
   return (
     <div className={`border rounded-lg p-4 flex gap-3 shadow-2xs ${config.bg} ${className}`}>
       <Icon className="h-5 w-5 shrink-0 mt-0.5" />
-      <div className="flex-1">
-        <span className="text-sm font-bold block">{message}</span>
-        {description && <p className="text-xs mt-1 text-dark-text/90 leading-relaxed">{description}</p>}
+      <div className="flex-1 min-w-0">
+        <span className="text-sm font-bold block whitespace-normal break-words">{message}</span>
+        {description && <p className="text-xs mt-1 text-dark-text/90 leading-relaxed whitespace-normal break-words">{description}</p>}
       </div>
       {onClose && (
         <button
           onClick={onClose}
-          className="p-1 rounded hover:bg-black/5 text-inherit h-fit"
+          className="p-1 rounded hover:bg-black/5 text-inherit h-fit shrink-0"
           aria-label={t("common.close")}
         >
           <X className="h-4 w-4" />
@@ -219,8 +219,8 @@ export const Toast: React.FC<ToastProps> = ({ type, message, onClose }) => {
 
   return (
     <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg max-w-sm border border-slate-800 animate-in slide-in-from-bottom-5 ${getToastStyle()}`}>
-      <span className="text-xs font-semibold">{message}</span>
-      <button onClick={onClose} className="p-0.5 rounded hover:bg-white/10 text-slate-400 hover:text-white ml-auto">
+      <span className="text-xs font-semibold min-w-0 flex-1 whitespace-normal break-words">{message}</span>
+      <button onClick={onClose} className="p-0.5 rounded hover:bg-white/10 text-slate-400 hover:text-white ml-auto shrink-0">
         <X className="h-3.5 w-3.5" />
       </button>
     </div>

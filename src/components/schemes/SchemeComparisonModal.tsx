@@ -7,10 +7,6 @@ import {
   Printer,
   ExternalLink,
   ShieldCheck,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  AlertTriangle,
   Scale
 } from "lucide-react";
 

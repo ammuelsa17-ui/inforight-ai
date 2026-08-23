@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { VoiceInputState, VoiceLanguage, VoiceRecognitionError } from "@/types/voice";
+import { VoiceInputState } from "@/types/voice";
 import { BHARAT_LANGUAGES, getLanguageById } from "@/data/voice/languages";
 import { BharatSpeechRecognizer } from "@/lib/voice/speech-recognition";
-import { checkBrowserVoiceCapabilities } from "@/lib/voice/voice-capabilities";
 import {
   Mic,
   MicOff,
@@ -14,7 +13,6 @@ import {
   Globe,
   AlertCircle,
   ShieldCheck,
-  Volume2,
   Edit3
 } from "lucide-react";
 
@@ -125,7 +123,7 @@ export default function VoiceInputModal({
             <div>
               <h2 className="text-base font-bold text-slate-900">Bharat Voice Input</h2>
               <span className="text-xs text-slate-500">
-                Speak your legal/civic problem in your regional language.
+                {fieldLabel || "Speak your legal/civic problem in your regional language."}
               </span>
             </div>
           </div>
@@ -212,7 +210,7 @@ export default function VoiceInputModal({
                 <span>{errorMessage}</span>
                 {isPermissionDenied && (
                   <span className="block mt-1 text-[11px] font-semibold text-rose-900">
-                    To enable: Click the site lock/settings icon in your browser address bar and set Microphone to "Allow".
+                    To enable: Click the site lock/settings icon in your browser address bar and set Microphone to &quot;Allow&quot;.
                   </span>
                 )}
               </div>
@@ -247,7 +245,7 @@ export default function VoiceInputModal({
 
             {interimText && (
               <p className="text-[11px] text-indigo-600 italic animate-pulse">
-                Hearing: "{interimText}"...
+                Hearing: &quot;{interimText}&quot;...
               </p>
             )}
           </div>
@@ -256,7 +254,7 @@ export default function VoiceInputModal({
           <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-500 flex items-start gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
             <span>
-              <strong>Privacy First:</strong> Voice is processed through your device's native speech recognition. Audio recordings are never uploaded or stored on InfoRight servers.
+              <strong>Privacy First:</strong> Voice is processed through your device&apos;s native speech recognition. Audio recordings are never uploaded or stored on InfoRight servers.
             </span>
           </div>
         </div>

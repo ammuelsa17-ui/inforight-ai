@@ -32,7 +32,7 @@ import {
 
 interface FormWizardProps {
   form: OfficialFormDefinition;
-  initialAnswers?: Record<string, any>;
+  initialAnswers?: Record<string, unknown>;
   onComplete?: (output: FormattedDocumentOutput) => void;
 }
 
@@ -44,7 +44,7 @@ export default function FormWizard({
   const storageKey = `inforight_draft_${form.form_id}`;
 
   // Form State
-  const [answers, setAnswers] = useState<Record<string, any>>(() => {
+  const [answers, setAnswers] = useState<Record<string, unknown>>(() => {
     if (typeof window !== "undefined") {
       try {
         const saved = localStorage.getItem(storageKey);
@@ -82,9 +82,6 @@ export default function FormWizard({
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem(storageKey, JSON.stringify(answers));
-        setSaveStatus("Saved locally");
-        const timer = setTimeout(() => setSaveStatus(null), 2000);
-        return () => clearTimeout(timer);
       } catch (err) {
         console.warn("Failed to persist draft:", err);
       }
@@ -104,7 +101,7 @@ export default function FormWizard({
       ? Math.min(100, Math.round((answeredMandatoryCount / totalMandatoryCount) * 100))
       : 0;
 
-  const handleInputChange = (fieldId: string, val: any) => {
+  const handleInputChange = (fieldId: string, val: unknown) => {
     setValidationError(null);
     setAnswers((prev) => ({ ...prev, [fieldId]: val }));
   };
@@ -236,7 +233,7 @@ export default function FormWizard({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 text-xs text-slate-600">
           <div>
             <span className="font-semibold text-slate-400 block">Authority:</span>
-            <span className="font-medium text-slate-800 truncate block">{form.authority}</span>
+            <span className="font-medium text-slate-800 whitespace-normal break-words block">{form.authority}</span>
           </div>
           <div>
             <span className="font-semibold text-slate-400 block">Jurisdiction:</span>
@@ -386,7 +383,7 @@ export default function FormWizard({
                 <span>Review &amp; Verify Your Application</span>
               </h2>
               <p className="text-xs text-slate-600 mt-0.5">
-                Ensure all particulars are correct. You can click "Edit" on any field to modify your answer before generating the final petition.
+                Ensure all particulars are correct. You can click &quot;Edit&quot; on any field to modify your answer before generating the final petition.
               </p>
             </div>
           </div>
@@ -507,12 +504,13 @@ export default function FormWizard({
  */
 interface FieldInputProps {
   field: FormFieldDefinition;
-  value: any;
-  onChange: (val: any) => void;
+  value: unknown;
+  onChange: (val: unknown) => void;
   onEnterPress: () => void;
 }
 
 function FieldInput({ field, value, onChange, onEnterPress }: FieldInputProps) {
+  const strVal = value !== undefined && value !== null ? String(value) : "";
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && field.data_type !== "text") {
       e.preventDefault();
@@ -525,7 +523,7 @@ function FieldInput({ field, value, onChange, onEnterPress }: FieldInputProps) {
       return (
         <textarea
           rows={5}
-          value={value}
+          value={strVal}
           onChange={(e) => onChange(e.target.value)}
           placeholder={field.placeholder || "Type your detailed explanation here..."}
           className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm text-slate-900 bg-white leading-relaxed resize-y"
@@ -536,7 +534,7 @@ function FieldInput({ field, value, onChange, onEnterPress }: FieldInputProps) {
       return (
         <input
           type="date"
-          value={value}
+          value={strVal}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           className="w-full sm:w-72 px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm text-slate-900 bg-white"
@@ -547,7 +545,7 @@ function FieldInput({ field, value, onChange, onEnterPress }: FieldInputProps) {
       return (
         <input
           type="number"
-          value={value}
+          value={strVal}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={field.placeholder || "0"}
@@ -565,7 +563,7 @@ function FieldInput({ field, value, onChange, onEnterPress }: FieldInputProps) {
           </span>
           <input
             type="number"
-            value={value}
+            value={strVal}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="0.00"
@@ -635,7 +633,7 @@ function FieldInput({ field, value, onChange, onEnterPress }: FieldInputProps) {
         <input
           type="tel"
           maxLength={10}
-          value={value}
+          value={strVal}
           onChange={(e) => onChange(e.target.value.replace(/\D/g, ""))}
           onKeyDown={handleKeyDown}
           placeholder="10-digit mobile number"
@@ -648,7 +646,7 @@ function FieldInput({ field, value, onChange, onEnterPress }: FieldInputProps) {
         <input
           type="text"
           maxLength={6}
-          value={value}
+          value={strVal}
           onChange={(e) => onChange(e.target.value.replace(/\D/g, ""))}
           onKeyDown={handleKeyDown}
           placeholder="6-digit Indian PIN code"
@@ -660,7 +658,7 @@ function FieldInput({ field, value, onChange, onEnterPress }: FieldInputProps) {
       return (
         <input
           type="email"
-          value={value}
+          value={strVal}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="name@example.com"
@@ -673,7 +671,7 @@ function FieldInput({ field, value, onChange, onEnterPress }: FieldInputProps) {
       return (
         <input
           type="text"
-          value={value}
+          value={strVal}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={field.placeholder || "Type your answer here..."}

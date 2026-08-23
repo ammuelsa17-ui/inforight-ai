@@ -93,7 +93,7 @@ export default function Sidebar() {
               }`}
             >
               <Icon className={`h-4.5 w-4.5 shrink-0 ${active ? "text-indigo-primary" : "text-secondary-text"}`} />
-              <span className="truncate">{link.name}</span>
+              <span className="min-w-0 flex-1 whitespace-normal break-words">{link.name}</span>
             </Link>
           );
         })}

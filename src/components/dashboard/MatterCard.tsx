@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { CitizenMatter } from "@/types/deadlines";
+import { CitizenMatter, DeadlineCalculationResult } from "@/types/deadlines";
 import { calculateMatterDeadline, formatFriendlyDate } from "@/lib/deadlines/deadline-engine";
 import {
   Clock,
@@ -23,6 +23,7 @@ import {
 
 interface MatterCardProps {
   matter: CitizenMatter;
+  calculation?: DeadlineCalculationResult;
   onToggleComplete: (id: string) => void;
   onDelete: (id: string) => void;
 }
@@ -128,14 +129,14 @@ export default function MatterCard({
         </div>
 
         {/* Title */}
-        <h3 className="text-base font-bold text-slate-900 leading-snug mb-1">
+        <h3 className="text-base font-bold text-slate-900 leading-snug mb-1 whitespace-normal break-words">
           {matter.title}
         </h3>
 
-        <div className="text-xs text-slate-500 mb-3 flex items-center gap-2">
-          <span>Authority: <strong className="text-slate-700">{matter.authority}</strong></span>
+        <div className="text-xs text-slate-500 mb-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="whitespace-normal break-words">Authority: <strong className="text-slate-700">{matter.authority}</strong></span>
           {matter.reference_number && (
-            <span>• Ref: <strong className="font-mono text-slate-700">{matter.reference_number}</strong></span>
+            <span className="whitespace-normal break-words">• Ref: <strong className="font-mono text-slate-700">{matter.reference_number}</strong></span>
           )}
         </div>
 
@@ -162,11 +163,11 @@ export default function MatterCard({
                 : "text-blue-600"
             }`}
           />
-          <div className="space-y-1 flex-1">
-            <div className="font-bold text-sm leading-tight">
+          <div className="space-y-1 flex-1 min-w-0">
+            <div className="font-bold text-sm leading-tight whitespace-normal break-words">
               {result.countdownText}
             </div>
-            <div className="text-[11px] opacity-90">
+            <div className="text-[11px] opacity-90 whitespace-normal break-words">
               Statutory Deadline: <strong>{result.formattedDeadlineDate}</strong> (Filed: {formatFriendlyDate(matter.filing_date)})
             </div>
           </div>

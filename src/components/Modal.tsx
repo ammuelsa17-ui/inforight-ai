@@ -66,13 +66,13 @@ export const Modal: React.FC<ModalProps> = ({
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="px-5 py-4 border-b border-borders flex items-center justify-between bg-slate-50/50">
-          <h3 id="modal-title" className="text-sm font-bold text-dark-text uppercase tracking-wider">
+        <div className="px-5 py-4 border-b border-borders flex items-center justify-between gap-3 bg-slate-50/50">
+          <h3 id="modal-title" className="text-sm font-bold text-dark-text uppercase tracking-wider min-w-0 flex-1 whitespace-normal break-words">
             {title}
           </h3>
           <button
             onClick={onClose}
-            className="p-1 rounded hover:bg-slate-100 text-secondary-text hover:text-dark-text transition-colors cursor-pointer"
+            className="p-1 rounded hover:bg-slate-100 text-secondary-text hover:text-dark-text transition-colors cursor-pointer shrink-0"
             aria-label={t("common.close")}
           >
             <X className="h-4.5 w-4.5" />
@@ -86,7 +86,7 @@ export const Modal: React.FC<ModalProps> = ({
 
         {/* Footer */}
         {actions && (
-          <div className="px-5 py-3.5 border-t border-borders bg-slate-50/50 flex justify-end gap-3.5">
+          <div className="px-5 py-3.5 border-t border-borders bg-slate-50/50 flex flex-wrap justify-end gap-3.5">
             {actions}
           </div>
         )}

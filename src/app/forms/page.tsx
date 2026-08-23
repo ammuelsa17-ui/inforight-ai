@@ -124,43 +124,43 @@ export default function FormsPage() {
                   </div>
 
                   {/* Form Title */}
-                  <h3 className="text-base font-bold text-slate-900 leading-snug mb-2">
+                  <h3 className="text-base font-bold text-slate-900 leading-snug mb-2 whitespace-normal break-words">
                     {form.form_name}
                   </h3>
 
-                  <p className="text-xs text-slate-600 line-clamp-3 mb-4 leading-relaxed">
+                  <p className="text-xs text-slate-600 mb-4 leading-relaxed whitespace-normal break-words">
                     {form.form_description ||
                       `Statutory application administered by ${form.authority}.`}
                   </p>
 
                   {/* Metadata List */}
                   <div className="space-y-1.5 text-xs text-slate-600 pt-3 border-t border-slate-100 mb-6">
-                    <div className="flex items-center gap-2">
-                      <Building className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">
+                    <div className="flex items-start gap-2">
+                      <Building className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                      <span className="min-w-0 whitespace-normal break-words">
                         <strong>Authority:</strong> {form.authority}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span>
+                    <div className="flex items-start gap-2">
+                      <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                      <span className="min-w-0 whitespace-normal break-words">
                         <strong>Jurisdiction:</strong> {form.jurisdiction.state_ut} (
                         {form.jurisdiction.government_level})
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <Banknote className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span className="truncate">
+                    <div className="flex items-start gap-2">
+                      <Banknote className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                      <span className="min-w-0 whitespace-normal break-words">
                         <strong>Statutory Fee:</strong>{" "}
                         {form.submission.statutory_fee || "Nil"}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span>
+                    <div className="flex items-start gap-2">
+                      <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                      <span className="min-w-0 whitespace-normal break-words">
                         <strong>Filing Mode:</strong>{" "}
                         {form.submission.online && form.submission.offline
                           ? "Online & Offline"
@@ -175,7 +175,7 @@ export default function FormsPage() {
                 {/* Card Action */}
                 <Link
                   href={`/forms/${form.form_id}`}
-                  className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 shadow-sm transition-colors"
+                  className="w-full inline-flex min-h-10 items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 shadow-sm transition-colors whitespace-normal break-words text-center"
                 >
                   <span>Start Step-by-Step Wizard</span>
                   <ArrowRight className="w-4 h-4" />

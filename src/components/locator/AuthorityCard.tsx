@@ -8,16 +8,13 @@ import {
   MapPin,
   ExternalLink,
   Phone,
-  Mail,
   ShieldCheck,
-  FileText,
   Clock,
   Copy,
   Check,
   AlertTriangle,
   Info,
-  ArrowRight,
-  HelpCircle
+  ArrowRight
 } from "lucide-react";
 
 interface AuthorityCardProps {
@@ -160,7 +157,7 @@ export default function AuthorityCard({ result }: AuthorityCardProps) {
                   href={auth.official_website}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-indigo-600 hover:text-indigo-800 font-semibold truncate block"
+                  className="text-indigo-600 hover:text-indigo-800 font-semibold break-all block"
                 >
                   {auth.official_website}
                 </a>

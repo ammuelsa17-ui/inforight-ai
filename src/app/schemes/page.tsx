@@ -326,7 +326,7 @@ export default function SchemesPage() {
                 onChange={(e) =>
                   setProfile((p) => ({
                     ...p,
-                    community: e.target.value ? (e.target.value as any) : undefined
+                    community: e.target.value ? (e.target.value as UserEligibilityProfile["community"]) : undefined
                   }))
                 }
                 className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white font-medium text-slate-900"
@@ -471,7 +471,7 @@ export default function SchemesPage() {
                   onChange={(e) =>
                     setProfile((p) => ({
                       ...p,
-                      marital_status: e.target.value ? (e.target.value as any) : undefined
+                      marital_status: e.target.value ? (e.target.value as UserEligibilityProfile["marital_status"]) : undefined
                     }))
                   }
                   className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white"
@@ -506,7 +506,7 @@ export default function SchemesPage() {
             <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 text-xs font-semibold">
               <button
                 onClick={() => setStatusFilter("ALL")}
-                className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors ${
+                className={`px-3 py-1.5 min-h-8 rounded-lg whitespace-nowrap shrink-0 transition-colors ${
                   statusFilter === "ALL"
                     ? "bg-slate-900 text-white shadow-xs"
                     : "bg-slate-100 text-slate-600 hover:bg-slate-200"
@@ -517,25 +517,25 @@ export default function SchemesPage() {
 
               <button
                 onClick={() => setStatusFilter("ELIGIBLE")}
-                className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors flex items-center gap-1 ${
+                className={`px-3 py-1.5 min-h-8 rounded-lg whitespace-nowrap shrink-0 transition-colors flex items-center gap-1.5 ${
                   statusFilter === "ELIGIBLE"
                     ? "bg-emerald-600 text-white shadow-xs"
                     : "bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100"
                 }`}
               >
-                <CheckCircle2 className="w-3.5 h-3.5" />
+                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                 <span>Eligible ({eligibleCount})</span>
               </button>
 
               <button
                 onClick={() => setStatusFilter("POTENTIALLY_ELIGIBLE")}
-                className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors flex items-center gap-1 ${
+                className={`px-3 py-1.5 min-h-8 rounded-lg whitespace-nowrap shrink-0 transition-colors flex items-center gap-1.5 ${
                   statusFilter === "POTENTIALLY_ELIGIBLE"
                     ? "bg-amber-600 text-white shadow-xs"
                     : "bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
                 }`}
               >
-                <HelpCircle className="w-3.5 h-3.5" />
+                <HelpCircle className="w-3.5 h-3.5 shrink-0" />
                 <span>Potentially Eligible ({potentiallyEligibleCount})</span>
               </button>
             </div>

@@ -104,26 +104,26 @@ function CompareContent() {
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="p-4 w-48 font-bold text-slate-700 uppercase tracking-wider bg-slate-100/70 sticky left-0 z-10">
+                    <th className="p-4 min-w-36 font-bold text-slate-700 uppercase tracking-wider bg-slate-100/70 sticky left-0 z-10 whitespace-normal break-words">
                       Criteria / Feature
                     </th>
                     {selectedSchemes.map((s) => (
                       <th
                         key={s.id}
-                        className="p-4 font-bold text-slate-900 min-w-[260px] max-w-xs align-top border-l border-slate-200"
+                        className="p-4 font-bold text-slate-900 min-w-[240px] align-top border-l border-slate-200 whitespace-normal break-words"
                       >
                         <div className="flex items-start justify-between gap-2 mb-1">
-                          <span className="text-[10px] font-semibold text-slate-400 font-mono">
+                          <span className="text-[10px] font-semibold text-slate-400 font-mono shrink-0">
                             {s.id}
                           </span>
                           <button
                             onClick={() => handleRemove(s.id)}
-                            className="text-slate-400 hover:text-rose-600 text-xs font-bold"
+                            className="text-slate-400 hover:text-rose-600 text-xs font-bold shrink-0"
                           >
                             ✕
                           </button>
                         </div>
-                        <div className="text-sm font-bold leading-snug">{s.title}</div>
+                        <div className="text-sm font-bold leading-snug whitespace-normal break-words">{s.title}</div>
                       </th>
                     ))}
                   </tr>
@@ -233,7 +233,7 @@ function CompareContent() {
             <Scale className="w-8 h-8 text-slate-400 mx-auto mb-2" />
             <h3 className="text-base font-bold text-slate-800 mb-1">No Schemes Selected for Comparison</h3>
             <p className="text-xs text-slate-500 max-w-md mx-auto mb-4">
-              Return to the schemes discovery page and check the "Compare" box on 2 to 4 schemes to compare them here.
+              Return to the schemes discovery page and check the &quot;Compare&quot; box on 2 to 4 schemes to compare them here.
             </p>
             <Link
               href="/schemes"

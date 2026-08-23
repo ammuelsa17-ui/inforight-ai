@@ -8,15 +8,9 @@ import {
   HelpCircle,
   XCircle,
   ExternalLink,
-  Building,
-  MapPin,
-  FileText,
   ChevronDown,
   ChevronUp,
-  AlertTriangle,
-  Sparkles,
-  Layers,
-  ArrowRight
+  AlertTriangle
 } from "lucide-react";
 
 interface SchemeCardProps {
@@ -201,7 +195,7 @@ export default function SchemeCard({
               </div>
               <div>
                 <span className="font-semibold text-slate-400 block">Official Sourcing:</span>
-                <span className="text-slate-700 truncate block">{scheme.officialSourceName}</span>
+                <span className="text-slate-700 whitespace-normal break-words block">{scheme.officialSourceName}</span>
               </div>
               <div>
                 <span className="font-semibold text-slate-400 block">Last Verified:</span>

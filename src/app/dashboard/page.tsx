@@ -268,7 +268,7 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
         const matchesTitle = matter.title.toLowerCase().includes(q);
         const matchesAuth = matter.authority.toLowerCase().includes(q);
         const matchesRef = (matter.reference_number || "").toLowerCase().includes(q);
-        const matchesRule = calc.ruleName.toLowerCase().includes(q);
+        const matchesRule = (calc.legalBasis || calc.ruleId || "").toLowerCase().includes(q);
         if (!matchesTitle && !matchesAuth && !matchesRef && !matchesRule) return false;
       }
 
@@ -278,7 +278,7 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
 
   return (
     <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
-      {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg("")} />}
+      {toastMsg && <Toast type="info" message={toastMsg} onClose={() => setToastMsg("")} />}
 
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header Title */}
@@ -370,43 +370,43 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
           <div className="space-y-6">
             {/* Stat Counters */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-              <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+              <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center gap-3 min-h-16">
+                <div className="w-10 h-10 shrink-0 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
                   {stats.total}
                 </div>
-                <div>
-                  <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Tracked</div>
-                  <div className="text-sm font-bold text-slate-900">{stats.total} matters</div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-normal break-words">Total Tracked</div>
+                  <div className="text-sm font-bold text-slate-900 whitespace-normal break-words">{stats.total} matters</div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-white border border-rose-200 shadow-xs flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+              <div className="p-4 rounded-xl bg-white border border-rose-200 shadow-xs flex items-center gap-3 min-h-16">
+                <div className="w-10 h-10 shrink-0 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
                   {stats.overdue}
                 </div>
-                <div>
-                  <div className="text-[11px] font-bold text-rose-600 uppercase tracking-wider">Overdue / Appeal</div>
-                  <div className="text-sm font-bold text-rose-700">{stats.overdue} require action</div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[11px] font-bold text-rose-600 uppercase tracking-wider whitespace-normal break-words">Overdue / Appeal</div>
+                  <div className="text-sm font-bold text-rose-700 whitespace-normal break-words">{stats.overdue} require action</div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-white border border-amber-200 shadow-xs flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+              <div className="p-4 rounded-xl bg-white border border-amber-200 shadow-xs flex items-center gap-3 min-h-16">
+                <div className="w-10 h-10 shrink-0 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
                   {stats.urgent}
                 </div>
-                <div>
-                  <div className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Due Soon (≤5d)</div>
-                  <div className="text-sm font-bold text-amber-700">{stats.urgent} upcoming</div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[11px] font-bold text-amber-600 uppercase tracking-wider whitespace-normal break-words">Due Soon (≤5d)</div>
+                  <div className="text-sm font-bold text-amber-700 whitespace-normal break-words">{stats.urgent} upcoming</div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-white border border-emerald-200 shadow-xs flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+              <div className="p-4 rounded-xl bg-white border border-emerald-200 shadow-xs flex items-center gap-3 min-h-16">
+                <div className="w-10 h-10 shrink-0 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
                   {stats.completed}
                 </div>
-                <div>
-                  <div className="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">Completed</div>
-                  <div className="text-sm font-bold text-emerald-700">{stats.completed} resolved</div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[11px] font-bold text-emerald-600 uppercase tracking-wider whitespace-normal break-words">Completed</div>
+                  <div className="text-sm font-bold text-emerald-700 whitespace-normal break-words">{stats.completed} resolved</div>
                 </div>
               </div>
             </div>

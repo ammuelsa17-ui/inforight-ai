@@ -5,12 +5,8 @@ import { TtsPlaybackState } from "@/types/voice";
 import { BharatTextToSpeechPlayer } from "@/lib/voice/text-to-speech";
 import {
   Volume2,
-  VolumeX,
-  Play,
   Pause,
-  RotateCcw,
-  Square,
-  AlertCircle
+  Square
 } from "lucide-react";
 
 interface ReadAloudButtonProps {
