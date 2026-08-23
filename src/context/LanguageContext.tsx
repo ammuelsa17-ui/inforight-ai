@@ -90,7 +90,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (typeof document !== "undefined") {
       const bcp = selectedLanguage || "en-IN";
       const isoLang = bcp.split("-")[0];
-      const dir = bcp === "ur-IN" ? "rtl" : "ltr";
+      const dir = (bcp === "ur-IN" || bcp === "ks-IN" || bcp === "sd-IN") ? "rtl" : "ltr";
       document.documentElement.lang = isoLang;
       document.documentElement.dir = dir;
     }
@@ -131,7 +131,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     [translations]
   );
 
-  const direction = selectedLanguage === "ur-IN" ? "rtl" : "ltr";
+  const direction = (selectedLanguage === "ur-IN" || selectedLanguage === "ks-IN" || selectedLanguage === "sd-IN") ? "rtl" : "ltr";
   const isEnglish = selectedLanguage === "en-IN";
 
   return (

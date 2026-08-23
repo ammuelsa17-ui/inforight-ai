@@ -60,14 +60,14 @@ export const StatCard: React.FC<StatCardProps> = ({
   const style = getColorClasses();
 
   return (
-    <div className={`bg-white border border-borders rounded-lg p-5 shadow-2xs flex items-center justify-between ${style.border}`}>
-      <div className="space-y-1">
-        <span className="text-[11px] font-bold text-secondary-text uppercase tracking-wider block">{title}</span>
+    <div className={`bg-white border border-borders rounded-lg p-5 shadow-2xs flex items-center justify-between min-w-0 h-auto ${style.border}`}>
+      <div className="space-y-1 min-w-0 pr-2">
+        <span className="text-[11px] font-bold text-secondary-text uppercase tracking-wider block break-words">{title}</span>
         <span className="text-2xl font-bold text-dark-text tracking-tight block">{value}</span>
-        {description && <span className="text-xs text-secondary-text block">{description}</span>}
+        {description && <span className="text-xs text-secondary-text block break-words">{description}</span>}
       </div>
       {Icon && (
-        <div className={`p-3 rounded-lg ${style.bg}`}>
+        <div className={`p-3 rounded-lg shrink-0 ${style.bg}`}>
           <Icon className={`h-6 w-6 ${style.icon}`} />
         </div>
       )}
@@ -92,13 +92,13 @@ export const RightsCard: React.FC<RightsCardProps> = ({
 }) => {
   const { t } = useLanguage();
   return (
-    <div className="bg-white border border-borders rounded-lg p-5 shadow-2xs hover:border-indigo-primary/30 transition-all flex flex-col justify-between group">
+    <div className="bg-white border border-borders rounded-lg p-5 shadow-2xs hover:border-indigo-primary/30 transition-all flex flex-col justify-between group min-w-0 h-auto">
       <div>
         <div className="bg-indigo-primary/5 text-indigo-primary p-2.5 rounded-lg w-fit mb-4 group-hover:bg-indigo-primary/10 transition-colors">
           <Icon className="h-6 w-6 text-indigo-primary" />
         </div>
-        <h3 className="text-base font-bold text-dark-text tracking-tight mb-2">{title}</h3>
-        <p className="text-sm text-secondary-text leading-relaxed line-clamp-3 mb-4">{description}</p>
+        <h3 className="text-base font-bold text-dark-text tracking-tight mb-2 break-words leading-snug">{title}</h3>
+        <p className="text-sm text-secondary-text leading-relaxed whitespace-normal break-words mb-4">{description}</p>
       </div>
       <Link
         href={exploreUrl}

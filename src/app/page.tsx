@@ -118,34 +118,34 @@ export default function HomePage() {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-2 text-xs">
-          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0 h-auto">
             <span className="text-[10px] text-indigo-400 font-bold uppercase block">{t("home.step1Badge")}</span>
-            <strong className="text-white block truncate">{t("home.step1Title")}</strong>
-            <p className="text-[11px] text-slate-400">{t("home.step1Desc")}</p>
+            <strong className="text-white block break-words leading-snug">{t("home.step1Title")}</strong>
+            <p className="text-[11px] text-slate-400 whitespace-normal break-words">{t("home.step1Desc")}</p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0 h-auto">
             <span className="text-[10px] text-sky-400 font-bold uppercase block">{t("home.step2Badge")}</span>
-            <strong className="text-white block truncate">{t("home.step2Title")}</strong>
-            <p className="text-[11px] text-slate-400">{t("home.step2Desc")}</p>
+            <strong className="text-white block break-words leading-snug">{t("home.step2Title")}</strong>
+            <p className="text-[11px] text-slate-400 whitespace-normal break-words">{t("home.step2Desc")}</p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0 h-auto">
             <span className="text-[10px] text-amber-400 font-bold uppercase block">{t("home.step3Badge")}</span>
-            <strong className="text-white block truncate">{t("home.step3Title")}</strong>
-            <p className="text-[11px] text-slate-400">{t("home.step3Desc")}</p>
+            <strong className="text-white block break-words leading-snug">{t("home.step3Title")}</strong>
+            <p className="text-[11px] text-slate-400 whitespace-normal break-words">{t("home.step3Desc")}</p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0 h-auto">
             <span className="text-[10px] text-emerald-400 font-bold uppercase block">{t("home.step4Badge")}</span>
-            <strong className="text-white block truncate">{t("home.step4Title")}</strong>
-            <p className="text-[11px] text-slate-400">{t("home.step4Desc")}</p>
+            <strong className="text-white block break-words leading-snug">{t("home.step4Title")}</strong>
+            <p className="text-[11px] text-slate-400 whitespace-normal break-words">{t("home.step4Desc")}</p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 space-y-1.5 min-w-0 sm:col-span-2 lg:col-span-1">
-            <span className="text-[10px] text-emerald-300 font-bold uppercase block">{t("home.step5Badge")}</span>
-            <strong className="text-emerald-100 block truncate">{t("home.step5Title")}</strong>
-            <p className="text-[11px] text-emerald-300/80">{t("home.step5Desc")}</p>
+          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0 h-auto">
+            <span className="text-[10px] text-purple-400 font-bold uppercase block">{t("home.step5Badge")}</span>
+            <strong className="text-white block break-words leading-snug">{t("home.step5Title")}</strong>
+            <p className="text-[11px] text-slate-400 whitespace-normal break-words">{t("home.step5Desc")}</p>
           </div>
         </div>
       </section>

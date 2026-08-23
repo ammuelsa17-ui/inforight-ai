@@ -23,16 +23,16 @@ export const Input: React.FC<InputProps> = ({
   const inputId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
 
   return (
-    <div className="w-full space-y-1.5">
+    <div className="w-full space-y-1.5 min-w-0">
       {label && (
-        <label htmlFor={inputId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider">
+        <label htmlFor={inputId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider leading-snug break-words">
           {label}
         </label>
       )}
       <input
         id={inputId}
         type={type}
-        className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-[#172033] text-sm placeholder-[#94A3B8] transition-all focus:outline-none ${
+        className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-[#172033] text-sm placeholder-[#94A3B8] transition-all focus:outline-none min-w-0 ${
           error
             ? "border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]"
             : "border-[#BCD7EE] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"
@@ -40,12 +40,12 @@ export const Input: React.FC<InputProps> = ({
         {...props}
       />
       {error ? (
-        <p className="text-xs text-[#EF4444] flex items-center gap-1 font-medium mt-1">
+        <p className="text-xs text-[#EF4444] flex items-center gap-1 font-medium mt-1 break-words">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-          {error}
+          <span>{error}</span>
         </p>
       ) : helperText ? (
-        <p className="text-xs text-[#526176] mt-1">{helperText}</p>
+        <p className="text-xs text-[#526176] mt-1 break-words leading-snug">{helperText}</p>
       ) : null}
     </div>
   );
@@ -70,16 +70,16 @@ export const Textarea: React.FC<TextareaProps> = ({
   const textareaId = id || (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
 
   return (
-    <div className="w-full space-y-1.5">
+    <div className="w-full space-y-1.5 min-w-0">
       {label && (
-        <label htmlFor={textareaId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider">
+        <label htmlFor={textareaId} className="block text-xs font-bold text-[#526176] uppercase tracking-wider leading-snug break-words">
           {label}
         </label>
       )}
       <textarea
         id={textareaId}
         rows={rows}
-        className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-[#172033] text-sm placeholder-[#94A3B8] transition-all focus:outline-none ${
+        className={`w-full px-3.5 py-2.5 bg-white border rounded-lg text-[#172033] text-sm placeholder-[#94A3B8] transition-all focus:outline-none min-w-0 ${
           error
             ? "border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]"
             : "border-[#BCD7EE] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]"

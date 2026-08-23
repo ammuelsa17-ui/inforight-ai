@@ -132,7 +132,7 @@ export default function SchemeCard({
         </div>
 
         {/* Scheme Title */}
-        <h3 className="text-base font-bold text-slate-900 leading-snug mb-2">
+        <h3 className="text-base font-bold text-slate-900 leading-snug mb-2 break-words">
           {scheme.title}
         </h3>
 
@@ -140,14 +140,14 @@ export default function SchemeCard({
         {scheme.isLoanOrCredit && (
           <div className="mb-3 p-2.5 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2 text-xs text-amber-900">
             <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <span>
+            <span className="break-words">
               <strong>Repayable Credit / Loan:</strong> This scheme provides a loan or credit line that must be repaid according to bank terms, not a free non-repayable grant.
             </span>
           </div>
         )}
 
         {/* Benefit Summary */}
-        <p className="text-xs text-slate-700 leading-relaxed mb-4 line-clamp-3">
+        <p className="text-xs text-slate-700 leading-relaxed mb-4 whitespace-normal break-words">
           {scheme.benefitDescription}
         </p>
 
@@ -155,20 +155,20 @@ export default function SchemeCard({
         <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs space-y-1.5 mb-4">
           <div className="flex items-start gap-1.5">
             <span className="font-semibold text-slate-500 shrink-0">Why Matched:</span>
-            <span className="text-slate-800">{scheme.whyMatched}</span>
+            <span className="text-slate-800 break-words">{scheme.whyMatched}</span>
           </div>
 
           {scheme.evaluationState === "POTENTIALLY_ELIGIBLE" && (
             <div className="flex items-start gap-1.5 pt-1 border-t border-slate-200/60 text-amber-800">
               <span className="font-semibold shrink-0">Missing Info:</span>
-              <span>{scheme.whatIsMissing}</span>
+              <span className="break-words">{scheme.whatIsMissing}</span>
             </div>
           )}
 
           {scheme.evaluationState === "NOT_ELIGIBLE" && (
             <div className="flex items-start gap-1.5 pt-1 border-t border-slate-200/60 text-rose-800">
               <span className="font-semibold shrink-0">Disqualified:</span>
-              <span>{scheme.failedConditions.join("; ")}</span>
+              <span className="break-words">{scheme.failedConditions.join("; ")}</span>
             </div>
           )}
         </div>
@@ -178,34 +178,34 @@ export default function SchemeCard({
           <div className="mt-4 pt-4 border-t border-slate-200 text-xs space-y-3 animate-in fade-in">
             <div>
               <span className="font-semibold text-slate-500 block mb-1">Administering Department:</span>
-              <span className="text-slate-800 font-medium">{scheme.ministryOrDept}</span>
+              <span className="text-slate-800 font-medium break-words">{scheme.ministryOrDept}</span>
             </div>
 
             <div>
               <span className="font-semibold text-slate-500 block mb-1">Mandatory Documents Required:</span>
               <ul className="list-disc pl-4 space-y-0.5 text-slate-700">
                 {scheme.requiredDocuments.map((doc, idx) => (
-                  <li key={idx}>{doc}</li>
+                  <li key={idx} className="break-words">{doc}</li>
                 ))}
               </ul>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-              <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+              <div className="min-w-0">
                 <span className="font-semibold text-slate-400 block">Application Mode:</span>
-                <span className="text-slate-700">{scheme.applicationMode}</span>
+                <span className="text-slate-700 break-words">{scheme.applicationMode}</span>
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="font-semibold text-slate-400 block">Statutory Fee:</span>
-                <span className="text-slate-700">{scheme.statutoryFee || "Nil"}</span>
+                <span className="text-slate-700 break-words">{scheme.statutoryFee || "Nil"}</span>
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="font-semibold text-slate-400 block">Official Sourcing:</span>
-                <span className="text-slate-700 truncate block">{scheme.officialSourceName}</span>
+                <span className="text-slate-700 break-words block">{scheme.officialSourceName}</span>
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="font-semibold text-slate-400 block">Last Verified:</span>
-                <span className="text-slate-700">{scheme.lastVerified}</span>
+                <span className="text-slate-700 break-words">{scheme.lastVerified}</span>
               </div>
             </div>
           </div>
@@ -213,7 +213,7 @@ export default function SchemeCard({
       </div>
 
       {/* Card Footer Actions */}
-      <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3 text-xs">
+      <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="text-slate-600 hover:text-indigo-600 font-medium flex items-center gap-1 transition-colors"
