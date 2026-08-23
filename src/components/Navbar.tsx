@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { FileText, Menu, X, ArrowRight } from "lucide-react";
+import { FileText, Menu, X, ArrowRight, Home } from "lucide-react";
 import LanguageSelector from "@/components/LanguageSelector";
 import AccessibilityToolbar from "@/components/AccessibilityToolbar";
 import { useLanguage } from "@/context/LanguageContext";
@@ -45,6 +45,14 @@ export default function Navbar() {
           <div className="pb-2 border-b border-[#BCD7EE]">
             <AccessibilityToolbar textToRead={t("accessibility.defaultSpeechText")} />
           </div>
+          <Link
+            href="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2 text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5 break-words whitespace-normal leading-snug"
+          >
+            <Home className="w-4 h-4 shrink-0 text-slate-500" />
+            <span>{t("common.home")}</span>
+          </Link>
           <Link
             href="/ask"
             onClick={() => setMobileMenuOpen(false)}
