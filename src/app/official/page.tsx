@@ -18,6 +18,8 @@ import { Input } from "@/components/Input";
 import { StatusBadge, EmptyState } from "@/components/Feedback";
 import { useLanguage } from "@/context/LanguageContext";
 
+import PageBackNav from "@/components/PageBackNav";
+
 export default function OfficialDashboardPage() {
   const { t } = useLanguage();
   return (
@@ -79,7 +81,9 @@ function OfficialDashboardContent() {
   });
 
   return (
-    <div className="flex-1 space-y-6 max-w-6xl mx-auto w-full py-4 bg-slate-50/20">
+    <div className="flex-1 space-y-6 max-w-6xl mx-auto w-full py-4 bg-slate-50/20 px-3 sm:px-4 lg:px-6">
+      {/* Page Back Navigation */}
+      <PageBackNav backHref="/" />
       
       {/* Page Header */}
       <div className="border-b border-borders pb-4">

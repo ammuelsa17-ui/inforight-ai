@@ -42,7 +42,14 @@ export const neLocale: UITranslationSchema = {
     "action": "कारबाही",
     "search": "खोज्नुहोस्",
     "filter": "फिल्टर",
-    "close": "बन्द गर्नुहोस्"
+    "close": "बन्द गर्नुहोस्",
+    "back": "पछाडि",
+    "home": "गृह पृष्ठ",
+    "backToCases": "मेरा मुद्दाहरूमा फर्कनुहोस्",
+    "backToOfficial": "आधिकारिक पोर्टलमा फर्कनुहोस्",
+    "backToResources": "स्रोतहरूमा फर्कनुहोस्",
+    "backToSchemes": "योजनाहरूमा फर्कनुहोस्",
+    "backToRights": "अधिकारहरूमा फर्कनुहोस्"
   },
   "home": {
     "badge": "इन्फोराइट एआई — २२ सूचीकृत भारतीय भाषाहरू + अंग्रेजी (संस्करण २.०)",

@@ -41,6 +41,13 @@ export interface UITranslationSchema {
     search: string;
     filter: string;
     close: string;
+    back: string;
+    home: string;
+    backToCases: string;
+    backToOfficial: string;
+    backToResources: string;
+    backToSchemes: string;
+    backToRights: string;
   };
   home: {
     badge: string;

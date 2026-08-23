@@ -10,6 +10,7 @@ import { BeforeAfterComparisonPanel } from "@/components/evidence/BeforeAfterCom
 import { CitizenConfirmationModal } from "@/components/evidence/CitizenConfirmationModal";
 import { triggerPrintDocument, exportRectificationEvidencePackHtml } from "@/lib/pdf/print-export";
 import { JourneyProgress } from "@/components/tracker/JourneyProgress";
+import PageBackNav from "@/components/PageBackNav";
 
 export default function CitizenCasePage() {
   const { t } = useLanguage();
@@ -73,6 +74,9 @@ export default function CitizenCasePage() {
 
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-6">
+      {/* Page Back Navigation */}
+      <PageBackNav backHref="/dashboard" backLabel={t("common.backToCases")} />
+
       {/* Navigation Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-4">
         <div className="flex items-center gap-3">

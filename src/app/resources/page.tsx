@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { Search, Phone, ExternalLink, ChevronDown, ChevronUp, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
+import PageBackNav from "@/components/PageBackNav";
 
 interface Resource {
   title: string;
@@ -116,6 +117,9 @@ export default function ResourcesPage() {
 
   return (
     <PageContainer>
+      {/* Page Back Navigation */}
+      <PageBackNav backHref="/" />
+
       {/* Page Header */}
       <PageHeader
         eyebrow={t("resources.badge")}

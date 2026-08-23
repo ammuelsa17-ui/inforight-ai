@@ -42,7 +42,14 @@ export const bnLocale: UITranslationSchema = {
     "action": "কার্র঵াঈ",
     "search": "অনুসন্ধান করুন",
     "filter": "ফ়িল্টর",
-    "close": "বন্ধ করুন"
+    "close": "বন্ধ করুন",
+    "back": "ফিরে যান",
+    "home": "হোম",
+    "backToCases": "আমার মামলায় ফিরে যান",
+    "backToOfficial": "অফিসিয়াল পোর্টালে ফিরে যান",
+    "backToResources": "সম্পদে ফিরে যান",
+    "backToSchemes": "প্রকল্পে ফিরে যান",
+    "backToRights": "অধাধিকারে ফিরে যান"
   },
   "home": {
     "badge": "বাংলা — AI for Civic & Legal Empowerment",

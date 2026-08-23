@@ -42,7 +42,14 @@ export const doiLocale: UITranslationSchema = {
     "action": "कार्रवाई",
     "search": "खोजो",
     "filter": "फ़िल्टर",
-    "close": "बंद करो"
+    "close": "बंद करो",
+    "back": "पिच्छे जाओ",
+    "home": "मुक्ख पन्ना",
+    "backToCases": "मेरे मामलें पर वापस जाओ",
+    "backToOfficial": "सरकारी पोर्टल पर वापस जाओ",
+    "backToResources": "स्त्रोतें पर वापस जाओ",
+    "backToSchemes": "योजनाएं पर वापस जाओ",
+    "backToRights": "हक्कें पर वापस जाओ"
   },
   "home": {
     "badge": "डोगरी — AI for Civic & Legal Empowerment",

@@ -42,7 +42,14 @@ export const hiLocale: UITranslationSchema = {
     "action": "कार्रवाई",
     "search": "खोजें",
     "filter": "फ़िल्टर",
-    "close": "बंद करें"
+    "close": "बंद करें",
+    "back": "पीछे",
+    "home": "मुख्य पृष्ठ",
+    "backToCases": "मेरे मामलों पर वापस जाएं",
+    "backToOfficial": "अधिकारी पोर्टल पर वापस जाएं",
+    "backToResources": "संसाधनों पर वापस जाएं",
+    "backToSchemes": "योजनाओं पर वापस जाएं",
+    "backToRights": "अधिकारों पर वापस जाएं"
   },
   "home": {
     "badge": "इन्फोराइट एआई — 22 अनुसूचित भारतीय भाषाएं + अंग्रेजी (संस्करण 2.0)",

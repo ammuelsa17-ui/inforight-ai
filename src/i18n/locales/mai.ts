@@ -42,7 +42,14 @@ export const maiLocale: UITranslationSchema = {
     "action": "कार्रवाई",
     "search": "खोजू",
     "filter": "फ़िल्टर",
-    "close": "बंद करू"
+    "close": "बंद करू",
+    "back": "पाछाँ",
+    "home": "मुख्य पृष्ठ",
+    "backToCases": "हमर मामला पर वापस जाउ",
+    "backToOfficial": "अधिकारिक पोर्टल पर वापस जाउ",
+    "backToResources": "संसाधन पर वापस जाउ",
+    "backToSchemes": "योजना पर वापस जाउ",
+    "backToRights": "अधिकार पर वापस जाउ"
   },
   "home": {
     "badge": "मैथिली — AI for Civic & Legal Empowerment",

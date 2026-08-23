@@ -42,7 +42,14 @@ export const satLocale: UITranslationSchema = {
     "action": "ᱠᱟᱹᱢᱤ",
     "search": "ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ",
     "filter": "ᱯᱷᱤᱞᱴᱚᱨ",
-    "close": "ᱵᱚᱸᱫᱽ ᱢᱮ"
+    "close": "ᱵᱚᱸᱫᱽ ᱢᱮ",
+    "back": "ᱨᱩᱣᱟᱹᱲ ᱢᱮ",
+    "home": "ᱢᱩᱬᱩᱛ ᱥᱟᱦᱴᱟ",
+    "backToCases": "ᱤᱧᱟᱜ ᱠᱮᱥ ᱛᱮ ᱨᱩᱣᱟᱹᱲ ᱢᱮ",
+    "backToOfficial": "ᱥᱚᱨᱠᱟᱨᱤ ᱯᱳᱨᱴᱟᱞ ᱛᱮ ᱨᱩᱣᱟᱹᱲ ᱢᱮ",
+    "backToResources": "ᱯᱷᱮᱰᱟᱛ ᱛᱮ ᱨᱩᱣᱟᱹᱲ ᱢᱮ",
+    "backToSchemes": "ᱡᱚᱡᱚᱱᱟ ᱛᱮ ᱨᱩᱣᱟᱹᱲ ᱢᱮ",
+    "backToRights": "ᱦᱚᱠ ᱛᱮ ᱨᱩᱣᱟᱹᱲ ᱢᱮ"
   },
   "home": {
     "badge": "InfoRight AI — ᱒᱒ ᱥᱮᱰᱭᱩᱞᱰ ᱯᱟᱹᱨᱥᱤ + ᱤᱝᱞᱤᱥ (Version ᱒.᱐)",

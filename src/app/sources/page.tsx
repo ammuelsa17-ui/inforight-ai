@@ -7,26 +7,16 @@ import { ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
 
+import PageBackNav from "@/components/PageBackNav";
+
 export default function SourcesPage() {
   const { t } = useLanguage();
   const sourcesList = Object.values(OFFICIAL_SOURCES_REGISTRY);
 
   return (
     <PageContainer size="default">
-      {/* Header */}
-      <div className="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-700 hover:text-indigo-900 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>{t("common.backToHome")}</span>
-        </Link>
-        <span className="text-xs font-semibold text-sky-800 uppercase tracking-wider px-3 py-1 bg-sky-50 rounded-full border border-sky-200 flex items-center gap-1">
-          <ShieldCheck className="w-4 h-4 text-sky-600" />
-          <span>{t("sources.badge")}</span>
-        </span>
-      </div>
+      {/* Page Back Navigation */}
+      <PageBackNav backHref="/resources" backLabel={t("common.backToResources")} />
 
       <PageHeader
         title={t("sources.title")}

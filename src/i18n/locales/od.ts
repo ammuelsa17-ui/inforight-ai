@@ -42,7 +42,14 @@ export const odLocale: UITranslationSchema = {
     "action": "କାର୍ରଵାଈ",
     "search": "ସନ୍ଧାନ କରନ୍ତୁ",
     "filter": "ଫ଼ିଲ୍ଟର",
-    "close": "ବନ୍ଦ କରନ୍ତୁ"
+    "close": "ବନ୍ଦ କରନ୍ତୁ",
+    "back": "ପଛକୁ ଯାଆନ୍ତୁ",
+    "home": "ମୁଖ୍ୟ ପୃଷ୍ଠା",
+    "backToCases": "ମୋର ମାମଲାକୁ ଫେରନ୍ତୁ",
+    "backToOfficial": "ସରକାରୀ ପୋର୍ଟାଲକୁ ଫେରନ୍ତୁ",
+    "backToResources": "ସମ୍ବଳକୁ ଫେରନ୍ତୁ",
+    "backToSchemes": "ଯୋଜନାକୁ ଫେରନ୍ତୁ",
+    "backToRights": "ଅଧିକାରକୁ ଫେରନ୍ତୁ"
   },
   "home": {
     "badge": "ଓଡ଼ିଆ — AI for Civic & Legal Empowerment",

@@ -42,7 +42,14 @@ export const mrLocale: UITranslationSchema = {
     "action": "कार्रवाई",
     "search": "शोधा",
     "filter": "फ़िल्टर",
-    "close": "बंद करा"
+    "close": "बंद करा",
+    "back": "मागे",
+    "home": "मुख्यपृष्ठ",
+    "backToCases": "माझ्या प्रकरणांवर परत जा",
+    "backToOfficial": "शासकीय पोर्टलवर परत जा",
+    "backToResources": "संसाधनांकडे परत जा",
+    "backToSchemes": "योजनांकडे परत जा",
+    "backToRights": "हक्कांकडे परत जा"
   },
   "home": {
     "badge": "मराठी — AI for Civic & Legal Empowerment",

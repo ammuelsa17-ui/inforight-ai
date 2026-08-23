@@ -42,7 +42,14 @@ export const paLocale: UITranslationSchema = {
     "action": "ਕਾਰ੍ਰਵਾਈ",
     "search": "ਖੋਜੋ",
     "filter": "ਫ਼ਿਲ੍ਟਰ",
-    "close": "ਬੰਦ ਕਰੋ"
+    "close": "ਬੰਦ ਕਰੋ",
+    "back": "ਵਾਪਸ ਜਾਓ",
+    "home": "ਮੁੱਖ ਪੰਨਾ",
+    "backToCases": "ਮੇਰੇ ਕੇਸਾਂ 'ਤੇ ਵਾਪਸ ਜਾਓ",
+    "backToOfficial": "ਅਧਿਕਾਰਤ ਪੋਰਟਲ 'ਤੇ ਵਾਪਸ ਜਾਓ",
+    "backToResources": "ਸਰੋਤਾਂ 'ਤੇ ਵਾਪਸ ਜਾਓ",
+    "backToSchemes": "ਸਕੀਮਾਂ 'ਤੇ ਵਾਪਸ ਜਾਓ",
+    "backToRights": "ਅਧਿਕਾਰਾਂ 'ਤੇ ਵਾਪਸ ਜਾਓ"
   },
   "home": {
     "badge": "ਪੰਜਾਬੀ — AI for Civic & Legal Empowerment",

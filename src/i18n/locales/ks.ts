@@ -42,7 +42,14 @@ export const ksLocale: UITranslationSchema = {
     "action": "کاررواای",
     "search": "کھوجےں",
     "filter": "فِلٹر",
-    "close": "بںد کرےں"
+    "close": "بںد کرےں",
+    "back": "واپس گژھِو",
+    "home": "ہوم",
+    "backToCases": "میٲنی کیسن کُن واپس گژھِو",
+    "backToOfficial": "سرکٲرؠ پورٹلس کُن واپس گژھِو",
+    "backToResources": "وسائلن کُن واپس گژھِو",
+    "backToSchemes": "سکیمن کُن واپس گژھِو",
+    "backToRights": "حقوقن کُن واپس گژھِو"
   },
   "home": {
     "badge": "اِنفورااِٹ اےآای — 22 انُسوچِت بھارتیی بھاشااےں + اںگرےجی (سںسکرن 2.0)",

@@ -19,7 +19,11 @@ import {
   Plus
 } from "lucide-react";
 
+import { useLanguage } from "@/context/LanguageContext";
+import PageBackNav from "@/components/PageBackNav";
+
 export default function SchemeComparePage() {
+  const { t } = useLanguage();
   return (
     <Suspense
       fallback={
@@ -34,6 +38,7 @@ export default function SchemeComparePage() {
 }
 
 function CompareContent() {
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const idsParam = searchParams.get("ids") || "";
   const initialIds = idsParam ? idsParam.split(",").filter(Boolean) : [];
@@ -45,8 +50,10 @@ function CompareContent() {
   }, []);
 
   const selectedSchemes: EvaluatedSchemeOutput[] = useMemo(() => {
-    return allEvaluated.filter((s) => selectedIds.includes(s.id));
-  }, [allEvaluated, selectedIds]);
+    return selectedIds
+      .map((id) => allEvaluated.find((s) => s.id === id))
+      .filter((s): s is EvaluatedSchemeOutput => s !== undefined);
+  }, [selectedIds, allEvaluated]);
 
   const handleRemove = (id: string) => {
     setSelectedIds((prev) => prev.filter((item) => item !== id));
@@ -59,6 +66,8 @@ function CompareContent() {
   return (
     <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
+        {/* Page Back Navigation */}
+        <PageBackNav backHref="/schemes" backLabel={t("common.backToSchemes")} />
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 mb-6">
           <div className="flex items-center gap-3">

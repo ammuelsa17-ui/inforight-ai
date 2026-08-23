@@ -42,7 +42,14 @@ export const mniLocale: UITranslationSchema = {
     "action": "ꯀꯥꯔꯔꯋꯥꯏ",
     "search": "ꯊꯤꯌꯨ",
     "filter": "ꯐꯤꯂꯇꯔ",
-    "close": "ꯊꯤꯡꯖꯤꯜꯂꯨ"
+    "close": "ꯊꯤꯡꯖꯤꯜꯂꯨ",
+    "back": "ꯍꯟꯖꯤꯜꯂꯨ",
+    "home": "ꯃꯔꯨꯑꯣꯏꯕ ꯂꯃꯥꯏ",
+    "backToCases": "ꯑꯩꯒꯤ ꯀꯦꯁꯁꯤꯡꯗ ꯍꯟꯖꯤꯜꯂꯨ",
+    "backToOfficial": "ꯑꯣꯐꯤꯁꯤꯑꯦꯜ ꯄꯣꯔꯇꯦꯜꯗ ꯍꯟꯖꯤꯜꯂꯨ",
+    "backToResources": "ꯔꯤꯁꯣꯔꯁꯁꯤꯡꯗ ꯍꯟꯖꯤꯜꯂꯨ",
+    "backToSchemes": "ꯁ꯭ꯀꯤꯃꯁꯤꯡꯗ ꯍꯟꯖꯤꯜꯂꯨ",
+    "backToRights": "ꯍꯛꯁꯤꯡꯗ ꯍꯟꯖꯤꯜꯂꯨ"
   },
   "home": {
     "badge": "InfoRight AI — ᱒᱒ ꯁꯦ거ᱩᱞꯗ ꯂꯣꯟ + ꯏᱝꯂꯤꯁ (Version 2.0)",
