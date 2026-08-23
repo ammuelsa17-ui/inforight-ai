@@ -32,11 +32,11 @@ export default function HomePage() {
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-extrabold text-[#102A56] tracking-tight leading-tight max-w-4xl mx-auto">
-          Understand Your Rights. Know What to Do Next.
+          {t("home.title")}
         </h1>
 
         <p className="text-base sm:text-lg text-[#526176] max-w-3xl mx-auto leading-relaxed font-normal">
-          InfoRight AI turns complex civic and legal information into clear, source-grounded actions — across rights, schemes, authorities, documents, and case follow-up.
+          {t("home.subtitle")}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -44,14 +44,14 @@ export default function HomePage() {
             href="/ask"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl text-base font-bold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-md shadow-indigo-100"
           >
-            <span>Get Help (Describe Problem)</span>
+            <span>{t("home.ctaGetHelp")}</span>
             <ArrowRight className="w-5 h-5" />
           </Link>
           <Link
             href="/dashboard"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-base font-bold bg-white text-slate-700 hover:bg-slate-50 border border-slate-300 transition-colors shadow-xs"
           >
-            <span>View My Cases &amp; Tracker</span>
+            <span>{t("home.ctaViewCases")}</span>
           </Link>
         </div>
       </section>
@@ -59,10 +59,10 @@ export default function HomePage() {
       {/* 3-Step Journey Explanation */}
       <section className="space-y-6">
         <div className="text-center space-y-2">
-          <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider block">Simple 3-Step Journey</span>
-          <h2 className="text-2xl font-bold text-[#102A56]">How InfoRight Works</h2>
+          <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider block">{t("home.journeyBadge")}</span>
+          <h2 className="text-2xl font-bold text-[#102A56]">{t("home.journeyTitle")}</h2>
           <p className="text-sm text-[#526176] max-w-xl mx-auto">
-            From plain-language complaint to certified statutory submission and closed-loop verification.
+            {t("home.journeySubtitle")}
           </p>
         </div>
 
@@ -71,9 +71,9 @@ export default function HomePage() {
             <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-base">
               1
             </div>
-            <h3 className="text-base font-bold text-slate-900">Describe Your Problem</h3>
+            <h3 className="text-base font-bold text-slate-900">{t("home.journey1Title")}</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Tell InfoRight what happened in plain speech or text in any of 23 Indian languages.
+              {t("home.journey1Desc")}
             </p>
           </div>
 
@@ -81,9 +81,9 @@ export default function HomePage() {
             <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold text-base">
               2
             </div>
-            <h3 className="text-base font-bold text-slate-900">Get the Right Path</h3>
+            <h3 className="text-base font-bold text-slate-900">{t("home.journey2Title")}</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              See competent statutory authorities, verified rules, timeline countdowns, and print-ready petition drafts.
+              {t("home.journey2Desc")}
             </p>
           </div>
 
@@ -91,9 +91,9 @@ export default function HomePage() {
             <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-base">
               3
             </div>
-            <h3 className="text-base font-bold text-slate-900">Track &amp; Verify Outcome</h3>
+            <h3 className="text-base font-bold text-slate-900">{t("home.journey3Title")}</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Follow official rectification evidence side-by-side, then confirm resolution or reopen if incomplete.
+              {t("home.journey3Desc")}
             </p>
           </div>
         </div>
@@ -103,49 +103,49 @@ export default function HomePage() {
       <section className="p-6 sm:p-8 rounded-3xl bg-slate-900 text-white shadow-xl space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
           <div>
-            <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider block">Accountability Architecture</span>
+            <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider block">{t("home.archBadge")}</span>
             <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-              Two-Sided Closed-Loop Civic Resolution
+              {t("home.archTitle")}
             </h2>
           </div>
           <span className="text-xs bg-slate-800 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 font-mono">
-            Prototype Role View: Citizen ↔ Official
+            {t("home.archRoleView")}
           </span>
         </div>
 
         <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
-          Officers cannot unilaterally close civic complaints. Cases transition to citizen review only after geo-verified rectification proof is uploaded, ensuring complete transparency.
+          {t("home.archSubtitle")}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-2 text-xs">
           <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
-            <span className="text-[10px] text-indigo-400 font-bold uppercase block">Step 1 • Citizen</span>
-            <strong className="text-white block truncate">Reports Issue</strong>
-            <p className="text-[11px] text-slate-400">Uploads Before-photo &amp; locality details.</p>
+            <span className="text-[10px] text-indigo-400 font-bold uppercase block">{t("home.step1Badge")}</span>
+            <strong className="text-white block truncate">{t("home.step1Title")}</strong>
+            <p className="text-[11px] text-slate-400">{t("home.step1Desc")}</p>
           </div>
 
           <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
-            <span className="text-[10px] text-sky-400 font-bold uppercase block">Step 2 • Official</span>
-            <strong className="text-white block truncate">Reviews &amp; Dispatches</strong>
-            <p className="text-[11px] text-slate-400">Assigned department crew marks IN_PROGRESS.</p>
+            <span className="text-[10px] text-sky-400 font-bold uppercase block">{t("home.step2Badge")}</span>
+            <strong className="text-white block truncate">{t("home.step2Title")}</strong>
+            <p className="text-[11px] text-slate-400">{t("home.step2Desc")}</p>
           </div>
 
           <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
-            <span className="text-[10px] text-amber-400 font-bold uppercase block">Step 3 • Official</span>
-            <strong className="text-white block truncate">Uploads Rectification</strong>
-            <p className="text-[11px] text-slate-400">After-repair photo with GPS validation.</p>
+            <span className="text-[10px] text-amber-400 font-bold uppercase block">{t("home.step3Badge")}</span>
+            <strong className="text-white block truncate">{t("home.step3Title")}</strong>
+            <p className="text-[11px] text-slate-400">{t("home.step3Desc")}</p>
           </div>
 
           <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 space-y-1.5 min-w-0">
-            <span className="text-[10px] text-emerald-400 font-bold uppercase block">Step 4 • Citizen</span>
-            <strong className="text-white block truncate">Confirms or Reopens</strong>
-            <p className="text-[11px] text-slate-400">Inspects Before vs After evidence comparison.</p>
+            <span className="text-[10px] text-emerald-400 font-bold uppercase block">{t("home.step4Badge")}</span>
+            <strong className="text-white block truncate">{t("home.step4Title")}</strong>
+            <p className="text-[11px] text-slate-400">{t("home.step4Desc")}</p>
           </div>
 
           <div className="p-3.5 rounded-xl bg-emerald-950/60 border border-emerald-500/50 space-y-1.5 min-w-0 sm:col-span-2 lg:col-span-1">
-            <span className="text-[10px] text-emerald-300 font-bold uppercase block">Step 5 • Audit</span>
-            <strong className="text-emerald-100 block truncate">SHA-256 Record</strong>
-            <p className="text-[11px] text-emerald-300/80">Tamper-evident PDF evidence package.</p>
+            <span className="text-[10px] text-emerald-300 font-bold uppercase block">{t("home.step5Badge")}</span>
+            <strong className="text-emerald-100 block truncate">{t("home.step5Title")}</strong>
+            <p className="text-[11px] text-emerald-300/80">{t("home.step5Desc")}</p>
           </div>
         </div>
       </section>

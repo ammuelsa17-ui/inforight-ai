@@ -19,6 +19,8 @@ export const SCRIPT_REQUIREMENTS: Record<string, { name: string; regex: RegExp; 
   "pa.ts": { name: "Gurmukhi", regex: /[\u0A00-\u0A7F]/ },
   "ta.ts": { name: "Tamil", regex: /[\u0B80-\u0BFF]/ },
   "te.ts": { name: "Telugu", regex: /[\u0C00-\u0C7F]/ },
+  "ks.ts": { name: "Kashmiri/Arabic", regex: /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/ },
+  "sd.ts": { name: "Sindhi/Arabic", regex: /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/ },
   "ur.ts": { name: "Urdu/Arabic", regex: /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/ },
   "sat.ts": { name: "Ol Chiki", regex: /[\u1C50-\u1C7F]/ },
   "mni.ts": { name: "Meitei Mayek", regex: /[\uABC0-\uABFF]/ },
@@ -36,11 +38,11 @@ export const ALLOWLISTED_ACRONYMS = new Set([
   "RTI", "PIO", "FAA", "PDF", "GPS", "SHA-256", "InfoRight AI", "Sarvam", "NCH 1915", "e-Jagriti", "SAMADHAN 2.0"
 ]);
 
-// Focus scope for zero-English-leakage CI enforcement (Priority Demo Languages)
+// Focus scope for zero-English-leakage CI enforcement (All 22 Non-English Locales)
 export const ZERO_LEAKAGE_ENFORCED_LOCALES = new Set([
-  "ta.ts",
-  "te.ts",
-  "as.ts"
+  "as.ts", "bn.ts", "brx.ts", "doi.ts", "gu.ts", "hi.ts", "kn.ts", "kok.ts",
+  "ks.ts", "mai.ts", "ml.ts", "mni.ts", "mr.ts", "ne.ts", "od.ts", "pa.ts",
+  "sa.ts", "sat.ts", "sd.ts", "ta.ts", "te.ts", "ur.ts"
 ]);
 
 export function getNestedValue(dict: any, keyPath: string) {
@@ -117,7 +119,7 @@ export async function runFullLanguageAudit(options: { failOnLeakage?: boolean } 
     "nav.", "common.", "home.", "ask.", "dashboard.", "official.", "resources.",
     "rights.", "sources.", "preview.", "evidence.", "appeal.", "feeCalc.",
     "timelineEngine.", "checksum.", "trustPanel.", "fallbackBanner.", "sidebar.",
-    "tracker.", "trust.", "explainer.", "planner."
+    "tracker.", "trust.", "explainer.", "planner.", "accessibility.", "consumerEngine.", "tenantEngine."
   ];
   const closedLoopKeys = extractedKeys.filter(k => closedLoopPrefixes.some(p => k.startsWith(p)));
 

@@ -9,6 +9,11 @@ export interface UITranslationSchema {
     dashboard: string;
     describeProblem: string;
     selectLanguage: string;
+    getHelp: string;
+    myCases: string;
+    rightsSchemes: string;
+    officialWorkspace: string;
+    officialRoleDemo: string;
   };
   common: {
     backToHome: string;
@@ -39,6 +44,8 @@ export interface UITranslationSchema {
     title: string;
     subtitle: string;
     cta: string;
+    ctaGetHelp: string;
+    ctaViewCases: string;
     modulesTitle: string;
     modulesSubtitle: string;
     module1Title: string;
@@ -67,6 +74,34 @@ export interface UITranslationSchema {
     demo5Sub: string;
     disclaimerTitle: string;
     disclaimerText: string;
+    journeyBadge: string;
+    journeyTitle: string;
+    journeySubtitle: string;
+    journey1Title: string;
+    journey1Desc: string;
+    journey2Title: string;
+    journey2Desc: string;
+    journey3Title: string;
+    journey3Desc: string;
+    archBadge: string;
+    archTitle: string;
+    archSubtitle: string;
+    archRoleView: string;
+    step1Badge: string;
+    step1Title: string;
+    step1Desc: string;
+    step2Badge: string;
+    step2Title: string;
+    step2Desc: string;
+    step3Badge: string;
+    step3Title: string;
+    step3Desc: string;
+    step4Badge: string;
+    step4Title: string;
+    step4Desc: string;
+    step5Badge: string;
+    step5Title: string;
+    step5Desc: string;
   };
   ask: {
     statusVerified: string;
