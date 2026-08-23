@@ -10,7 +10,7 @@ export default function LanguageSelector() {
   const { selectedLanguage, setSelectedLanguage, t } = useLanguage();
 
   return (
-    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#F4F9FF] border border-[#BCD7EE] text-xs text-[#102A56] max-w-[140px] sm:max-w-[180px] 2xl:max-w-[220px] min-w-0 shrink">
+    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#F4F9FF] border border-[#BCD7EE] text-xs text-[#102A56] max-w-[120px] sm:max-w-[180px] min-w-0 shrink">
       <Globe className="w-3.5 h-3.5 text-[#4F46E5] shrink-0" />
       <select
         value={selectedLanguage}
