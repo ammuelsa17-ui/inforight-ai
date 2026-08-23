@@ -28,23 +28,23 @@ export default function Navbar() {
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center ml-6 gap-6 text-sm font-semibold text-[#102A56] shrink-0">
             <Link href="/ask" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap text-indigo-700 font-bold">
-              Get Help
+              {t("nav.getHelp")}
             </Link>
             <Link href="/dashboard" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
-              My Cases &amp; Tracker
+              {t("nav.myCases")}
             </Link>
             <Link href="/rights" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
-              Rights &amp; Schemes
+              {t("nav.rightsSchemes")}
             </Link>
             <Link href="/resources" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
-              Resources
+              {t("nav.resources")}
             </Link>
             <Link
               href="/official"
               className="text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 px-2.5 py-1 rounded-md border border-slate-300 transition-colors whitespace-nowrap font-medium"
               title="Demonstrate government officer review workflow"
             >
-              Official Workspace
+              {t("nav.officialWorkspace")}
             </Link>
           </nav>
 
@@ -86,35 +86,35 @@ export default function Navbar() {
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-bold text-indigo-600 hover:text-indigo-800 py-1.5"
           >
-            Get Help (Describe Problem)
+            {t("nav.getHelp")}
           </Link>
           <Link
             href="/dashboard"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
-            My Cases &amp; Tracker
+            {t("nav.myCases")}
           </Link>
           <Link
             href="/rights"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
-            Rights &amp; Schemes
+            {t("nav.rightsSchemes")}
           </Link>
           <Link
             href="/resources"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-[#102A56] hover:text-[#4F46E5] py-1.5"
           >
-            Resources
+            {t("nav.resources")}
           </Link>
           <Link
             href="/official"
             onClick={() => setMobileMenuOpen(false)}
             className="block text-sm font-semibold text-slate-600 hover:text-slate-900 py-1.5 border-t border-slate-100 pt-2"
           >
-            Official Workspace (Role Demo)
+            {t("nav.officialRoleDemo")}
           </Link>
           <div className="pt-2 border-t border-[#BCD7EE]">
             <Link

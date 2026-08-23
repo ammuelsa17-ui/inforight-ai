@@ -10,7 +10,12 @@ export const taLocale: UITranslationSchema = {
     "resources": "வளங்கள்",
     "dashboard": "டாஷ்போர்டு",
     "describeProblem": "சிக்கலை விவரிக்குக",
-    "selectLanguage": "மொழியைத் தேர்ந்தெடுக்கவும்"
+    "selectLanguage": "மொழியைத் தேர்ந்தெடுக்கவும்",
+    "getHelp": "உதவி பெறுக",
+    "myCases": "என் வழக்குகள் & கண்காணிப்பு",
+    "rightsSchemes": "உரிமைகள் & நலத்திட்டங்கள்",
+    "officialWorkspace": "அதிகாரப்பூர்வ பணியிடம்",
+    "officialRoleDemo": "அதிகாரப்பூர்வ பணியிடம் (செயல்முறை விளக்கம்)"
   },
   "common": {
     "backToHome": "முகப்பிற்குத் திரும்பு",
@@ -68,7 +73,37 @@ export const taLocale: UITranslationSchema = {
     "demo5Title": "கல்வி உதவித்தொகை ஒப்பீடு",
     "demo5Sub": "மாநில எஸ்சி/எஸ்டி நல உதவித்தொகை தகுதி சரிபார்ப்பு",
     "disclaimerTitle": "தகவல் & கல்வி மறுப்புரை",
-    "disclaimerText": "இன்ஃபோரைட் AI குடிமக்கள் அதிகாரமளிப்பிற்கான சட்டப்பூர்வ வழிகாட்டலை வழங்குகிறது. இது உத்தியோகபூர்வ சட்ட ஆலோசனையை மாற்றாது."
+    "disclaimerText": "இன்ஃபோரைட் AI குடிமக்கள் அதிகாரமளிப்பிற்கான சட்டப்பூர்வ வழிகாட்டலை வழங்குகிறது. இது உத்தியோகபூர்வ சட்ட ஆலோசனையை மாற்றாது.",
+    "journeyBadge": "எளிய 3-படி பயணம்",
+    "journeyTitle": "இன்ஃபோரைட் எவ்வாறு செயல்படுகிறது",
+    "journeySubtitle": "எளிய மொழிப் புகாரிலிருந்து சான்றளிக்கப்பட்ட சட்டப்பூர்வ சமர்ப்பிப்பு மற்றும் சரிபார்ப்பு வரை.",
+    "journey1Title": "உங்கள் சிக்கலை விவரியுங்கள்",
+    "journey1Desc": "23 இந்திய மொழிகளில் ஏதேனும் ஒன்றில் எளிய பேச்சு அல்லது உரை வடிவில் இன்ஃபோரைட்டிடம் என்ன நடந்தது என்று கூறுங்கள்.",
+    "journey2Title": "சரியான சட்ட வழியைப் பெறுங்கள்",
+    "journey2Desc": "தகுதிவாய்ந்த சட்ட அதிகாரிகள், சரிபார்க்கப்பட்ட விதிகள், காலக்கெடு கவுண்டவுன் மற்றும் அச்சுக்குத் தயாரான மனு வரைவுகளைப் பார்க்கவும்.",
+    "journey3Title": "முடிவைக் கண்காணித்து சரிபார்க்கவும்",
+    "journey3Desc": "அதிகாரப்பூர்வ பழுதுபார்ப்பு ஆதாரங்களை ஒப்பிட்டுப் பார்த்து, தீர்வை உறுதிப்படுத்தவும் அல்லது முழுமையடையாவிட்டால் மீண்டும் திறக்கவும்.",
+    "archBadge": "பொறுப்புக்கூறல் கட்டமைப்பு",
+    "archTitle": "இருதரப்பு மூடிய-சுழற்சி குடிமக்கள் தீர்வு",
+    "archSubtitle": "அதிகாரிகள் ஒருதலைப்பட்சமாக குடிமக்கள் புகார்களை மூட முடியாது. ஜிபிஎஸ் சரிபார்க்கப்பட்ட பழுதுபார்ப்பு சான்று பதிவேற்றப்பட்ட பின்னரே வழக்குகள் குடிமக்கள் மதிப்பாய்வுக்கு மாற்றப்பட்டு முழு வெளிப்படைத்தன்மையை உறுதி செய்கிறது.",
+    "archRoleView": "மாதிரி பங்கு பார்வை: குடிமகன் ↔ அதிகாரி",
+    "step1Badge": "படி 1 • குடிமகன்",
+    "step1Title": "சிக்கலைப் புகாரளித்தல்",
+    "step1Desc": "முந்தைய புகைப்படம் மற்றும் பகுதி விவரங்களை பதிவேற்றுகிறது.",
+    "step2Badge": "படி 2 • அதிகாரி",
+    "step2Title": "ஆய்வு & குழு அனுப்புதல்",
+    "step2Desc": "ஒதுக்கப்பட்ட துறை ஊழியர்கள் பணியில் உள்ளதாக (IN_PROGRESS) குறிக்கின்றனர்.",
+    "step3Badge": "படி 3 • அதிகாரி",
+    "step3Title": "சரிசெய்தலை பதிவேற்றுதல்",
+    "step3Desc": "ஜிபிஎஸ் சரிபார்ப்புடன் பழுதுநீக்கிய பிந்தைய புகைப்படம்.",
+    "step4Badge": "படி 4 • குடிமகன்",
+    "step4Title": "உறுதி செய்தல் அல்லது மீண்டும் திறத்தல்",
+    "step4Desc": "முந்தைய மற்றும் பிந்தைய ஆதார ஒப்பீட்டை ஆய்வு செய்கிறது.",
+    "step5Badge": "படி 5 • தணிக்கை",
+    "step5Title": "SHA-256 பதிவு",
+    "step5Desc": "சேதப்படுத்த முடியாத PDF ஆதார தொகுப்பு.",
+    "ctaGetHelp": "உதவி பெறுக (சிக்கலை விவரிக்க)",
+    "ctaViewCases": "என் வழக்குகள் & கண்காணிப்பைப் பார்க்க"
   },
   "ask": {
     "statusVerified": "சரிபார்க்கப்பட்டது",
@@ -198,14 +233,14 @@ export const taLocale: UITranslationSchema = {
     "scenarioConsumer": "பழுதடைந்த பொருள் / பணம் திரும்பப் பெறாமை",
     "scenarioWorkplace": "வழங்கப்படாத சம்பளம் / பணி நிலுவை",
     "conflictTitle": "இருப்பிடம் பொருந்தவில்லை:",
-    "pinStatutoryBasisLabel": "Statutory Basis:",
+    "pinStatutoryBasisLabel": "சட்டப்பூர்வ அடிப்படை:",
     "pinRtiPioLabel": "RTI பொதுத் தகவல் அலுவலர் (PIO):",
-    "pinResponsibleDeptLabel": "Responsible Department:",
+    "pinResponsibleDeptLabel": "பொறுப்பான துறை:",
     "pinJurisdictionLabel": "அதிகார வரம்பு:",
     "pinLocalityLabel": "பகுதி / மண்டலம்:",
     "pinResolverInstruction": "சட்டப்பூர்வ உள்ளாட்சி அமைப்பு மற்றும் RTI PIO-வை அறிய 6-இலக்க இந்திய அஞ்சல் குறியீட்டை (PIN) உள்ளிடவும்",
-    "pinResolverTag": "Deterministic Map",
-    "pinResolverTitle": "PIN Code Authority Resolver (Verified Ground-Truth)",
+    "pinResolverTag": "தீர்மான வரைபடம்",
+    "pinResolverTitle": "பின்கோடு அதிகாரி தீர்வாளர் (சரிபார்க்கப்பட்ட உண்மைத்தன்மை)"
   },
   "rights": {
     "badge": "சட்டப்பூர்வ உரிமைகள் வழிகாட்டி",
@@ -238,22 +273,22 @@ export const taLocale: UITranslationSchema = {
     "matchBtn": "திட்டங்களை ஒப்பிடுக",
     "matching": "திட்டங்கள் ஒப்பிடப்படுகின்றன...",
     "matchedCount": "ஒப்பிடப்பட்ட திட்டங்கள்",
-    "occStudent": "Student",
-    "occFarmer": "Farmer",
-    "occSalaried": "Salaried Employee",
-    "occSelfEmployed": "Self Employed",
-    "occUnemployed": "Unemployed / Homemaker",
-    "occSenior": "Senior Citizen",
-    "locUrban": "Urban",
-    "locRural": "Rural",
-    "pursuingStudies": "Currently Pursuing Studies (Active Student)",
-    "ruleMatchTitle": "Rule-Based Eligibility Match",
-    "noMatchText": "No schemes matched your exact combination of criteria. Try adjusting income limit or student status.",
-    "matchedBadge": "Matched",
-    "whyMatched": "Why You Matched:",
-    "reqDocs": "Required Documents:",
-    "refPlatform": "Reference Platform:",
-    "applyPortal": "Apply on myScheme Portal",
+    "occStudent": "மாணவர்",
+    "occFarmer": "விவசாயி",
+    "occSalaried": "ஊதியம் பெறும் ஊழியர்",
+    "occSelfEmployed": "சுயதொழில் செய்பவர்",
+    "occUnemployed": "வேலையற்றவர் / இல்லத்தரசி",
+    "occSenior": "மூத்த குடிமகன்",
+    "locUrban": "நகர்ப்புறம்",
+    "locRural": "கிராமப்புறம்",
+    "pursuingStudies": "தற்போது படித்துக் கொண்டிருப்பவர் (செயலில் உள்ள மாணவர்)",
+    "ruleMatchTitle": "விதி அடிப்படையிலான தகுதி பொருத்தம்",
+    "noMatchText": "உங்கள் அளவுகோல்களுடன் எந்தத் திட்டமும் பொருந்தவில்லை. வருமான வரம்பு அல்லது மாணவர் நிலையை மாற்றி முயற்சிக்கவும்.",
+    "matchedBadge": "பொருந்தியது",
+    "whyMatched": "நீங்கள் எவ்வாறு பொருந்துகிறீர்கள்:",
+    "reqDocs": "தேவையான ஆவணங்கள்:",
+    "refPlatform": "குறிப்பு தளம்:",
+    "applyPortal": "myScheme இணையதளத்தில் விண்ணப்பிக்கவும்",
     "socialCategoryLabel": "சமூகப் பிரிவு",
     "genderLabel": "பாலினம்",
     "eligibleBadge": "தகுதியானது",
@@ -274,14 +309,14 @@ export const taLocale: UITranslationSchema = {
     "verifiedBadge": "சரிபார்க்கப்பட்டது",
     "verifiedLabel": "சரிபார்க்கப்பட்டது:",
     "visitPortal": "அதிகாரப்பூர்வ தளத்திற்குச் செல்லவும்",
-    "capRecordAccess": "Public Record Access",
-    "capCertifiedCopies": "Certified Copies of Work Orders",
-    "capRoadContracts": "Road Contracts",
-    "capMBEntries": "MB Entries",
-    "capDefectLiability": "Defect Liability Periods",
-    "capProductDefects": "Product Defect Remedies",
-    "capUnfairTrade": "Unfair Trade Practice Claims",
-    "capRefundEntitlements": "Refund Entitlements"
+    "capRecordAccess": "பொது ஆவண அணுகல்",
+    "capCertifiedCopies": "பணி ஆணைகளின் சான்றளிக்கப்பட்ட பிரதிகள்",
+    "capRoadContracts": "சாலை ஒப்பந்தங்கள்",
+    "capMBEntries": "அளவு புத்தக (MB) பதிவுகள்",
+    "capDefectLiability": "குறைபாடு பொறுப்பு காலங்கள்",
+    "capProductDefects": "பொருள் குறைபாடு நிவாரணங்கள்",
+    "capUnfairTrade": "நியாயமற்ற வர்த்தக நடைமுறை கோரிக்கைகள்",
+    "capRefundEntitlements": "பணத்தைத் திரும்பப்பெறும் உரிமைகள்"
   },
   "resources": {
     "allResourcesFilter": "அனைத்து வளங்கள்",
@@ -295,9 +330,9 @@ export const taLocale: UITranslationSchema = {
     "badge": "பொது ஆவணங்கள் மற்றும் வார்ப்புருக்கள்",
     "title": "குடிமக்கள் வளங்கள் மற்றும் படிவ வார்ப்புருக்கள்",
     "subtitle": "சரிபார்க்கப்பட்ட சட்டப்பூர்வ படிவங்கள் மற்றும் மனு ஆவணங்களை அணுகவும்.",
-    "downloadTemplate": "Download Template",
-    "certifiedForm": "Certified Form",
-    "previewTemplate": "Preview Template"
+    "downloadTemplate": "படிவத்தைப் பதிவிறக்குக",
+    "certifiedForm": "சான்றளிக்கப்பட்ட படிவம்",
+    "previewTemplate": "படிவத்தை முன்னோட்டமிடுக"
   },
   "dashboard": {
     "badge": "குடிமக்கள் வழக்கு சேமிப்பு",
@@ -380,8 +415,7 @@ export const taLocale: UITranslationSchema = {
     "catSupportDoc": "துணை ஆவணம்",
     "catOther": "இதர ஆவணம்",
     "previewFileTitle": "கோப்பைப் பார்வையிடு",
-    "removeFileTitle": "கோப்பை நீக்கு"
-  ,
+    "removeFileTitle": "கோப்பை நீக்கு",
     "clientSideVerified": "உலாவி சரிபார்க்கப்பட்டது • AI கசிவு இல்லை",
     "supportedFormatsHelp": "அனுமதிக்கப்பட்ட வடிவங்கள்: JPEG, PNG, WebP (அதிகபட்சம் 10MB). புகைப்படங்கள் உலாவியில் பாதுகாப்பாக உள்ளன.",
     "errOnlyImagesAllowed": "JPEG, PNG, அல்லது WebP படங்கள் மட்டுமே அனுமதிக்கப்படும்.",
@@ -452,10 +486,8 @@ export const taLocale: UITranslationSchema = {
   "sidebar": {
     "privacyTitle": "தனியுரிமை பாதுகாப்பு",
     "privacyBody": "உங்கள் தனிப்பட்ட விவரங்கள் இந்த உலாவியிலேயே இருக்கும் மற்றும் AI சேவைகளுடன் பகிரப்படாது."
-  }
-
-  ,
-  tracker: {
+  },
+  "tracker": {
     "title": "சட்டப்பூர்வ சமர்ப்பிப்பு & வழக்கு கண்காணிப்பான்",
     "stepDraft": "1. வரைவு உருவாக்கப்பட்டது",
     "stepSubmit": "2. சமர்ப்பிப்பு பதிவு",
@@ -475,20 +507,20 @@ export const taLocale: UITranslationSchema = {
     "refNoLabel": "ஒப்புதல் / தபால் எண்:",
     "btnEditRecord": "பதிவைத் திருத்து",
     "btnFirstAppeal": "முதல் மேல்முறையீடு உருவாக்கு"
-},
-  trust: {
+  },
+  "trust": {
     "whyTitle": "இன்ஃபோரைட் ஏன் இந்த முடிவை எடுத்தது:",
     "unresolvedFacts": "முடிவு செய்யப்படாத அதிகார வரம்பு / விவரங்கள்:",
     "rulesEvaluated": "சரிபார்க்கப்பட்ட சட்ட விதிகள்:",
     "officialSourceRecords": "அரசாங்க ஆதார பதிவுகள்:",
     "showSources": "சரிபார்க்கப்பட்ட சட்ட ஆதாரங்களைக் காட்டு",
     "hideSources": "சட்ட ஆதாரங்களை மறை"
-},
-  explainer: {
+  },
+  "explainer": {
     "whatItMeans": "இதன் பொருள் என்ன:",
     "whatNext": "அடுத்து நீங்கள் செய்ய வேண்டியது:"
-},
-  planner: {
+  },
+  "planner": {
     "tabPlanner": "ஒருங்கிணைந்த நடவடிக்கை திட்டம் (அனைத்து உரிமைகள்)",
     "tabGuided": "வழிகாட்டப்பட்ட 5-படி குடிமக்கள் படிவம் (RTI)",
     "legalDistinction": "சட்ட வரம்பு வேறுபாடு:",
@@ -499,8 +531,8 @@ export const taLocale: UITranslationSchema = {
     "factsLabel": "உண்மை விவரங்கள்:",
     "statutoryBasisLabel": "சட்டப்பூர்வ அடிப்படை:",
     "reliefLabel": "கோரப்படும் தீர்வு:"
-},
-  consumerEngine: {
+  },
+  "consumerEngine": {
     "badge": "தேசிய நுகர்வோர் பாதுகாப்புச் சட்டம், 2019",
     "title": "அகில இந்திய நுகர்வோர் பாதுகாப்பு நடவடிக்கை தளம்",
     "subtitle": "36 மாநிலங்கள் மற்றும் யூனியன் பிரதேசங்களுக்கான உண்மை நேர நுகர்வோர் குறைதீர்ப்பு வழிகாட்டல், NCH 1915 இணைப்பு மற்றும் e-Daakhil மனு தயாரிப்பு.",
@@ -536,8 +568,8 @@ export const taLocale: UITranslationSchema = {
     "amountPaidLabel": "செலுத்தப்பட்ட மொத்தத் தொகை (₹) *",
     "issueCategoryLabel": "பிரச்சினை வகை *",
     "reliefDemandedLabel": "கோரப்படும் நிவாரணம் *"
-},
-  tenantEngine: {
+  },
+  "tenantEngine": {
     "badge": "மாநில வாடகை மற்றும் குத்தகைச் சட்டம்",
     "title": "அகில இந்திய மாநில வாரியான வாடகைதாரர் உரிமைகள் தளம்",
     "subtitle": "இந்தியாவின் அனைத்து 36 மாநிலங்கள் மற்றும் யூனியன் பிரதேசங்களுக்கான சட்டப்பூர்வ வாடகைதாரர் வழிகாட்டல் மற்றும் கோரிக்கை மனு தயாரிப்பு.",
@@ -569,5 +601,5 @@ export const taLocale: UITranslationSchema = {
     "propertyTypeLabel": "சொத்து வகை *",
     "issueCategoryLabel": "பிரச்சினை வகை *",
     "depositHeldLabel": "முன்பணத் தொகை (₹)"
-}
+  }
 };
