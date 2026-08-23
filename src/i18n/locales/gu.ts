@@ -42,7 +42,14 @@ export const guLocale: UITranslationSchema = {
     "action": "કાર્રવાઈ",
     "search": "શોધો",
     "filter": "ફ઼િલ્ટર",
-    "close": "બંધ કરો"
+    "close": "બંધ કરો",
+    "back": "પાછા જાઓ",
+    "home": "મુખ્ય પૃષ્ઠ",
+    "backToCases": "મારા કેસો પર પાછા જાઓ",
+    "backToOfficial": "અધિકૃત પોર્ટલ પર પાછા જાઓ",
+    "backToResources": "સંસાધનો પર પાછા જાઓ",
+    "backToSchemes": "યોજનાઓ પર પાછા જાઓ",
+    "backToRights": "અધિકારો પર પાછા જાઓ"
   },
   "home": {
     "badge": "ગુજરાતી — AI for Civic & Legal Empowerment",

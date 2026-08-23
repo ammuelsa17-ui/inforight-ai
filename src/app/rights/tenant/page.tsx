@@ -12,6 +12,7 @@ import { WhyThisResultPanel } from "@/components/trust/WhyThisResultPanel";
 import { PlainLanguageExplainer } from "@/components/explainer/PlainLanguageExplainer";
 import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
 import { LocationMap } from "@/components/location/LocationMap";
+import PageBackNav from "@/components/PageBackNav";
 
 export default function TenantRightsPage() {
   const { t } = useLanguage();
@@ -83,19 +84,8 @@ export default function TenantRightsPage() {
 
   return (
     <PageContainer size="narrow">
-      {/* Header */}
-      <div className="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
-        <Link
-          href="/rights"
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 font-medium transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>{t("common.backToHome")}</span>
-        </Link>
-        <span className="text-xs font-semibold text-amber-800 uppercase tracking-wider px-3 py-1 bg-amber-50 rounded-full border border-amber-200">
-          {t("tenantEngine.badge")}
-        </span>
-      </div>
+      {/* Page Back Navigation */}
+      <PageBackNav backHref="/rights" backLabel={t("common.backToRights")} />
 
       <PageHeader
         title={t("tenantEngine.title")}

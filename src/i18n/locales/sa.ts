@@ -42,7 +42,14 @@ export const saLocale: UITranslationSchema = {
     "action": "कार्रवाई",
     "search": "अन्विष्यतु",
     "filter": "फ़िल्टर",
-    "close": "पिदधातु"
+    "close": "पिदधातु",
+    "back": "प्रतिनिवर्तताम्",
+    "home": "मुख्यपृष्ठम्",
+    "backToCases": "मम प्रकरणेषु प्रतिनिवर्तताम्",
+    "backToOfficial": "शासकीय-प्रवेशद्वारं प्रतिनिवर्तताम्",
+    "backToResources": "स्रोतांसि प्रतिनिवर्तताम्",
+    "backToSchemes": "योजनाः प्रतिनिवर्तताम्",
+    "backToRights": "अधिकारान् प्रतिनिवर्तताम्"
   },
   "home": {
     "badge": "संस्कृतम् — AI for Civic & Legal Empowerment",

@@ -42,7 +42,14 @@ export const teLocale: UITranslationSchema = {
     "action": "చర్య",
     "search": "శోధించండి",
     "filter": "వడపోత",
-    "close": "మూసివేయి"
+    "close": "మూసివేయి",
+    "back": "వెనుకకు",
+    "home": "హోమ్",
+    "backToCases": "నా కేసులకు తిరిగి వెళ్ళండి",
+    "backToOfficial": "అధికారిక పోర్టల్‌కు తిరిగి వెళ్ళండి",
+    "backToResources": "వనరులకు తిరిగి వెళ్ళండి",
+    "backToSchemes": "పథకాలకు తిరిగి వెళ్ళండి",
+    "backToRights": "హక్కులకు తిరిగి వెళ్ళండి"
   },
   "home": {
     "badge": "తెలుగు — InfoRight AI (సంస్కరణ 2.0)",

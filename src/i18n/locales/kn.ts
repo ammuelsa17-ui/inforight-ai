@@ -42,7 +42,14 @@ export const knLocale: UITranslationSchema = {
     "action": "ಕ್ರಿಯೆ",
     "search": "ಹುಡುಕಿ",
     "filter": "ಫಿಲ್ಟರ್",
-    "close": "ಮುಚ್ಚಿ"
+    "close": "ಮುಚ್ಚಿ",
+    "back": "ಹಿಂದಕ್ಕೆ",
+    "home": "ಮುಖಪುಟ",
+    "backToCases": "ನನ್ನ ಪ್ರಕರಣಗಳಿಗೆ ಹಿಂತಿರುಗಿ",
+    "backToOfficial": "ಅಧಿಕೃತ ಪೋರ್ಟಲ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+    "backToResources": "ಸಂಪನ್ಮೂಲಗಳಿಗೆ ಹಿಂತಿರುಗಿ",
+    "backToSchemes": "ಯೋಜನೆಗಳಿಗೆ ಹಿಂತಿರುಗಿ",
+    "backToRights": "ಹಕ್ಕುಗಳಿಗೆ ಹಿಂತಿರುಗಿ"
   },
   "home": {
     "badge": "ನಾಗರಿಕ ಮತ್ತು ಕಾನೂನು ಸಬಲೀಕರಣಕ್ಕಾಗಿ AI — ಆವೃತ್ತಿ 2.0",

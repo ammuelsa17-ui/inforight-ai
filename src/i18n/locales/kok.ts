@@ -42,7 +42,14 @@ export const kokLocale: UITranslationSchema = {
     "action": "कारवाई",
     "search": "सोधात",
     "filter": "गाळणी",
-    "close": "बंध करात"
+    "close": "बंध करात",
+    "back": "फाटीं वचात",
+    "home": "मुखेल पान",
+    "backToCases": "म्हज्या प्रकरणांचेर परत वचात",
+    "backToOfficial": "अधिकृत पोर्टलाचेर परत वचात",
+    "backToResources": "संसाधनांकडे परत वचात",
+    "backToSchemes": "येवजण्यांकडे परत वचात",
+    "backToRights": "हक्कांकडे परत वचात"
   },
   "home": {
     "badge": "इन्फोराइट एआई — २२ अनुसूचित भारतीय भासो + इंग्लीश (आवृत्ती २.०)",

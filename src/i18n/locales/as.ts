@@ -42,7 +42,14 @@ export const asLocale: UITranslationSchema = {
     "action": "পদক্ষেপ",
     "search": "সন্ধান কৰক",
     "filter": "ফিল্টাৰ",
-    "close": "বন্ধ কৰক"
+    "close": "বন্ধ কৰক",
+    "back": "উভতি যাওক",
+    "home": "মুখ্য পৃষ্ঠা",
+    "backToCases": "মোৰ গোচৰলৈ উভতি যাওক",
+    "backToOfficial": "চৰকাৰী পৰ্টেললৈ উভতি যাওক",
+    "backToResources": "সম্পদলৈ উভতি যাওক",
+    "backToSchemes": "আঁচনিলৈ উভতি যাওক",
+    "backToRights": "অধিকাৰলৈ উভতি যাওক"
   },
   "home": {
     "badge": "অসমীয়া — InfoRight AI (সংস্কৰণ ২.০)",

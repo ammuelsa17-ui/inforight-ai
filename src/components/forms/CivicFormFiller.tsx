@@ -241,16 +241,16 @@ export const CivicFormFiller: React.FC<CivicFormFillerProps> = ({
             <h3 className="text-base font-bold text-[#102A56]">{t("ask.step2Title")}</h3>
             <p className="text-xs text-slate-500">{t("ask.step2Desc")}</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <input
               type="text"
               maxLength={6}
               value={form.pinCode}
               onChange={(e) => setForm({ ...form, pinCode: e.target.value.replace(/\D/g, "") })}
-              className="w-40 p-3 bg-white border border-[#BCD7EE] rounded-xl text-lg font-mono font-bold tracking-wider text-[#102A56] text-center focus:outline-none focus:border-indigo-600"
+              className="w-full sm:w-40 p-3 bg-white border border-[#BCD7EE] rounded-xl text-lg font-mono font-bold tracking-wider text-[#102A56] text-center focus:outline-none focus:border-indigo-600"
               placeholder={t("ask.pinPlaceholder")}
             />
-            <span className="text-xs text-slate-500">{t("ask.demoPinsNotice")}</span>
+            <span className="text-xs text-slate-500 break-words">{t("ask.demoPinsNotice")}</span>
           </div>
 
           {pinResolution && (

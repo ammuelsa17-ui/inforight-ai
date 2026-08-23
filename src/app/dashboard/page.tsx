@@ -38,6 +38,7 @@ import { PrimaryButton, SecondaryButton } from "@/components/Button";
 import { StatusBadge, EmptyState, Toast } from "@/components/Feedback";
 import { Input } from "@/components/Input";
 import { Modal } from "@/components/Modal";
+import PageBackNav from "@/components/PageBackNav";
 
 const STORAGE_KEY = "inforight_deadline_matters";
 
@@ -281,6 +282,9 @@ ${selectedCase.aiResponse.questions.map((q, idx) => `${idx + 1}. ${q}`).join("\n
       {toastMsg && <Toast type="info" message={toastMsg} onClose={() => setToastMsg("")} />}
 
       <div className="max-w-7xl mx-auto space-y-6">
+        {/* Page Back Navigation */}
+        <PageBackNav backHref="/" />
+
         {/* Header Title */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
           <div>

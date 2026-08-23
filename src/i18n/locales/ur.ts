@@ -42,7 +42,14 @@ export const urLocale: UITranslationSchema = {
     "action": "کاررواای",
     "search": "تلاش کریں",
     "filter": "فِلٹر",
-    "close": "بند کریں"
+    "close": "بند کریں",
+    "back": "پیچھے جائیں",
+    "home": "مرکزی صفحہ",
+    "backToCases": "میرے مقدمات پر واپس جائیں",
+    "backToOfficial": "سرکاری پورٹل پر واپس جائیں",
+    "backToResources": "وسائل پر واپس جائیں",
+    "backToSchemes": "اسکیموں پر واپس جائیں",
+    "backToRights": "حقوق پر واپس جائیں"
   },
   "home": {
     "badge": "اُردُو — AI for Civic & Legal Empowerment",

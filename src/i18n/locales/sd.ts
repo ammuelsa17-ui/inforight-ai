@@ -42,7 +42,14 @@ export const sdLocale: UITranslationSchema = {
     "action": "کاررواای",
     "search": "کھوجےں",
     "filter": "فِلٹر",
-    "close": "بںد کرےں"
+    "close": "بںد کرےں",
+    "back": "واپس وڃو",
+    "home": "مکيه صفحو",
+    "backToCases": "منهنجن ڪيسن ڏانهن واپس وڃو",
+    "backToOfficial": "سرڪاري پورٽل ڏانهن واپس وڃو",
+    "backToResources": "وسيلن ڏانهن واپس وڃو",
+    "backToSchemes": "اسڪيمن ڏانهن واپس وڃو",
+    "backToRights": "حقن ڏانهن واپس وڃو"
   },
   "home": {
     "badge": "اِنفورااِٹ اےآای — 22 انُسوچِت بھارتیی بھاشااےں + اںگرےجی (سںسکرن 2.0)",

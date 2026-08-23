@@ -24,6 +24,7 @@ import { OfficerRectificationModal } from "@/components/evidence/OfficerRectific
 import { BeforeAfterComparisonPanel } from "@/components/evidence/BeforeAfterComparisonPanel";
 import { triggerPrintDocument, exportRectificationEvidencePackHtml } from "@/lib/pdf/print-export";
 import { JourneyProgress } from "@/components/tracker/JourneyProgress";
+import PageBackNav from "@/components/PageBackNav";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -109,7 +110,10 @@ export default function OfficialCaseDetailsPage({ params }: PageProps) {
   };
 
   return (
-    <div className="flex-1 space-y-6 max-w-6xl mx-auto w-full py-4 bg-slate-50/10">
+    <div className="flex-1 space-y-6 max-w-6xl mx-auto w-full py-4 bg-slate-50/10 px-3 sm:px-4 lg:px-6">
+      {/* Page Back Navigation */}
+      <PageBackNav backHref="/official" backLabel={t("common.backToOfficial")} />
+
       {toastMsg && <Toast type="success" message={toastMsg} onClose={() => setToastMsg("")} />}
 
       {/* Navigation Header */}

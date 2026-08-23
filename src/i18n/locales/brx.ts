@@ -42,7 +42,14 @@ export const brxLocale: UITranslationSchema = {
     "action": "कार्रवाई",
     "search": "नायगिर",
     "filter": "फ़िल्टर",
-    "close": "बन्द खालाम"
+    "close": "बन्द खालाम",
+    "back": "उनाव",
+    "home": "गाहाय बिलाइ",
+    "backToCases": "आंनि दायोफोरनाव थांफिन",
+    "backToOfficial": "सोरखारि पोर्टलनाव थांफिन",
+    "backToResources": "सोरखारि फुंखाफोरनाव थांफिन",
+    "backToSchemes": "आंसनिनियाव थांफिन",
+    "backToRights": "हकफोरनाव थांफिन"
   },
   "home": {
     "badge": "बर' — AI for Civic & Legal Empowerment",

@@ -40,6 +40,7 @@ import { PlainLanguageExplainer } from "@/components/explainer/PlainLanguageExpl
 import { SubmissionTracker } from "@/components/tracker/SubmissionTracker";
 import { ALL_STATES_AND_UTS } from "@/lib/location/location-context";
 import { PageContainer, PageHeader } from "@/components/layout/PageContainer";
+import PageBackNav from "@/components/PageBackNav";
 import { LocationMap } from "@/components/location/LocationMap";
 import { AdministrativeDetailsPanel } from "@/components/location/AdministrativeDetailsPanel";
 import { NormalizedLocationResolution } from "@/lib/location/all-india-location-resolver";
@@ -332,21 +333,8 @@ export default function AskPage() {
 
   return (
     <PageContainer size="narrow">
-      {/* Top Header */}
-      <div className="mb-6 flex items-center justify-between border-b border-slate-200 pb-4">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>{t("common.backToHome")}</span>
-        </Link>
-
-        <span className="px-3 py-1 bg-indigo-50 text-indigo-700 font-mono text-xs font-bold rounded-full border border-indigo-200 flex items-center gap-1.5">
-          <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
-          <span>{t("ask.actionPlannerTitle")}</span>
-        </span>
-      </div>
+      {/* Page Back Navigation */}
+      <PageBackNav backHref="/" />
 
       <PageHeader
         title={t("ask.pageTitle")}

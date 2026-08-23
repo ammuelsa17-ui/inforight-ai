@@ -42,7 +42,14 @@ export const mlLocale: UITranslationSchema = {
     "action": "കാര്രവാഈ",
     "search": "തിരയുക",
     "filter": "ഫ഼ില്ടര",
-    "close": "അടയ്ക്കുക"
+    "close": "അടയ്ക്കുക",
+    "back": "പിന്നോട്ട്",
+    "home": "ഹോം",
+    "backToCases": "എന്റെ കേസുകളിലേക്ക് മടങ്ങുക",
+    "backToOfficial": "ഔദ്യോഗിക പോർട്ടലിലേക്ക് മടങ്ങുക",
+    "backToResources": "വിഭവങ്ങളിലേക്ക് മടങ്ങുക",
+    "backToSchemes": "പദ്ധതികളിലേക്ക് മടങ്ങുക",
+    "backToRights": "അവകാശങ്ങളിലേക്ക് മടങ്ങുക"
   },
   "home": {
     "badge": "മലയാളം — AI for Civic & Legal Empowerment",

@@ -42,7 +42,14 @@ export const enLocale: UITranslationSchema = {
     "action": "Action",
     "search": "Search",
     "filter": "Filter",
-    "close": "Close"
+    "close": "Close",
+    "back": "Back",
+    "home": "Home",
+    "backToCases": "Back to My Cases",
+    "backToOfficial": "Back to Official Portal",
+    "backToResources": "Back to Resources",
+    "backToSchemes": "Back to Schemes",
+    "backToRights": "Back to Rights"
   },
   "home": {
     "badge": "InfoRight AI — 22 Scheduled Indian Languages + English (Version 2.0)",

@@ -25,11 +25,11 @@ import {
   GraduationCap,
   Users,
   Heart,
-  Briefcase,
   ChevronDown,
   ChevronUp,
-  Info
+  Info,
 } from "lucide-react";
+import PageBackNav from "@/components/PageBackNav";
 
 const INDIAN_STATES_AND_UTS = [
   "National",
@@ -209,9 +209,12 @@ export default function SchemesPage() {
   return (
     <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Page Header */}
+        {/* Page Back Navigation */}
+        <PageBackNav backHref="/" />
+
+        {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold mb-3">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
             <span>Welfare Discovery &amp; Eligibility Engine</span>
           </div>

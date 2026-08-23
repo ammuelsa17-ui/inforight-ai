@@ -42,7 +42,14 @@ export const taLocale: UITranslationSchema = {
     "action": "செயல்பாடு",
     "search": "தேடுக",
     "filter": "வடிகட்டி",
-    "close": "மூடு"
+    "close": "மூடு",
+    "back": "பின்செல்க",
+    "home": "முகப்பு",
+    "backToCases": "எனது வழக்குகளுக்குத் திரும்பு",
+    "backToOfficial": "அதிகாரப்பூர்வ போர்ட்டலுக்குத் திரும்பு",
+    "backToResources": "வளங்களுக்குத் திரும்பு",
+    "backToSchemes": "திட்டங்களுக்குத் திரும்பு",
+    "backToRights": "உரிமைகளுக்குத் திரும்பு"
   },
   "home": {
     "badge": "குடிமக்கள் மற்றும் சட்ட அதிகாரமளிப்பிற்கான AI — பதிப்பு 2.0",
