@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Printer, Building, Scale, PhoneCall, ExternalLink } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
-import { ALL_STATES_AND_UTS } from "@/lib/location/location-context";
+import { ALL_STATES_AND_UTS, getDistrictsForState, isDistrictInState } from "@/lib/location/location-context";
 import { planConsumerAction, ConsumerActionPlan, ConsumerIssueType, ConsumerReliefRequested } from "@/lib/consumer/consumer-engine";
 import { generateRepresentationDocument, exportRepresentationHtml, RepresentationData } from "@/lib/templates/representation-generator";
 import { triggerPrintDocument } from "@/lib/pdf/print-export";
@@ -18,6 +18,17 @@ export default function ConsumerRightsPage() {
   const [selectedState, setSelectedState] = useState("Tamil Nadu");
   const [district, setDistrict] = useState("Coimbatore");
   const [pinCode, setPinCode] = useState("641002");
+
+  const availableDistricts = React.useMemo(() => {
+    return getDistrictsForState(selectedState);
+  }, [selectedState]);
+
+  const handleStateChange = (nextState: string) => {
+    setSelectedState(nextState);
+    if (!isDistrictInState(nextState, district)) {
+      setDistrict("");
+    }
+  };
   const [productOrService, setProductOrService] = useState("Laptop / Electronic Device");
   const [sellerOrProvider, setSellerOrProvider] = useState("Online E-Commerce Platform / Seller");
   const [amountPaid, setAmountPaid] = useState<number>(45000);
@@ -104,7 +115,7 @@ export default function ConsumerRightsPage() {
             <label className="block text-xs font-bold text-slate-700 mb-1">{t("ask.stateLabel")} *</label>
             <select
               value={selectedState}
-              onChange={(e) => setSelectedState(e.target.value)}
+              onChange={(e) => handleStateChange(e.target.value)}
               className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-900"
             >
               {ALL_STATES_AND_UTS.map((s) => (
@@ -117,13 +128,18 @@ export default function ConsumerRightsPage() {
 
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1">{t("ask.districtLabel")}</label>
-            <input
-              type="text"
+            <select
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
-              placeholder={t("consumerEngine.districtPlaceholder")}
-              className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900"
-            />
+              className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-medium text-slate-900"
+            >
+              <option value="">{t("consumerEngine.districtPlaceholder")}</option>
+              {availableDistricts.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>

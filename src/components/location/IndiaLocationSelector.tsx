@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { ALL_STATES_AND_UTS, getDistrictsForState, resolveLocationContext, IndiaLocationContext } from "@/lib/location/location-context";
+import { ALL_STATES_AND_UTS, getDistrictsForState, isDistrictInState, resolveLocationContext, IndiaLocationContext } from "@/lib/location/location-context";
 import { useLanguage } from "@/context/LanguageContext";
 import { MapPin, AlertTriangle, CheckCircle2 } from "lucide-react";
 
@@ -79,10 +79,7 @@ export function IndiaLocationSelector({
 
   const handleStateChange = (newState: string) => {
     setSelectedState(newState);
-    const districts = getDistrictsForState(newState);
-    if (districts.length > 0) {
-      setSelectedDistrict(districts[0]);
-    } else {
+    if (!isDistrictInState(newState, selectedDistrict)) {
       setSelectedDistrict("");
     }
   };
@@ -127,27 +124,18 @@ export function IndiaLocationSelector({
           <label className="block text-[11px] font-bold text-slate-700 mb-1">
             {t("ask.districtLabel")} {requiredLevel === "DISTRICT" || requiredLevel === "PIN" ? "*" : ""}
           </label>
-          {availableDistricts.length > 0 ? (
-            <select
-              value={selectedDistrict}
-              onChange={(e) => setSelectedDistrict(e.target.value)}
-              className="w-full p-2.5 bg-[#F4F9FF] border border-[#BCD7EE] font-medium text-xs rounded-xl text-slate-900 focus:outline-none focus:border-indigo-500"
-            >
-              {availableDistricts.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type="text"
-              value={selectedDistrict}
-              onChange={(e) => setSelectedDistrict(e.target.value)}
-              placeholder={t("consumerEngine.districtPlaceholder")}
-              className="w-full p-2.5 bg-[#F4F9FF] border border-[#BCD7EE] text-xs rounded-xl text-slate-900 focus:outline-none"
-            />
-          )}
+          <select
+            value={selectedDistrict}
+            onChange={(e) => setSelectedDistrict(e.target.value)}
+            className="w-full p-2.5 bg-[#F4F9FF] border border-[#BCD7EE] font-medium text-xs rounded-xl text-slate-900 focus:outline-none focus:border-indigo-500"
+          >
+            <option value="">{t("consumerEngine.districtPlaceholder")}</option>
+            {availableDistricts.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* 3. PIN Code Input */}

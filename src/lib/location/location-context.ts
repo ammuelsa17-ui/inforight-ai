@@ -358,15 +358,25 @@ export const ALL_STATES_AND_UTS: StateUtMetadata[] = [
 ];
 
 /**
- * Returns the list of verified districts for a given State/UT code.
+ * Returns the list of verified districts for a given State/UT code or name.
  */
 export function getDistrictsForState(stateCodeOrName: string): string[] {
+  if (!stateCodeOrName) return [];
   const match = ALL_STATES_AND_UTS.find(
     (s) =>
       s.code.toUpperCase() === stateCodeOrName.toUpperCase() ||
       s.name.toLowerCase() === stateCodeOrName.toLowerCase()
   );
   return match ? match.districts : [];
+}
+
+/**
+ * Checks if a given district belongs to a specified State/UT.
+ */
+export function isDistrictInState(stateCodeOrName: string, districtName: string): boolean {
+  if (!stateCodeOrName || !districtName) return false;
+  const districts = getDistrictsForState(stateCodeOrName);
+  return districts.some((d) => d.toLowerCase() === districtName.toLowerCase());
 }
 
 /**
