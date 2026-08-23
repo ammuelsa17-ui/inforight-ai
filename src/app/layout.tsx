@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
 import Navbar from "@/components/Navbar";
+import AppStartHomeReset from "@/components/AppStartHomeReset";
 import { RoleProvider } from "@/context/RoleContext";
 import { LanguageProvider } from "@/context/LanguageContext";
 
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-screen flex flex-col antialiased text-[#172033]`}>
         <RoleProvider>
           <LanguageProvider>
+            <AppStartHomeReset />
             <Navbar />
             <main className="flex-1 flex flex-col min-w-0">{children}</main>
           </LanguageProvider>
