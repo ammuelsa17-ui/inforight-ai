@@ -128,14 +128,14 @@ export default function MatterCard({
         </div>
 
         {/* Title */}
-        <h3 className="text-base font-bold text-slate-900 leading-snug mb-1">
+        <h3 className="text-base font-bold text-slate-900 leading-snug mb-1 break-words">
           {matter.title}
         </h3>
 
-        <div className="text-xs text-slate-500 mb-3 flex items-center gap-2">
-          <span>Authority: <strong className="text-slate-700">{matter.authority}</strong></span>
+        <div className="text-xs text-slate-500 mb-3 flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="break-words">Authority: <strong className="text-slate-700">{matter.authority}</strong></span>
           {matter.reference_number && (
-            <span>• Ref: <strong className="font-mono text-slate-700">{matter.reference_number}</strong></span>
+            <span className="break-all">• Ref: <strong className="font-mono text-slate-700">{matter.reference_number}</strong></span>
           )}
         </div>
 

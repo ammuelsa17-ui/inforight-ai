@@ -15,7 +15,7 @@ This document details the end-to-end user journey across both Citizen and Offici
 | **5. Officer Dispatch & Review** | Municipal Official | `/official` | Inspect assigned road complaints | **"Review Case"** → **"Start Work"** | Status updates to `IN_PROGRESS`; department crew dispatched | `/official/cases/[id]` |
 | **6. Uploading Rectification** | Municipal Official | `/official/cases/[id]` | Submit repair evidence with GPS coordinates | **"Submit Rectification Proof"** | Haversine distance validated (<25m); Status updates to `RECTIFIED_PENDING_CITIZEN_CONFIRMATION` | `/official/cases/[id]` |
 | **7. Citizen Verification** | Citizen | `/dashboard/cases/[id]` | Inspect side-by-side Before/After repair photos | **"Confirm Resolved"** or **"Reopen Case"** | If confirmed: Case closes permanently. If reopened: Cycle increments and returns to Officer. | `/dashboard/cases/[id]` |
-| **8. Audit & Legal Record** | Citizen / Official | `/dashboard/cases/[id]` | Export legal record of repair | **"Print Evidence Pack"** | Printable official A4 evidence package with SHA-256 tamper-evident checksums | PDF Export |
+| **8. Audit & Legal Record** | Citizen / Official | `/dashboard/cases/[id]` | Export legal record of repair | **"Print Evidence Pack"** | Printable official A4 evidence package with SHA-256 integrity checksums | PDF Export |
 
 ---
 

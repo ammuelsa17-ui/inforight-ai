@@ -55,16 +55,16 @@ export function PageHeader({
               {eyebrow}
             </span>
           )}
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 leading-tight">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 leading-tight break-words">
             {title}
           </h1>
           {description && (
-            <p className="text-base md:text-lg text-slate-600 leading-relaxed">
+            <p className="text-base md:text-lg text-slate-600 leading-relaxed whitespace-normal break-words">
               {description}
             </p>
           )}
         </div>
-        {action && <div className="shrink-0 flex items-center gap-3">{action}</div>}
+        {action && <div className="shrink-0 flex flex-wrap items-center gap-3">{action}</div>}
       </div>
     </div>
   );
@@ -88,12 +88,12 @@ export function SectionHeader({
 }: SectionHeaderProps) {
   return (
     <div className={`flex items-start justify-between gap-3 mb-4 ${className}`}>
-      <div>
-        <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
+      <div className="min-w-0 flex-1">
+        <h2 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight break-words leading-snug">
           {title}
         </h2>
         {description && (
-          <p className="text-xs md:text-sm text-slate-500 mt-1 leading-normal">
+          <p className="text-xs md:text-sm text-slate-500 mt-1 leading-normal whitespace-normal break-words">
             {description}
           </p>
         )}

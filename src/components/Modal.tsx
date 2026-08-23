@@ -60,19 +60,19 @@ export const Modal: React.FC<ModalProps> = ({
 
       {/* Modal Dialog */}
       <div
-        className={`w-full bg-white border border-borders rounded-lg shadow-xl overflow-hidden flex flex-col z-10 animate-in zoom-in-95 duration-200 ${getSizeClasses()} max-h-[90vh]`}
+        className={`w-full max-w-[calc(100vw-2rem)] ${getSizeClasses()} bg-white border border-borders rounded-lg shadow-xl overflow-hidden flex flex-col z-10 animate-in zoom-in-95 duration-200 max-h-[90vh]`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="px-5 py-4 border-b border-borders flex items-center justify-between bg-slate-50/50">
-          <h3 id="modal-title" className="text-sm font-bold text-dark-text uppercase tracking-wider">
+        <div className="px-5 py-4 border-b border-borders flex items-center justify-between gap-3 bg-slate-50/50">
+          <h3 id="modal-title" className="text-sm font-bold text-dark-text uppercase tracking-wider break-words leading-snug">
             {title}
           </h3>
           <button
             onClick={onClose}
-            className="p-1 rounded hover:bg-slate-100 text-secondary-text hover:text-dark-text transition-colors cursor-pointer"
+            className="p-1 rounded hover:bg-slate-100 text-secondary-text hover:text-dark-text transition-colors cursor-pointer shrink-0"
             aria-label={t("common.close")}
           >
             <X className="h-4.5 w-4.5" />
@@ -80,13 +80,13 @@ export const Modal: React.FC<ModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto text-sm text-dark-text leading-relaxed flex-1">
+        <div className="p-6 overflow-y-auto text-sm text-dark-text leading-relaxed flex-1 min-w-0 break-words">
           {children}
         </div>
 
         {/* Footer */}
         {actions && (
-          <div className="px-5 py-3.5 border-t border-borders bg-slate-50/50 flex justify-end gap-3.5">
+          <div className="px-5 py-3.5 border-t border-borders bg-slate-50/50 flex flex-col sm:flex-row sm:justify-end gap-2 sm:gap-3.5">
             {actions}
           </div>
         )}

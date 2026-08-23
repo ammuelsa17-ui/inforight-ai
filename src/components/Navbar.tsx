@@ -26,22 +26,22 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center ml-6 gap-6 text-sm font-semibold text-[#102A56] shrink-0">
-            <Link href="/ask" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap text-indigo-700 font-bold">
+          <nav className="hidden xl:flex items-center ml-4 2xl:ml-6 gap-3 2xl:gap-6 text-xs 2xl:text-sm font-semibold text-[#102A56] shrink min-w-0 overflow-hidden">
+            <Link href="/ask" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap text-indigo-700 font-bold shrink-0">
               {t("nav.getHelp")}
             </Link>
-            <Link href="/dashboard" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
+            <Link href="/dashboard" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap shrink-0">
               {t("nav.myCases")}
             </Link>
-            <Link href="/rights" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
+            <Link href="/rights" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap shrink-0">
               {t("nav.rightsSchemes")}
             </Link>
-            <Link href="/resources" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap">
+            <Link href="/resources" className="hover:text-[#4F46E5] transition-colors whitespace-nowrap shrink-0">
               {t("nav.resources")}
             </Link>
             <Link
               href="/official"
-              className="text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 px-2.5 py-1 rounded-md border border-slate-300 transition-colors whitespace-nowrap font-medium"
+              className="text-[11px] 2xl:text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 px-2 py-1 rounded-md border border-slate-300 transition-colors whitespace-nowrap font-medium shrink-0"
               title="Demonstrate government officer review workflow"
             >
               {t("nav.officialWorkspace")}
@@ -49,7 +49,7 @@ export default function Navbar() {
           </nav>
 
           {/* Action CTA & Tools */}
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <div className="hidden xl:flex items-center gap-2 2xl:gap-3 shrink-0 ml-auto pl-2">
             <AccessibilityToolbar textToRead="Welcome to InfoRight AI. Convert municipal road complaints into clear record-based RTI applications with verified official sources." />
             <LanguageSelector />
             <Link
@@ -62,7 +62,7 @@ export default function Navbar() {
           </div>
 
           {/* Tablet & Mobile Menu Toggle Button */}
-          <div className="flex lg:hidden items-center gap-2">
+          <div className="flex xl:hidden items-center gap-2 ml-auto">
             <LanguageSelector />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -77,7 +77,7 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-b border-[#BCD7EE] bg-white px-4 py-4 space-y-3">
+        <div className="xl:hidden border-b border-[#BCD7EE] bg-white px-4 py-4 space-y-3">
           <div className="pb-2 border-b border-[#BCD7EE]">
             <AccessibilityToolbar textToRead="Welcome to InfoRight AI. Convert municipal road complaints into clear record-based RTI applications with verified official sources." />
           </div>

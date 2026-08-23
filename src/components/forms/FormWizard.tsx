@@ -235,22 +235,22 @@ export default function FormWizard({
         </div>
 
         {/* Form Quick Info Strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 text-xs text-slate-600">
-          <div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-4 text-xs text-slate-600">
+          <div className="min-w-0">
             <span className="font-semibold text-slate-400 block">Authority:</span>
-            <span className="font-medium text-slate-800 truncate block">{form.authority}</span>
+            <span className="font-medium text-slate-800 break-words block">{form.authority}</span>
           </div>
-          <div>
+          <div className="min-w-0">
             <span className="font-semibold text-slate-400 block">Jurisdiction:</span>
-            <span className="font-medium text-slate-800">{form.jurisdiction.state_ut}</span>
+            <span className="font-medium text-slate-800 break-words">{form.jurisdiction.state_ut}</span>
           </div>
-          <div>
+          <div className="min-w-0">
             <span className="font-semibold text-slate-400 block">Statutory Fee:</span>
-            <span className="font-medium text-slate-800">{form.submission.statutory_fee || "Nil"}</span>
+            <span className="font-medium text-slate-800 break-words">{form.submission.statutory_fee || "Nil"}</span>
           </div>
-          <div>
+          <div className="min-w-0">
             <span className="font-semibold text-slate-400 block">Filing Mode:</span>
-            <span className="font-medium text-slate-800">
+            <span className="font-medium text-slate-800 break-words">
               {form.submission.online && form.submission.offline
                 ? "Online & Offline"
                 : form.submission.online
