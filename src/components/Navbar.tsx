@@ -65,7 +65,7 @@ export default function Navbar() {
           <div className="flex 2xl:hidden items-center gap-2 sm:gap-3 ml-auto">
             <Link
               href="/ask"
-              className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-xs whitespace-nowrap"
+              className="hidden sm:inline-flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-[#4F46E5] text-white hover:bg-[#4338CA] transition-colors shadow-xs whitespace-nowrap"
             >
               <span>{t("nav.getHelp")}</span>
             </Link>
