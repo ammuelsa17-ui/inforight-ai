@@ -87,7 +87,7 @@ export const enLocale: UITranslationSchema = {
     "journey3Desc": "Follow official rectification evidence side-by-side, then confirm resolution or reopen if incomplete.",
     "archBadge": "Accountability Architecture",
     "archTitle": "Two-Sided Closed-Loop Civic Resolution",
-    "archSubtitle": "Officers cannot unilaterally close civic complaints. Cases transition to citizen review only after geo-verified rectification proof is uploaded, ensuring complete transparency.",
+    "archSubtitle": "Officers cannot unilaterally close civic complaints. Cases transition to citizen review only after rectification evidence with device-reported location context is uploaded, ensuring complete transparency.",
     "archRoleView": "Prototype Role View: Citizen ↔ Official",
     "step1Badge": "Step 1 • Citizen",
     "step1Title": "Reports Issue",
@@ -97,13 +97,13 @@ export const enLocale: UITranslationSchema = {
     "step2Desc": "Assigned department crew marks IN_PROGRESS.",
     "step3Badge": "Step 3 • Official",
     "step3Title": "Uploads Rectification",
-    "step3Desc": "After-repair photo with GPS validation.",
+    "step3Desc": "After-repair photo with device-reported location context.",
     "step4Badge": "Step 4 • Citizen",
     "step4Title": "Confirms or Reopens",
     "step4Desc": "Inspects Before vs After evidence comparison.",
     "step5Badge": "Step 5 • Audit",
-    "step5Title": "SHA-256 Record",
-    "step5Desc": "Tamper-evident PDF evidence package."
+    "step5Title": "SHA-256 Integrity Record",
+    "step5Desc": "SHA-256 integrity record for detecting file changes."
   },
   "ask": {
     "statusVerified": "Verified",
